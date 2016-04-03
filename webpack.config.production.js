@@ -4,7 +4,7 @@ var precss       = require('precss');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: './react_components/App.jsx',
+    entry: './client/Router.jsx',
     output: {
         path: path.join(__dirname, '/public/'),
         filename: 'bundle.js'

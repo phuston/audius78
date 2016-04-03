@@ -5,7 +5,7 @@ var precss       = require('precss');
 
 module.exports = {
     entry: ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000',
-        './react_components/App.jsx'],
+        './client/Router.jsx'],
     output: {
         //path: path.join(__dirname, '/public/'),
         path: __dirname,
