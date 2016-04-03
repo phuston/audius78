@@ -29,9 +29,15 @@
     "express-session": "^1.13.0",
     "fs": "0.0.2",
     "morgan": "^1.7.0",
+    "node-sass": "^3.4.2",
+    "postcss-loader": "^0.8.2",
     "precss": "^1.4.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
+    "react-redux": "^4.4.1",
+    "react-router": "^2.0.1",
+    "redux": "^3.3.1",
+    "sass-loader": "^3.2.0",
     "webpack": "^1.12.14"
   },
   "devDependencies": {

@@ -21,7 +21,7 @@ var Main = React.createClass({
 });
 
 function run() {
-  render(<Main />, document.getElementById("target"));
+  render(<Main />, document.getElementById("content"));
 }
 
 if (window.addEventListener) {

@@ -6,7 +6,7 @@ class ExistingWorkspace extends Component{
 
 	render() {
 		return (
-			<div className={styles.existing-workspace}
+			<div className={styles.existing-workspace} >
 				<input 
 					className={styles.existing-workspace-input}
 					type='text' 

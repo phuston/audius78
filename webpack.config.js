@@ -5,7 +5,7 @@ var precss       = require('precss');
 
 module.exports = {
     entry: ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000',
-        './client/Router.jsx'],
+        './client/router.jsx'],
     output: {
         //path: path.join(__dirname, '/public/'),
         path: __dirname,
@@ -29,7 +29,8 @@ module.exports = {
             test:   [/\.css$/, /\.scss$/],
             //loader: ['style-loader','css-loader','postcss-loader', 'sass']
             loaders: ['style','css','postcss-loader', 'sass']
-        }]
+        },
+        ]
     },
     resolve: {
         extensions: ['', '.js', '.jsx', '.scss', '.css']

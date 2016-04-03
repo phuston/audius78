@@ -4,7 +4,7 @@ var precss       = require('precss');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: './client/Router.jsx',
+    entry: './client/router.jsx',
     output: {
         path: path.join(__dirname, '/public/'),
         filename: 'bundle.js'
@@ -24,7 +24,9 @@ module.exports = {
         {
             test:   [/\.css$/, /\.scss$/],
             loaders: ['style','css','postcss-loader', 'sass']
-        }]
+        },
+
+        ]
     },
     resolve: {
         extensions: ['', '.js', '.jsx', '.scss', '.css']
