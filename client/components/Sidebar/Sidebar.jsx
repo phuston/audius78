@@ -9,7 +9,7 @@ class Sidebar extends Component{
 		return (
 
 			<div className = {styles.sidebar} >
-
+				<p> I am a Sidebar! </p>
 				<input className={styles.split} />
 				<input className={styles.move} />
 

@@ -10,7 +10,7 @@ class Navbar extends Component{
 
 			<div className = {styles.navbar} >
 
-				<h2> Audius78 </h2>
+				<p> I am a Navbar! </p>
 
 			</div>
 		)

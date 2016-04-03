@@ -15,6 +15,7 @@ class TrackBox extends Component{
 		return (
 
 			<div >
+				<h1> This heres a trackbox </h1>
 				<Row />
 			</div>
 		)

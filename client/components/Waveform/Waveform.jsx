@@ -9,7 +9,7 @@ class Waveform extends Component{
 		return (
 
 			<div className = {styles.waveform} >
-
+				<p> I am a Waveform! </p>
 			</div>
 		)
 	}

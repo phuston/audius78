@@ -9,6 +9,7 @@ class MasterTrack extends Component{
 		return (
 
 			<div className = {styles.mastertrack} >
+				<p> I am the MasterTrack! </p>
 
 			</div>
 		)

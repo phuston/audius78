@@ -14,6 +14,7 @@ class Row extends Component{
 	render(){
 		return (
 			<div className={styles.row} >
+				<h2> I am the Row, yo! </h2>
 				<AudioBlock />
 			</div>
 		)

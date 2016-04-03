@@ -20,6 +20,7 @@ class Workspace extends Component{
 		return (
 
 			<div className={styles.workspace} >
+				<h1> Welcome to the Workspace </h1>
 				<Navbar className={styles.navbar}/>
 				<Sidebar className={styles.sidebar}/>
 				<MasterTrack className={styles.mastertrack}/>

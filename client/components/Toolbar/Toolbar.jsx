@@ -9,9 +9,7 @@ class Toolbar extends Component{
 		return (
 
 			<div className = {styles.toolbar} >
-
-				<h2> Audius78 </h2>
-
+				<p> I am a Toolbar! </p>
 			</div>
 		)
 	}

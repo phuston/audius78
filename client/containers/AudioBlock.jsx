@@ -16,6 +16,7 @@ class AudioBlock extends Component{
 		return (
 
 			<div className={style.audio-block}>
+				<h3> I am an AudioBlock </h3>
 				<Waveform />
 				<Toolbar />
 			</div>
