@@ -17,4 +17,4 @@ export default handleActions({
 	// MOVE: TRACK: (state, action) => (
 	// 	// TODO: do some shit here
 	// )
-}, {})
+}, {});

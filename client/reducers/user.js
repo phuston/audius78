@@ -7,4 +7,4 @@ export default handleActions({
 	// REMOVE_USER: (state, action) => (
 	// 	// TODO: remove the user specified with the action.username
 	// )
-}, {})
+}, {});
