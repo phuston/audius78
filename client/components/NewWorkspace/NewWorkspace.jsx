@@ -9,7 +9,8 @@ class NewWorkspace extends Component{
 			<input 
 				className={styles.workspaceButton}
 				type='button' 
-				value='New Workspace' />
+				value='New Workspace' 
+				onClick={this.props.onNewWorkspace}/>
 		);
 	}
 }

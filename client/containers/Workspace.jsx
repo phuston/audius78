@@ -29,5 +29,4 @@ class Workspace extends Component{
 	}
 }
 
-
-export default connect(x=>x)(Workspace);
+export default Workspace;
