@@ -21,15 +21,29 @@ module.exports = function(){
                         compression: 8},
                         req.file.filename + '.flac'],
                         function(err, outFP){ 
+                            console.log(outFP);
                             if( err ) {
-                                return res.json(err);
-                                console.error("SOX error");
+                                console.error("SOX error", err);
                             }
+                            fs.exists(outFP, function(exists){
+                                if( !exists ){
+                                    console.error('file does not exist');
+                                }
 
-                            fs.renameSync(outFP, "static/"+outFP);
-                            fs.unlinkSync(req.file.path);
-                            return res.json({fd: "static/"+outFP});
-
+                                fs.rename(outFP, "static/"+outFP, function(err){
+                                    if( err ){
+                                        console.error("Rename error");
+                                        return res.status(500).json(err);
+                                    }
+                                    fs.unlink(req.file.path, function(err){
+                                        if( err ){
+                                            console.error("Unlink error");
+                                            return res.status(500).json(err);
+                                        }
+                                        return res.json({fd: "static/"+outFP});
+                                    });
+                                });
+                            });
                         });
             });
         }

@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var webpack = require('webpack');
 var config = require('./webpack.config.js');
+var index =require('./routes/index.js')();
 
 var isDeveloping = process.env.NODE_ENV !== 'production';
 
@@ -40,6 +41,8 @@ if(isDeveloping) {
 }
 
 app.use(express.static(path.join(__dirname, '/public')));  
+
+app.post('/api/upload', index.upload);
 
 var PORT = process.env.PORT || 3000;
 app.listen(PORT, function() {
