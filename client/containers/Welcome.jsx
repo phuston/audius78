@@ -31,12 +31,4 @@ class Welcome extends Component{
 	}
 }
 
-// let routes = (  
-//  <Route name="app" path="/" handler={App}>
-//    <Route name="login" path="/login" handler={LoginHandler}/>
-//  </Route>
-// );
-
-
-
 export default connect(x=>x)(Welcome);
