@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
+import { Link } from 'react-router';
 
 import styles from './NewWorkspace.scss';
 
