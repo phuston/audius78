@@ -6,13 +6,13 @@ class ExistingWorkspace extends Component{
 
 	render() {
 		return (
-			<div className={styles.existing-workspace} >
+			<div className={styles.existingWorkspace} >
 				<input 
-					className={styles.existing-workspace-input}
+					className={styles.existingInput}
 					type='text' 
 					placeholder='Enter Code' />
 				<input 
-					className={styles.existing-workspace-button}
+					className={styles.existingButton}
 					type='button' 
 					value='Enter Existing Workspace' />
 			</div>

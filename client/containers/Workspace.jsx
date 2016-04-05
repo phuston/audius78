@@ -18,7 +18,6 @@ class Workspace extends Component{
 
 	render(){
 		return (
-
 			<div className={styles.workspace} >
 				<h1> Welcome to the Workspace </h1>
 				<Navbar className={styles.navbar}/>
@@ -30,5 +29,4 @@ class Workspace extends Component{
 	}
 }
 
-
-export default connect(x=>x)(Workspace);
+export default Workspace;

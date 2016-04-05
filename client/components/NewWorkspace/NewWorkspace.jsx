@@ -7,9 +7,10 @@ class NewWorkspace extends Component{
 	render() {
 		return (
 			<input 
-				className={styles.new-workspace-button}
+				className={styles.workspaceButton}
 				type='button' 
-				value='New Workspace' />
+				value='New Workspace' 
+				onClick={this.props.onNewWorkspace}/>
 		);
 	}
 }
