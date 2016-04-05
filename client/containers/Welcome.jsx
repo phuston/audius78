@@ -14,7 +14,6 @@ class Welcome extends Component{
 
 	render(){
 		return (
-
 			<div className={styles.welcome}>
 				<h1>Welcome to Audius78</h1>
 				<NewWorkspace />
