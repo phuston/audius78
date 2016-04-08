@@ -4,9 +4,17 @@
     <meta charset="utf-8">
     <title>Audius78</title>
   </head>
-  
+
   <body>
     <div id="content"></div>
+    <form id        =  "uploadForm"
+         enctype   =  "multipart/form-data"
+         action    =  "/api/upload"
+         method    =  "post"
+         >
+         <input type="file" name="song" />
+         <input type="submit" value="Upload Image" name="submit">
+    </form>
   </body>
   <script type='text/javascript' src='bundle.js'></script>
 </html>

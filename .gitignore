@@ -36,7 +36,7 @@ node_modules
 auth.js
 
 # Don't push compiled code
-#bundle.js
+bundle.js
 
 # Swap files for vim
 *.swp
