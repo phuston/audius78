@@ -1,29 +1,27 @@
 {
 	Users: [Id,...],
-	Audio: {
-		Raw: {
-			id: {
-				fd: String,
-				length: Number
-			},
-			...
+	Raw: {
+		id: {
+			fd: String,
+			length: Number
 		},
-		Rows: {
-			Id: {
-				Blocks: {
-					Id: {
-						length: Number,
-						row_offset: Number,
-						fd: String,
-						file_offset: Number
-						tags: [
-							start_time: Number,
-							duration: Number,
-							apply_func: Function
-						]
-					},
-					...
-				}
+		...
+	},
+	Rows: {
+		Id: {
+			Blocks: {
+				Id: {
+					length: Number,
+					row_offset: Number,
+					fd: String,
+					file_offset: Number
+					tags: [
+						start_time: Number,
+						duration: Number,
+						apply_func: Function
+					]
+				},
+				...
 			}
 		}
 	}
