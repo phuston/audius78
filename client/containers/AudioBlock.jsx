@@ -15,7 +15,7 @@ class AudioBlock extends Component{
 	render(){
 		return (
 
-			<div className={style.audio-block}>
+			<div className={styles.audioBlock}>
 				<h3> I am an AudioBlock </h3>
 				<Waveform />
 				<Toolbar />
