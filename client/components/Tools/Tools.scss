@@ -1,30 +1,30 @@
 @import '../../containers/Containers.scss';
 
 .move {
-	width: 5vw;
+	width: 50px;
+	margin: 20px;
 	border: none;
 	background-color: $primary;
 	color: white;
 	text-align: center;
-	margin: 1vh 0 1vh 3vw;
 	box-shadow: none;
 	border-radius: 2em;
 }
 
 .split {
-	width: 5vw;
+	width: 50px;
+	margin: 20px;
 	border: none;
 	background-color: $primary;
 	color: white;
 	text-align: center;
-	margin: 3vh 0 1vh 3vw;
 	box-shadow: none;
 	border-radius: 2em;
 }
 
 .sidebar {
 	background-color: $accent;
-	width: 20vw;
+	width: 100vw;
 	display: flex;
-	flex-flow: column;
+	flex-flow: row;
 }

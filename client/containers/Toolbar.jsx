@@ -8,15 +8,16 @@ import styles from './Containers.scss';
 import Tools from '../components/Tools/Tools.jsx'
 
 
-class Sidebar extends Component{
+class Toolbar extends Component{
 
 	render() {
 		return (
-			<div className = {styles.sidebar} >
+			<div className = {styles.toolbar} >
+				<h2> Toolbar </h2>
 				<Tools />
 			</div>
 		)
 	}
 }
 
-export default Sidebar;
+export default Toolbar;

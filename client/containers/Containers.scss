@@ -2,12 +2,17 @@ $primary: #FF5722;
 $dark: #E64A19;
 $accent: #81D4FA;
 
-
-
 .welcome {
 	font-family: Helvetica;
 	font-size: 2em;
 	text-align: center;
+}
+
+.toolbar {
+	display: flex;
+	flex-flow: columns;
+	background-color: $accent;
+
 }
 
 .page {
@@ -19,7 +24,7 @@ $accent: #81D4FA;
 
 .workspace {
 	display: flex;
-	flex-flow: row;
+	flex-flow: column;
 }
 
 .songs {

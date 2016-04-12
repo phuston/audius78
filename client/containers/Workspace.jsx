@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 //Containers
 import TrackBox from './TrackBox.jsx'
 import Navbar from './NavbarBox.jsx'
-import Sidebar from './Sidebar.jsx'
+import Toolbar from './Toolbar.jsx'
 
 //Styling 
 import styles from './Containers.scss'
@@ -19,7 +19,7 @@ class Workspace extends Component{
 
 				<div className={styles.workspace} >
 
-					<Sidebar className={styles.sidebar}/>
+					<Toolbar className={styles.toolbar}/>
 
 					<div className={styles.songs}>
 						<TrackBox className={styles.trackbox}/>

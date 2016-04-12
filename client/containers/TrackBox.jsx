@@ -6,6 +6,7 @@ import styles from './Containers.scss';
 
 // Components
 import Row from '../components/Row/Row.jsx';
+import Time from '../components/Time/Time.jsx'
 
 
 class TrackBox extends Component{
@@ -14,7 +15,7 @@ class TrackBox extends Component{
 		return (
 
 			<div >
-				<h1> Tracks </h1>
+				<Time />
 				<Row />
 				<Row />
 			</div>

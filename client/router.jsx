@@ -14,7 +14,7 @@ var Main = React.createClass({
     return (
       <Provider store={store}>
         <Router history={browserHistory}>
-          <Route path="/" component={WelcomeBox}/>
+          <Route path="/" component={Workspace}/>
           <Route path="/workspace" component={Workspace}/>
         </Router>
       </Provider>
