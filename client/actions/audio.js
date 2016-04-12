@@ -37,6 +37,6 @@ export const loadWorkspace = createAction(types.ADD_WORKSPACE, (workspaceId) => 
 });
 export const addRow = createAction(types.ADD_ROW);
 export const removeRow = createAction(types.REMOVE_ROW);
-export const flagTrack = createAction(types.FLAG_TRACK);
+export const flagTrack = createAction(types.FLAG_TRACK, (operation, rowId, blockId));
 export const splitTrack = createAction(types.SPLIT_TRACK);
 export const moveTrack = createAction(types.MOVE_TRACK);
