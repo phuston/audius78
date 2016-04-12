@@ -1,12 +1,23 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router';
 
-import styles from './ExistingWorkspace.scss';
 
-class ExistingWorkspace extends Component{
+import styles from './Welcome.scss';
+
+class Welcome extends Component{
 
 	render() {
 		return (
 			<div className={styles.existingWorkspace} >
+
+				<Link to='/workspace'> 
+				<input 
+					className={styles.workspaceButton}
+					type='button' 
+					value='New Workspace' 
+					onClick={this.props.onNewWorkspace}/>
+				</Link>
+
 				<input 
 					className={styles.existingInput}
 					type='text' 
@@ -20,4 +31,4 @@ class ExistingWorkspace extends Component{
 	}
 }
 
-export default ExistingWorkspace;
+export default Welcome

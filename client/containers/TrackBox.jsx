@@ -1,12 +1,11 @@
 // Outside
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
-//Containers
-import Row from './Row.jsx'
+// Styling 
+import styles from './Containers.scss';
 
-//Styling 
-import styles from './Containers.scss'
+// Components
+import Row from '../components/Row/Row.jsx';
 
 
 class TrackBox extends Component{
@@ -15,7 +14,8 @@ class TrackBox extends Component{
 		return (
 
 			<div >
-				<h1> This heres a trackbox </h1>
+				<h1> Tracks </h1>
+				<Row />
 				<Row />
 			</div>
 		)

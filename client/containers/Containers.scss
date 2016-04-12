@@ -1,31 +1,50 @@
+$primary: #FF5722;
+$dark: #E64A19;
+$accent: #81D4FA;
+
+
+
 .welcome {
-	
+	font-family: Helvetica;
+	font-size: 2em;
+	text-align: center;
+}
+
+.page {
+	font-family: Helvetica;
+	display: flex;
+	flex-flow: column;
+	border: solid black 2px;
 }
 
 .workspace {
-
+	display: flex;
+	flex-flow: row;
 }
 
-.navbar {
-
-}
-
-.sidebar{
-
-}
-
-.mastertrack {
-
+.songs {
+	display: flex;
+	flex-flow: column;
+	background-color: $primary;
+	width: 100%;
 }
 
 .trackbox{
-	
+	border: solid black 2px;
+
 }
 
 .row {
-
+	border: solid black 2px;
+	display: flex;
+	flex-flow: row;
+	margin: 20px;
+	padding: 5px;
 }
 
 .audioBlock {
-
+	border: solid black 2px;
+	display: flex;
+	flex-flow: row;
+	padding: 5px;
 }

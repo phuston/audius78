@@ -4,26 +4,28 @@ import { connect } from 'react-redux';
 
 //Containers
 import TrackBox from './TrackBox.jsx'
-
-//Components
-import Navbar from '../components/Navbar/Navbar.jsx'
-import Sidebar from '../components/Sidebar/Sidebar.jsx'
-import MasterTrack from '../components/MasterTrack/MasterTrack.jsx'
+import Navbar from './NavbarBox.jsx'
+import Sidebar from './Sidebar.jsx'
 
 //Styling 
 import styles from './Containers.scss'
-
 
 class Workspace extends Component{
 
 	render(){
 		return (
-			<div className={styles.workspace} >
-				<h1> Welcome to the Workspace </h1>
+			<div className={styles.page} >
 				<Navbar className={styles.navbar}/>
-				<Sidebar className={styles.sidebar}/>
-				<MasterTrack className={styles.mastertrack}/>
-				<TrackBox className={styles.trackbox}/>
+
+				<div className={styles.workspace} >
+
+					<Sidebar className={styles.sidebar}/>
+
+					<div className={styles.songs}>
+						<TrackBox className={styles.trackbox}/>
+					</div>
+
+				</div>
 			</div>
 		)
 	}
