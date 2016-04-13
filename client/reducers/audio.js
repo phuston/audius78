@@ -1,22 +1,23 @@
 import { handleActions } from 'redux-actions';
+import { filter } from 'filter-object';
 
 export default handleActions({
 	ADD_ROW: (state, action) => (
-		// TODO: add a new row with the specified audio tag
-		// TODO: figure out where the hell the downloading is supposed to go
+		return [...state, action.payload.rowId: action.payload.rows]
 	),
 	REMOVE_ROW: (state, action) => (
-		// TODO: remove the track specified in the action here
+		var remove = "!" + action.payload.rowId;
+		return filter(state, remove)
 	),
-	FLAG_TRACK: (state, action) => (
+	FLAG_BLOCK: (state, action) => (
         var block = {...state[action.payload.rowId][action.payload.blockId], action.payload.newFlags}
         var row = {...state[action.payload.rowId], [action.payload.blockId]:block}
         return {...state, [action.payload.rowId]:row}
 	),
-	SPLIT_TRACK: (state, action) => (
+	SPLIT_BLOCK: (state, action) => (
 		// TODO: do some here
 	),
-	MOVE: TRACK: (state, action) => (
+	MOVE_BLOCK: (state, action) => (
 		// TODO: do some here
 	)
 }, {});
