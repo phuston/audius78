@@ -11,13 +11,13 @@ export default handleActions({
 	),
 	FLAG_BLOCK: (state, action) => (
         var block = {...state[action.payload.rowId][action.payload.blockId], action.payload.newFlags}
-        var row = {...state[action.payload.rowId], [action.payload.blockId]:block}
+        var row = {...state[action.payload.rowId], action.payload.blockId:block}
         return {...state, [action.payload.rowId]:row}
 	),
 	SPLIT_BLOCK: (state, action) => (
-		// TODO: do some here
+		return {...state, action.payload.rowId:action.payload.newRows}
 	),
 	MOVE_BLOCK: (state, action) => (
-		// TODO: do some here
+		return {...state, action.payload.rowId:action.payload.newRows}
 	)
 }, {});

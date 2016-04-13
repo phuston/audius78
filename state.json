@@ -7,7 +7,6 @@
                 Id: {
                     length: Number,
                     row_offset: Number,
-                    fd: MediaElementAudioSourceNode,
                     file_offset: Number
                     flags: [
                         {
