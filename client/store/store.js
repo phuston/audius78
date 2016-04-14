@@ -12,7 +12,7 @@ const reduxRouter = syncHistory(browserHistory);
 middlewares.push(reduxRouter);
 
 if (process.env.NODE_ENV != 'production') {
-    const createLogger = require(`redux-logger`);
+    const createLogger = require('redux-logger');
     const logger = createLogger({collapse:true});
     middlewares.push(logger);
 }

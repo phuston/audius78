@@ -5,6 +5,6 @@ export const REMOVE_USER = 'REMOVE_USER';
 // Row actions
 export const ADD_ROW = 'ADD_ROW';
 export const REMOVE_ROW = 'REMOVE_ROW';
-export const FLAG_TRACK = 'FLAG_TRACK';
-export const SPLIT_TRACK = 'SPLIT_TRACK';
-export const MOVE_TRACK = 'MOVE_TRACK';
+export const FLAG_BLOCK = 'FLAG_BLOCK';
+export const SPLIT_BLOCK = 'SPLIT_BLOCK';
+export const MOVE_BLOCK = 'MOVE_BLOCK';
