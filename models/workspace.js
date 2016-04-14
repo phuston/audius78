@@ -22,4 +22,4 @@ var workspacesSchema = mongoose.Schema({
 });
 
 
-module.exports = mongoose.model('Workspace', howlsSchema);
+module.exports = mongoose.model('Workspace', workspaceSchema);
