@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, Route, browserHistory } from 'react-router';
+import { Router, Route, browserHistory, IndexRoute } from 'react-router';
 
 import store from './store/store';
 import Workspace from './containers/Workspace.jsx';
@@ -14,8 +14,7 @@ var Main = React.createClass({
     return (
       <Provider store={store}>
         <Router history={browserHistory}>
-          <IndexRoute component={WelcomeBox}/>
-          <Route path="/welcome" component={WelcomeBox}/>
+          <Route path="/" component={WelcomeBox}/>
           <Route path="/workspace" component={Workspace}/>
         </Router>
       </Provider>
