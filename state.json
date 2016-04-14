@@ -3,6 +3,7 @@
     Users: [Id,...],
     Rows: {
         Id: {
+            raw_audio: audiobuffer,
             Blocks: {
                 Id: {
                     length: Number,
