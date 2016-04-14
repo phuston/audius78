@@ -3,7 +3,7 @@ var mongoose = require("mongoose") ;
 var Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
 
-var workspacesSchema = mongoose.Schema({
+var workspaceSchema = mongoose.Schema({
   _id: {type: String},
   rows: [{
     rowId: String,
