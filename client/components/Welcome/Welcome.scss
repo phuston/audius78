@@ -1,0 +1,44 @@
+@import '../../containers/Containers.scss';
+
+
+.existingWorkspace {
+
+}
+
+.workspaceButton {
+	height: 30px;
+	font-family: Helvetica;
+	text-decoration: none;
+	border: none;
+	background-color: $dark;
+	color: white;
+	border-radius: 30px;
+	margin: 20px;
+}
+
+.existingInput {
+
+	height: 30px;
+	width: 100px;
+	font-family: Helvetica;
+	text-decoration: none;
+	border: none;
+	box-shadow: none;
+	background-color: lightgrey;
+	color: black;
+	border-radius: 3px;
+	margin: 20px;
+
+}
+
+.existingButton {
+
+	height: 30px;
+	font-family: Helvetica;
+	text-decoration: none;
+	border: none;
+	background-color: $primary;
+	color: white;
+	border-radius: 30px;
+	margin: 20px;
+}

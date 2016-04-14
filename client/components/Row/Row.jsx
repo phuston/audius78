@@ -1,20 +1,20 @@
 // Outside
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
-//Containers
-import AudioBlock from './AudioBlock.jsx'
+// Components
+import AudioBlock from '../AudioBlock/AudioBlock.jsx';
+import RowTool from '../RowTool/RowTool.jsx';
+
 
 //Styling 
-import styles from './Containers.scss'
-
+import styles from './Row.scss';
 
 class Row extends Component{
 
 	render(){
 		return (
 			<div className={styles.row} >
-				<h2> I am the Row, yo! </h2>
+				<RowTool />
 				<AudioBlock />
 			</div>
 		)

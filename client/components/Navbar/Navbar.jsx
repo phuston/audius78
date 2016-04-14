@@ -10,10 +10,8 @@ class Navbar extends Component{
 		return (
 
 			<div className = {styles.navbar} >
-
-				<p> I am a Navbar! </p>
-				<Link to='/'><input type='button' value='Logout' /></Link>
-
+				<h2> Audius78 Workspace</h2>
+				<Link to='/'><input className={styles.button} type='button' value='Logout' /></Link>
 			</div>
 		)
 	}

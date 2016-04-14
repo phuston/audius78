@@ -1,0 +1,40 @@
+@import '../../containers/Containers.scss';
+
+.tools > input {
+	width: 50px;
+	margin: 20px;
+	border: none;
+	background-color: $primary;
+	color: white;
+	text-align: center;
+	box-shadow: none;
+	border-radius: 2em;
+}
+
+.tools {
+	width: 100vw;
+	display: flex;
+	flex-flow: row;
+}
+
+.move {
+
+}
+
+.split {
+
+}
+
+.pauseplay {
+
+}
+
+.stop {
+
+}
+
+.cut {
+
+}
+
+

@@ -4,26 +4,38 @@ import { connect } from 'react-redux';
 
 //Containers
 import TrackBox from './TrackBox.jsx'
-
-//Components
-import Navbar from '../components/Navbar/Navbar.jsx'
-import Sidebar from '../components/Sidebar/Sidebar.jsx'
-import MasterTrack from '../components/MasterTrack/MasterTrack.jsx'
+import Navbar from './NavbarBox.jsx'
+import Toolbar from './Toolbar.jsx'
 
 //Styling 
 import styles from './Containers.scss'
-
 
 class Workspace extends Component{
 
 	render(){
 		return (
-			<div className={styles.workspace} >
-				<h1> Welcome to the Workspace </h1>
+			<div className={styles.page} >
 				<Navbar className={styles.navbar}/>
-				<Sidebar className={styles.sidebar}/>
-				<MasterTrack className={styles.mastertrack}/>
-				<TrackBox className={styles.trackbox}/>
+
+				<div className={styles.workspace} >
+
+					<Toolbar className={styles.toolbar}/>
+
+					<div className={styles.songs}>
+						<TrackBox className={styles.trackbox}/>
+					</div>
+
+					<form 
+						id =  "uploadForm"
+         				encType = "multipart/form-data"
+         				action =  "/api/upload"
+         				method =  "post"
+         				className={styles.uploadform} >
+         				
+         				<input type="file" name="song" className={styles.filechoose} />
+        				<input type="submit" value="Upload" name="submit" className={styles.upload} />
+    				</form>
+				</div>
 			</div>
 		)
 	}

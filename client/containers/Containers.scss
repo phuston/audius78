@@ -1,31 +1,75 @@
+$primary: #255C69;
+$dark: #0F434F;
+$accent: #AA7139;
+$light: #447884;
+$background: #6B949E;
+
+body {
+	background-color: $background;
+}
+
 .welcome {
-	
+	font-family: Helvetica;
+	font-size: 2em;
+	text-align: center;
+}
+
+.toolbar {
+	display: flex;
+	flex-flow: columns;
+	background-color: $accent;
+
+}
+
+.page {
+	font-family: Helvetica;
+	display: flex;
+	flex-flow: column;
 }
 
 .workspace {
-
+	display: flex;
+	flex-flow: column;
 }
 
-.navbar {
-
-}
-
-.sidebar{
-
-}
-
-.mastertrack {
-
+.songs {
+	display: flex;
+	flex-flow: column;
+	background-color: $primary;
+	width: 100%;
 }
 
 .trackbox{
-	
+	border: solid black 2px;
+
 }
 
 .row {
-
+	border: solid black 2px;
+	display: flex;
+	flex-flow: row;
+	margin: 20px;
+	padding: 5px;
 }
 
 .audioBlock {
+	border: solid black 2px;
+	display: flex;
+	flex-flow: row;
+	padding: 5px;
+}
+
+.upload {
+	background-color: $accent;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	margin: 20px;
+	box-shadow: 5px 5px 15px #888888;
+	color: white;
+	border: none;
+}
+
+.uploadform{
 
 }

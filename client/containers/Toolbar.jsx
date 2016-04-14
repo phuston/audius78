@@ -1,15 +1,20 @@
+// Outside
 import React, { Component } from 'react';
 
-import styles from './Toolbar.scss';
+// Styling
+import styles from './Containers.scss';
+
+// Components
+import Tools from '../components/Tools/Tools.jsx'
 
 
 class Toolbar extends Component{
 
 	render() {
 		return (
-
 			<div className = {styles.toolbar} >
-				<p> I am a Toolbar! </p>
+				<h2> Toolbar </h2>
+				<Tools />
 			</div>
 		)
 	}
