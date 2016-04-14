@@ -1,25 +1,25 @@
 {
-    id: some hash
-    Users: [Id,...],
-    Rows: {
+  id: some hash
+  Users: [Id,...],
+  Rows: {
+    Id: {
+      raw_audio: audiobuffer,
+      Blocks: {
         Id: {
-            raw_audio: audiobuffer,
-            Blocks: {
-                Id: {
-                    length: Number,
-                    row_offset: Number,
-                    file_offset: Number
-                    flags: [
-                        {
-                            start_time: Number,
-                            duration: Number,
-                            type: String
-                        },
-                        ...
-                    ]
-                },
-                ...
-            }
-        }
+          length: Number,
+          row_offset: Number,
+          file_offset: Number
+          flags: [
+            {
+              start_time: Number,
+              duration: Number,
+              type: String
+            },
+            ...
+          ]
+        },
+        ...
+      }
     }
+  }
 }

@@ -7,14 +7,14 @@ import styles from './AudioBlock.scss'
 
 class AudioBlock extends Component{
 
-    render(){
-        return (
+  render(){
+    return (
 
-            <div className={styles.audioBlock}>
-                <h3>Im the waveform woohoo</h3>
-            </div>
-        )
-    }
+      <div className={styles.audioBlock}>
+        <h3>Im the waveform woohoo</h3>
+      </div>
+    )
+  }
 }
 
 
