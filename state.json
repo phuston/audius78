@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
     id: some hash
     Users: [Id,...],
     Rows: {
@@ -23,32 +22,4 @@
             }
         }
     }
-=======
-	Users: [Id,...],
-	Raw: {
-		id: {
-			fd: String,
-			length: Number
-		},
-		...
-	},
-	Rows: {
-		Id: {
-			Blocks: {
-				Id: {
-					length: Number,
-					row_offset: Number,
-					fd: String,
-					file_offset: Number
-					tags: [
-						start_time: Number,
-						duration: Number,
-						apply_func: Function
-					]
-				},
-				...
-			}
-		}
-	}
->>>>>>> e1243328a5033f588d5cff720e6d5281f5742c6e
 }
