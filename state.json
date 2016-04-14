@@ -1,5 +1,5 @@
 {
-  id: some hash
+  workspaceId: some hash
   Users: [Id,...],
   Rows: {
     Id: {
