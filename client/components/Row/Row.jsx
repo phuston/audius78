@@ -11,14 +11,14 @@ import styles from './Row.scss';
 
 class Row extends Component{
 
-    render(){
-        return (
-            <div className={styles.row} >
-                <RowTool />
-                <AudioBlock />
-            </div>
-        )
-    }
+  render(){
+    return (
+      <div className={styles.row} >
+        <RowTool />
+        <AudioBlock />
+      </div>
+    )
+  }
 }
 
 

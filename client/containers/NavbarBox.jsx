@@ -9,14 +9,14 @@ import Navbar from '../components/Navbar/Navbar.jsx'
 
 class NavbarBox extends Component{
 
-    render() {
-        return (
+  render() {
+    return (
 
-            <div className = {styles.navbar} >
-                <Navbar />
-            </div>
-        )
-    }
+      <div className = {styles.navbar} >
+        <Navbar />
+      </div>
+    )
+  }
 }
 
 export default NavbarBox;

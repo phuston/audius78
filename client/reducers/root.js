@@ -5,7 +5,7 @@ import rows from './rows';
 import users from './users';
 
 export default combineReducers({
-    routing,
-    users,
-    rows
+  routing,
+  users,
+  rows
 });
