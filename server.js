@@ -41,6 +41,7 @@ if(isDeveloping) {
 }
 
 app.use(express.static(path.join(__dirname, '/public')));  
+app.use(express.static(path.join(__dirname, '/static')));  
 
 app.post('/api/upload', index.upload);
 
