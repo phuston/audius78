@@ -5,14 +5,14 @@ import styles from './Time.scss';
 
 class Time extends Component{
 
-	render() {
-		return (
+    render() {
+        return (
 
-			<div className = {styles.time} >
-				<p> this is a timer that runs across the screen</p>
-			</div>
-		)
-	}
+            <div className = {styles.time} >
+                <p> this is a timer that runs across the screen</p>
+            </div>
+        )
+    }
 }
 
 export default Time;

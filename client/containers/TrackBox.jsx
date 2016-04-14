@@ -11,15 +11,15 @@ import Time from '../components/Time/Time.jsx'
 
 class TrackBox extends Component{
 
-	render(){
-		return (
+    render(){
+        return (
 
-			<div >
-				<Time />
-				<Row />
-			</div>
-		)
-	}
+            <div >
+                <Time />
+                <Row />
+            </div>
+        )
+    }
 }
 
 
