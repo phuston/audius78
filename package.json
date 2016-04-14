@@ -47,6 +47,11 @@
     "redux-simple-router": "^2.0.4",
     "sass-loader": "^3.2.0",
     "style-loader": "^0.13.1",
+    "multer": "^1.1.0",
+    "precss": "^1.4.0",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "sox.js": "^1.0.4",
     "webpack": "^1.12.14"
   },
   "devDependencies": {
