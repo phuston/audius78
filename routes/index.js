@@ -16,10 +16,7 @@ module.exports = function(){
                 }
 
                 sox([req.file.path, 
-                        { bits: 24,
-                        rate: 44100,
-                        compression: 8},
-                        req.file.filename + '.flac'],
+                        req.file.filename + '.ogg'],
                         function(err, outFP){ 
                             console.log(outFP);
                             if( err ) {
