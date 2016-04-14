@@ -25,6 +25,16 @@ class Workspace extends Component{
 						<TrackBox className={styles.trackbox}/>
 					</div>
 
+					<form 
+						id =  "uploadForm"
+         				encType = "multipart/form-data"
+         				action =  "/api/upload"
+         				method =  "post"
+         				className={styles.uploadform} >
+         				
+         				<input type="file" name="song" className={styles.filechoose} />
+        				<input type="submit" value="Upload" name="submit" className={styles.upload} />
+    				</form>
 				</div>
 			</div>
 		)

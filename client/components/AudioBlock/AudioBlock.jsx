@@ -11,7 +11,7 @@ class AudioBlock extends Component{
 		return (
 
 			<div className={styles.audioBlock}>
-				<h3>Im the audioblock</h3>
+				<h3>Im the waveform woohoo</h3>
 			</div>
 		)
 	}

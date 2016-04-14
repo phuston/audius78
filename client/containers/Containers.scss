@@ -1,6 +1,12 @@
-$primary: #FF5722;
-$dark: #E64A19;
-$accent: #81D4FA;
+$primary: #255C69;
+$dark: #0F434F;
+$accent: #AA7139;
+$light: #447884;
+$background: #6B949E;
+
+body {
+	background-color: $background;
+}
 
 .welcome {
 	font-family: Helvetica;
@@ -19,7 +25,6 @@ $accent: #81D4FA;
 	font-family: Helvetica;
 	display: flex;
 	flex-flow: column;
-	border: solid black 2px;
 }
 
 .workspace {
@@ -52,4 +57,19 @@ $accent: #81D4FA;
 	display: flex;
 	flex-flow: row;
 	padding: 5px;
+}
+
+.upload {
+	background-color: $accent;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	margin: 20px;
+	box-shadow: 5px 5px 15px #888888;
+	color: white;
+	border: none;
+}
+
+.uploadform{
+
 }

@@ -1,0 +1,25 @@
+@import '../../containers/Containers.scss';
+
+.rowtool {
+	display: flex;
+	flex-flow: column;
+}
+
+.rowtool > input {
+	width: 50px;
+	margin: 5px;
+	border: none;
+	background-color: $light;
+	color: white;
+	text-align: center;
+	box-shadow: none;
+	border-radius: 2em;
+}
+
+.filter {
+
+}
+
+.mute {
+
+}
