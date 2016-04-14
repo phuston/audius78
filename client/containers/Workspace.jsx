@@ -12,7 +12,19 @@ import styles from './Containers.scss'
 
 class Workspace extends Component{
 
-  render(){
+  componentDidMount() {
+    let hash = 'UDIU78'; // Get hash from store
+    let socket = io();
+    console.log(socket);
+    socket.emit('newWorkspace', hash);
+    socket.on('workspaceCreated', function (data) {
+      socket = io('/' + hash);
+      console.log(socket);
+    })
+    return null;
+  }
+
+  render() {
     return (
       <div className={styles.page} >
         <Navbar className={styles.navbar}/>

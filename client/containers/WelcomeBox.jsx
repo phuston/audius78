@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 
-
 //Components
 import Welcome from '../components/Welcome/Welcome.jsx'
 
