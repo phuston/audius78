@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
-import * as rowActions from '../actions/rows.js'
+import * as workspaceActions from '../actions/workspace.js'
 
 //Components
 import Welcome from '../components/Welcome/Welcome.jsx'
@@ -17,8 +17,8 @@ class WelcomeBox extends Component {
     var dispatch = this.props.dispatch;
 
     //Bind Actions
-    this.newWorkspace = () => dispatch(rowActions.newWorkspace());
-    this.loadWorkspace = (workspaceId) => dispatch(rowActions.loadWorkspace(workspaceId));
+    this.newWorkspace = () => dispatch(workspaceActions.newWorkspace());
+    this.loadWorkspace = (workspaceId) => dispatch(workspaceActions.loadWorkspace(workspaceId));
   }
   
   render(){

@@ -3,6 +3,7 @@ import { filter } from 'filter-object';
 
 export default handleActions({
   NEW_WORKSPACE: (state, action) => {
+    console.log(action);
     return {...state, workspaceId: action.payload};
   },
   CONN_WORKSPACE: (state, action) => {

@@ -11,24 +11,29 @@ import Toolbar from './Toolbar.jsx'
 import styles from './Containers.scss'
 
 class Workspace extends Component{
+  componentDidUpdate(prevProps, prevState) {
+    console.log('prevProps', prevProps);
+    console.log('currProps', this.props);
+    if (!prevProps.workspace.id) {
+      console.log('getting hash', this.props.workspace.id);
 
-  componentDidMount() {
-    console.log(this.props.workspaceId);
-    // let hash = 'UDIU78'; // Get hash from store
-    // let socket = io();
-    // console.log(socket);
-    // socket.emit('newWorkspace', hash);
-    // socket.on('workspaceCreated', function (data) {
-    //   socket = io('/' + hash);
-    //   console.log(socket);
-    // })
-    return null;
+      let hash = 'UDIU78'; // Get hash from store
+      let socket = io();
+      socket.emit('newWorkspace', hash);
+      socket.on('workspaceCreated', function (data) {
+        socket = io('/' + hash);
+        // console.log(socket);
+      });
+      return null;
+    }
   }
 
   render() {
     return (
       <div className={styles.page} >
         <Navbar className={styles.navbar}/>
+
+        <div><h1>{this.props.workspace.id}</h1></div>
 
         <div className={styles.workspace} >
 

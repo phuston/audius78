@@ -8,7 +8,6 @@ var socketObject = {
 		  console.log('connected');
 
 		  socket.on('newWorkspace', function (hashCode) {
-				console.log('newWorkspace');
 				var nsp = io.of('/'+hashCode);
 				socket.emit('workspaceCreated');
 				nsp.on('connection', function(socket) {
@@ -16,13 +15,7 @@ var socketObject = {
 				});
 			});
 		});
-
-		
 	},
-
-	// createNamespace: function (hashCode) {
-		
-	// }
 }
 
 module.exports = socketObject;
