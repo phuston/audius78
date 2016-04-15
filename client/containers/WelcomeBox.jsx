@@ -20,16 +20,12 @@ class WelcomeBox extends Component {
     this.newWorkspace = () => dispatch(rowActions.newWorkspace());
     this.loadWorkspace = (workspaceId) => dispatch(rowActions.loadWorkspace(workspaceId));
   }
-
-  onNewWorkspace(){
-    this.newWorkspace()
-  }
-
+  
   render(){
     return (
       <div className={styles.welcome}>
         <h1>Welcome to Audius78</h1>
-        <Welcome onNewWorkspace={this.onNewWorkspace}/>
+        <Welcome onNewWorkspace={this.newWorkspace}/>
       </div>
     )
   }
