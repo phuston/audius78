@@ -6,9 +6,10 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var webpack = require('webpack');
 var config = require('./webpack.config.js');
-var index = require('./routes/index.js')();
 var workspace = require( './routes/workspace');
 var app = express();
+var index =require('./routes/index.js')();
+var db = require('./db.js');
 
 var isDeveloping = process.env.NODE_ENV !== 'production';
 
