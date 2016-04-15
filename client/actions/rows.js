@@ -1,7 +1,7 @@
 import { createAction } from 'redux-actions';
 import * as types from '../constants/ActionTypes';
 
-export const createWorkspace = createAction(types.NEW_WORKSPACE, ()=>{
+export const newWorkspace = createAction(types.NEW_WORKSPACE, ()=>{
   return fetch(`/workspace/create`, {
     headers: {
       'Accept': 'application/json',
@@ -17,7 +17,7 @@ export const createWorkspace = createAction(types.NEW_WORKSPACE, ()=>{
     console.log(err);
   })
 });
-export const loadWorkspace = createAction(types.CONN_WORKSPACE, (workspaceId) => {
+export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId) => {
   return fetch(`/workspace/load`, {
     headers: {
       'Accept': 'application/json',
