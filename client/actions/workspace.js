@@ -18,7 +18,7 @@ export const newWorkspace = createAction(types.NEW_WORKSPACE, ()=>{
   })
   .catch(err =>{
     console.log(err);
-  })
+  });
 });
 
 export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId) => {
@@ -29,18 +29,37 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId) =>
     },
     method: 'post',
     credentials: 'same-origin',
-    body: JSON.stringify({"id": workspaceId})
+    body: JSON.stringify({'id': workspaceId})
   })
   .then((response) => {
     return response.json();
   })
   .then((data) => {
-    console.log(utils.modelToState(data.workspace));
-    return {id: data.workspace.id, rows: utils.modelToState(data.workspace.rows)};
+    return Promise.all(data.workspace.rows.map((row) => {
+      return fetch(row.rawAudio);
+    }))
+    .then((files) => {
+      return Promise.all(files.map((file) => {
+        return file.arrayBuffer();
+      }))
+      .then((buffers) => {
+        return {id: data.workspace.id, rows: utils.modelToState(data.workspace), files: buffers}; 
+      });
+    });
+  }).then((newState) => {
+    return newState;
   })
   .catch(err =>{
     console.log(err);
-  })
+  });
+});
+
+export const socketConnection = createAction(types.CONN_SOCKET, (socket) => {
+  return socket;
+});
+
+export const audioContext = createAction(types.AUDIO_CONTEXT, (audioCtx) => {
+  return audioCtx;
 });
 
 export const addRow = createAction(types.ADD_ROW, (filename, newRow) => {

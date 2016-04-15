@@ -1,6 +1,7 @@
 // Outside
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import * as workspaceActions from '../actions/workspace.js';
 
 //Containers
 import TrackBox from './TrackBox.jsx'
@@ -12,14 +13,30 @@ import styles from './Containers.scss'
 
 class Workspace extends Component {
 
+  constructor(props) {
+    super(props);
+
+    let dispatch = this.props.dispatch;
+    let audioCtx = new (window.AudioContext || window.webkitAudioContexet)();
+    dispatch(workspaceActions.audioContext(audioCtx));
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (!prevProps.workspace.id) {
-      let socket = io();
-      socket.emit('newWorkspace', this.props.workspace.id);
-      socket.on('workspaceCreated', (data) => {
-        socket = io('/' + this.props.workspace.id);
-      });
-      return null;
+
+      if (this.props.workspace instanceof Promise) {
+        this.props.workspace.then((workspace) => {
+          let dispatch = this.props.dispatch;
+          let socket = io();
+
+          // dispatch(workspaceActions.socketConnection(socket));
+
+          socket.emit('newWorkspace', workspace.id);
+          socket.on('workspaceCreated', (data) => {
+            socket = io('/' + workspace.id);
+          });
+        });
+      }
     }
   }
 
