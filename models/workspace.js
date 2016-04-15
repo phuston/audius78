@@ -1,7 +1,7 @@
-var mongoose = require("mongoose") ;
+var mongoose = require("mongoose");
+var findOrCreate = require('mongoose-findorcreate');
 
-var Schema = mongoose.Schema,
-  ObjectId = Schema.ObjectId;
+var Schema = mongoose.Schema;
 
 var workspaceSchema = mongoose.Schema({
   _id: {type: String},
@@ -21,5 +21,6 @@ var workspaceSchema = mongoose.Schema({
   }]
 });
 
+workspaceSchema.plugin(findOrCreate);
 
 module.exports = mongoose.model('Workspace', workspaceSchema);

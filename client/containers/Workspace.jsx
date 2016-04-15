@@ -12,17 +12,11 @@ import styles from './Containers.scss'
 
 class Workspace extends Component{
   componentDidUpdate(prevProps, prevState) {
-    console.log('prevProps', prevProps);
-    console.log('currProps', this.props);
     if (!prevProps.workspace.id) {
-      console.log('getting hash', this.props.workspace.id);
-
-      let hash = 'UDIU78'; // Get hash from store
       let socket = io();
-      socket.emit('newWorkspace', hash);
-      socket.on('workspaceCreated', function (data) {
-        socket = io('/' + hash);
-        // console.log(socket);
+      socket.emit('newWorkspace', this.props.workspace.id);
+      socket.on('workspaceCreated', (data) => {
+        socket = io('/' + this.props.workspace.id);
       });
       return null;
     }
