@@ -11,10 +11,14 @@ var multerHandle = multer({
 module.exports = function(){
   return {
     upload: function(req, res){
+      console.log(req.body);
       multerHandle(req, res, function(err){
         if( err ){
-          return res.json(err);
+          console.error('Multer failure');
+          return res.status(500).json(err);
         }
+
+        console.log(req.file);
 
         sox([req.file.path, 
             req.file.filename + '.ogg'],
@@ -38,6 +42,7 @@ module.exports = function(){
                       console.error("Unlink error");
                       return res.status(500).json(err);
                     }
+                    console.log("Uploaded file "+outFP);
                     return res.json({fd: "static/"+outFP});
                   });
                 });

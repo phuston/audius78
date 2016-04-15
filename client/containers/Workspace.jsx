@@ -15,9 +15,9 @@ import styles from './Containers.scss'
 
 
 class Workspace extends Component{
-
   constructor(props){
     super(props);
+    this.onDrop = this.onDrop.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -36,10 +36,22 @@ class Workspace extends Component{
   }
 
   onDrop(files){
-    console.log(files);
-    console.log(this.props);
-    var socket = this.props.workspace.socket;
-    //this.props.workspace.socket.emit('fileUpload', files[0].name);
+    console.log(files[0]);
+    var data = new FormData();
+    data.append('file', files[0]);
+    console.log(data);
+
+    fetch('/api/upload', {
+      method: 'POST',
+      body: data
+    })
+    .then( function(res){
+      var socket = this.props.workspace.socket;
+      this.props.workspace.socket.emit('fileUpload', res);
+    }.bind(this))
+    .catch( function(err){
+      console.error(err);
+    });
   }
 
   render() {
