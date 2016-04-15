@@ -8,5 +8,8 @@ export default handleActions({
   },
   CONN_WORKSPACE: (state, action) => {
     return {...state, id: action.payload};
+  },
+  CONN_SOCKET: (state, action) => {
+    return {...state, socket: action.payload};
   }
 }, {});

@@ -41,3 +41,7 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId) =>
     console.log(err);
   })
 });
+
+export const socketConnection = createAction(types.CONN_SOCKET, (socket) => {
+  return socket;
+});

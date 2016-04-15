@@ -14,6 +14,10 @@ var socketObject = {
 					console.log('connected to', hashCode);
 				});
 			});
+
+          socket.on('fileUpload', function(filename){
+            console.log(filename);
+          });
 		});
 	},
 }
