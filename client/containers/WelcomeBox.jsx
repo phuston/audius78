@@ -17,13 +17,11 @@ class WelcomeBox extends Component{
     super(props);
     var dispatch = this.props.dispatch;
 
-    setInterval(this.update.bind(this), 5000);
-
     //Bind Actions
     this.newWorkspace = () => dispatch(rowActions.newWorkspace());
     this.loadWorkspace = (workspaceId) => dispatch(rowActions.loadWorkspace(workspaceId));
   }
-  
+
   render(){
     return (
       <div className={styles.welcome}>
