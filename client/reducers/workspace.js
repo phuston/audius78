@@ -2,10 +2,6 @@ import { handleActions } from 'redux-actions';
 import { filter } from 'filter-object';
 
 export default handleActions({
-  NEW_WORKSPACE: (state, action) => {
-    return {...state, id: action.payload.id, rows: action.payload.rows};
-  },
-
   LOAD_WORKSPACE: (state, action) => {
   	let audioCtx = state.audioCtx;
 

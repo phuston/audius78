@@ -2,7 +2,7 @@ import { createAction } from 'redux-actions';
 import * as types from '../constants/ActionTypes';
 import utils from '../../utils';
 
-export const newWorkspace = createAction(types.NEW_WORKSPACE, ()=>{
+export const newWorkspace = createAction(types.LOAD_WORKSPACE, ()=>{
   return fetch(`/workspace/create`, {
     headers: {
       'Accept': 'application/json',
@@ -13,8 +13,19 @@ export const newWorkspace = createAction(types.NEW_WORKSPACE, ()=>{
   })
   .then((response) => {
     return response.json();
-  }).then((data) => {
-    return {id: data.hash, rows: utils.modelToState(data.workspace)};
+  })
+  .then((data) => {
+    return Promise.all(data.workspace.rows.map((row) => {
+      return fetch(row.rawAudio);
+    }))
+    .then((files) => {
+      return Promise.all(files.map((file) => {
+        return file.arrayBuffer();
+      }))
+      .then((buffers) => {
+        return {id: data.workspace.id, rows: utils.modelToState(data.workspace), files: buffers}; 
+      });
+    });
   })
   .catch(err =>{
     console.log(err);
@@ -46,8 +57,6 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId) =>
         return {id: data.workspace.id, rows: utils.modelToState(data.workspace), files: buffers}; 
       });
     });
-  }).then((newState) => {
-    return newState;
   })
   .catch(err =>{
     console.log(err);
