@@ -7,8 +7,6 @@ import store from './store/store';
 import Workspace from './containers/Workspace.jsx';
 import WelcomeBox from './containers/WelcomeBox.jsx';
 
-// CHANGE ROUTER BACK TO WELCOME INSTEAD OF WORKSPACE
-
 var Main = React.createClass({
   render: function() {
     return (

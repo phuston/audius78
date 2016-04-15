@@ -13,14 +13,15 @@ import styles from './Containers.scss'
 class Workspace extends Component{
 
   componentDidMount() {
-    let hash = 'UDIU78'; // Get hash from store
-    let socket = io();
-    console.log(socket);
-    socket.emit('newWorkspace', hash);
-    socket.on('workspaceCreated', function (data) {
-      socket = io('/' + hash);
-      console.log(socket);
-    })
+    console.log(this.props.workspaceId);
+    // let hash = 'UDIU78'; // Get hash from store
+    // let socket = io();
+    // console.log(socket);
+    // socket.emit('newWorkspace', hash);
+    // socket.on('workspaceCreated', function (data) {
+    //   socket = io('/' + hash);
+    //   console.log(socket);
+    // })
     return null;
   }
 
