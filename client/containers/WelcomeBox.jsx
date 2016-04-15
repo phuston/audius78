@@ -10,13 +10,11 @@ import Welcome from '../components/Welcome/Welcome.jsx'
 //Styling
 import styles from './Containers.scss'
 
-class WelcomeBox extends Component{
+class WelcomeBox extends Component {
 
   constructor(props) {
     super(props);
     var dispatch = this.props.dispatch;
-
-    setInterval(this.update.bind(this), 5000);
 
     //Bind Actions
     this.newWorkspace = () => dispatch(rowActions.newWorkspace());
