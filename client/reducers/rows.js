@@ -2,13 +2,6 @@ import { handleActions } from 'redux-actions';
 import { filter } from 'filter-object';
 
 export default handleActions({
-  NEW_WORKSPACE: (state, action) => {
-    console.log(action);
-    return {...state, workspaceId: action.payload};
-  },
-  CONN_WORKSPACE: (state, action) => {
-    return {...state, workspaceId: action.payload};
-  },
   ADD_ROW: (state, action) => {
     return {...state, ...action.row};
   },

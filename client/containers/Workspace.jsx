@@ -10,7 +10,8 @@ import Toolbar from './Toolbar.jsx'
 //Styling 
 import styles from './Containers.scss'
 
-class Workspace extends Component{
+class Workspace extends Component {
+
   componentDidUpdate(prevProps, prevState) {
     if (!prevProps.workspace.id) {
       let socket = io();
