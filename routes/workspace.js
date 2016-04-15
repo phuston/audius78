@@ -23,7 +23,7 @@ router.post('/create', function(req, res, next) {
       return console.log(err);
     }
 
-    res.json({'hash': hash, 'workspace': workspace});
+    res.json({hash: hash, workspace: workspace});
   });
 });
 

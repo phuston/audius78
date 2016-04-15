@@ -14,7 +14,7 @@ export const newWorkspace = createAction(types.NEW_WORKSPACE, ()=>{
   .then((response) => {
     return response.json();
   }).then((data) => {
-    return data.hash;
+    return {id: data.hash, rows: utils.modelToState(data.workspace)};
   })
   .catch(err =>{
     console.log(err);
@@ -36,37 +36,30 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId) =>
   })
   .then((data) => {
     console.log(utils.modelToState(data.workspace));
-    return utils.modelToState(data.workspace);
+    return {id: data.workspace.id, rows: utils.modelToState(data.workspace.rows)};
   })
   .catch(err =>{
     console.log(err);
   })
 });
 
-export const addRow = createAction(types.ADD_ROW, (newRows) => {
+export const addRow = createAction(types.ADD_ROW, (filename, newRow) => {
+  // Make a request to download the file at filename served statically, decode it, add to newRow object, return that
   return newRows;
 });
+
 export const removeRow = createAction(types.REMOVE_ROW, (rowId) => {
   return rowId;
 });
-export const flagBlock = createAction(types.FLAG_TRACK, (rowId, blockId, operation) => {
-  return {
-    rowId: rowId, 
-    blockId: blockId,
-    operation: operation
-  }
+
+export const flagBlock = createAction(types.FLAG_TRACK, (newFlags) => {
+  return newFlags;
 });
-export const splitBlock = createAction(types.SPLIT_BLOCK, (rowId, blockId, time) => {
-  return {
-    rowId: rowId,
-    blockId: blockId,
-    time: time
-  }
+
+export const splitBlock = createAction(types.SPLIT_BLOCK, (newBlocks) => {
+  return newBlocks;
 });
-export const moveBlock = createAction(types.MOVE_BLOCK, (rowId, blockId, timeDelta) => {
-  return {
-    rowId: rowId,
-    blockId: blockId,
-    timeDelta: timeDelta
-  }
+
+export const moveBlock = createAction(types.MOVE_BLOCK, (newBlocks) => {
+  return newBlocks;
 });
