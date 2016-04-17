@@ -6,7 +6,7 @@ var workspaceSchema = require('../models/workspace');
 var multerHandle = multer({
   dest: 'uploads/',
   limits: {fileSize: 10000000, files: 1}
-}).single('song');
+}).single('file');
 
 module.exports = function(){
   return {

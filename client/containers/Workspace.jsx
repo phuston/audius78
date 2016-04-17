@@ -39,6 +39,7 @@ class Workspace extends Component{
     console.log(files[0]);
     var data = new FormData();
     data.append('file', files[0]);
+    data.append('name', 'song');
     console.log(data);
 
     fetch('/api/upload', {
@@ -70,13 +71,6 @@ class Workspace extends Component{
           </div>
 
           <Dropzone onDrop={this.onDrop}/>
-
-        </div>
-      </div>
-    )
-  }
-}
-/*
           <form 
             id =  "uploadForm"
             encType = "multipart/form-data"
@@ -87,6 +81,11 @@ class Workspace extends Component{
             <input type="file" name="song" className={styles.filechoose} />
             <input type="submit" value="Upload" name="submit" className={styles.upload} />
           </form>
-*/
+
+        </div>
+      </div>
+    )
+  }
+}
 
 export default connect(x=>x)(Workspace);
