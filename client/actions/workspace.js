@@ -2,7 +2,7 @@ import { createAction } from 'redux-actions';
 import * as types from '../constants/ActionTypes';
 import utils from '../../utils';
 
-export const newWorkspace = createAction(types.LOAD_WORKSPACE, ()=>{
+export const newWorkspace = createAction(types.LOAD_WORKSPACE, (audioCtx)=>{
   return fetch(`/workspace/create`, {
     headers: {
       'Accept': 'application/json',
@@ -22,8 +22,18 @@ export const newWorkspace = createAction(types.LOAD_WORKSPACE, ()=>{
       return Promise.all(files.map((file) => {
         return file.arrayBuffer();
       }))
-      .then((buffers) => {
-        return {id: data.workspace.id, rows: utils.modelToState(data.workspace), files: buffers}; 
+      .then((arrayBuffers) => {
+        return Promise.all(arrayBuffers.map((arrayBuffer) => {
+          return audioCtx.decodeAudioData(arrayBuffer);
+        }))
+        .then((buffers) => {
+          let rows = utils.modelToState(data.workspace);
+          rows = Array.prototype.map.call(rows, (row, i) => {
+            row.rawAudio = buffers[i];
+            return row;
+          });
+          return {id: data.workspace.id, rows: rows}; 
+        });
       });
     });
   })
@@ -32,7 +42,7 @@ export const newWorkspace = createAction(types.LOAD_WORKSPACE, ()=>{
   });
 });
 
-export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId) => {
+export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, audioCtx) => {
   return fetch(`/workspace/load`, {
     headers: {
       'Accept': 'application/json',
@@ -53,8 +63,18 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId) =>
       return Promise.all(files.map((file) => {
         return file.arrayBuffer();
       }))
-      .then((buffers) => {
-        return {id: data.workspace.id, rows: utils.modelToState(data.workspace), files: buffers}; 
+      .then((arrayBuffers) => {
+        return Promise.all(arrayBuffers.map((arrayBuffer) => {
+          return audioCtx.decodeAudioData(arrayBuffer);
+        }))
+        .then((buffers) => {
+          let rows = utils.modelToState(data.workspace);
+          rows = Array.prototype.map.call(rows, (row, i) => {
+            row.rawAudio = buffers[i];
+            return row;
+          });
+          return {id: data.workspace.id, rows: rows}; 
+        });
       });
     });
   })

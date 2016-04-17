@@ -10,13 +10,21 @@ import Time from '../components/Time/Time.jsx'
 
 
 class TrackBox extends Component{
+	constructor(props) {
+		super(props);
+	}
 
   render(){
-    return (
+  	if (this.props.workspace.rows !== undefined) {
+			var rows = Array.prototype.map.call(this.props.workspace.rows, (row) => {
+	  		return (<Row key={row.rowId} rowData={row}/>);
+	  	});
+  	}
 
-      <div >
-        <Time />
-        <Row />
+    return (
+      <div>
+        <Time workspace={this.props.workspace}/>
+        {rows}
       </div>
     )
   }

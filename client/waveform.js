@@ -1,5 +1,10 @@
 let extractPeaks = require('webaudio-peaks');
 
+const NORMAL = 0,
+			SPLICING = 1;
+
+let MODE = NORMAL;
+
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let analyser = audioCtx.createAnalyser();
 let canvas = document.getElementById('canvas');
@@ -19,6 +24,16 @@ document.body.appendChild(audio);
 
 let zoomIn = document.getElementById('zoom-in');
 let zoomOut = document.getElementById('zoom-out');
+let normalButton = document.getElementById('normal-mode');
+let spliceButton = document.getElementById('splice-mode');
+
+normalButton.addEventListener('click', (e) => {
+	MODE = NORMAL;
+});
+
+spliceButton.addEventListener('click', (e) => {
+	MODE = SPLICING;
+});
 
 zoomIn.addEventListener('click', (e) => {
 	zoomLevel = Math.max(1/8, zoomLevel/2);
@@ -52,9 +67,13 @@ document.addEventListener('keydown', (e) => {
 
 canvas.addEventListener('click', (e) => {
 	if (!playing) {
-		timescalex = e.pageX;
-		audio.currentTime = timescalex / pixPerSec;
-		$('#cursor').css({'left': timescalex});
+		if (MODE === NORMAL) {
+			timescalex = e.pageX;
+			audio.currentTime = timescalex / pixPerSec;
+			$('#cursor').css({'left': timescalex});
+		} else if (MODE === SPLICING) {
+			console.log('spliced');
+		}
 	} else {
 		drawTimescale(e.pageX);
 		audio.currentTime = e.pageX / pixPerSec;
