@@ -1,24 +1,27 @@
 {
-  workspaceId: some hash
   Users: [Id,...],
-  Rows: {
-    Id: {
-      raw_audio: audiobuffer,
-      Blocks: {
-        Id: {
-          length: Number,
-          row_offset: Number,
-          file_offset: Number
-          flags: [
-            {
-              start_time: Number,
-              duration: Number,
-              type: String
-            },
-            ...
-          ]
-        },
-        ...
+  workspace: {
+    id: String,
+    Socket: socket,
+    Rows: {
+      Id: {
+        raw_audio: audiobuffer,
+        Blocks: {
+          Id: {
+            length: Number,
+            row_offset: Number,
+            file_offset: Number
+            flags: [
+              {
+                start_time: Number,
+                duration: Number,
+                type: String
+              },
+              ...
+            ]
+          },
+          ...
+        }
       }
     }
   }

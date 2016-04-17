@@ -17,15 +17,15 @@ class WelcomeBox extends Component {
     var dispatch = this.props.dispatch;
 
     //Bind Actions
-    this.newWorkspace = () => dispatch(workspaceActions.newWorkspace());
-    this.loadWorkspace = (workspaceId) => dispatch(workspaceActions.loadWorkspace(workspaceId));
+    this.newWorkspace = (audioCtx) => dispatch(workspaceActions.newWorkspace(audioCtx));
+    this.loadWorkspace = (workspaceId, audioCtx) => dispatch(workspaceActions.loadWorkspace(workspaceId, audioCtx));
   }
   
   render(){
     return (
       <div className={styles.welcome}>
         <h1>Welcome to Audius78</h1>
-        <Welcome onNewWorkspace={this.newWorkspace}/>
+        <Welcome onNewWorkspace={this.newWorkspace} onLoadWorkspace={this.loadWorkspace}/>
       </div>
     )
   }
