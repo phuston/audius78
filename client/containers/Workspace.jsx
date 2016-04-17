@@ -13,25 +13,31 @@ import Toolbar from './Toolbar.jsx'
 //Styling 
 import styles from './Containers.scss'
 
+class Workspace extends Component {
 
-class Workspace extends Component{
-
-  constructor(props){
+  constructor(props) {
     super(props);
+
+    let dispatch = this.props.dispatch;
+    let audioCtx = new (window.AudioContext || window.webkitAudioContexet)();
+    dispatch(workspaceActions.audioContext(audioCtx));
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (!prevProps.workspace.id) {
-      var socket = io();
+      if (this.props.workspace instanceof Promise) {
+        this.props.workspace.then((workspace) => {
+          let dispatch = this.props.dispatch;
+          let socket = io();
 
-      var dispatch = this.props.dispatch;
-      dispatch(workspaceActions.socketConnection(socket));
+          // dispatch(workspaceActions.socketConnection(socket));
 
-      socket.emit('newWorkspace', this.props.workspace.id);
-      socket.on('workspaceCreated', (data) => {
-        socket = io('/' + this.props.workspace.id);
-      });
-      return null;
+          socket.emit('newWorkspace', workspace.id);
+          socket.on('workspaceCreated', (data) => {
+            socket = io('/' + workspace.id);
+          });
+        });
+      }
     }
   }
 

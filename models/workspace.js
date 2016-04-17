@@ -1,15 +1,14 @@
 var mongoose = require("mongoose");
-var findOrCreate = require('mongoose-findorcreate');
 
 var Schema = mongoose.Schema;
 
 var workspaceSchema = mongoose.Schema({
-  _id: {type: String},
+  id: {type: String},
   rows: [{
-    rowId: String,
+    rowId: Number,
     rawAudio: String,
     audioBlocks: [{
-      length: Number,
+      length: Number, // seconds
       row_offset: Number,
       file_offset: Number,
       flags: [{
@@ -20,7 +19,5 @@ var workspaceSchema = mongoose.Schema({
     }]
   }]
 });
-
-workspaceSchema.plugin(findOrCreate);
 
 module.exports = mongoose.model('Workspace', workspaceSchema);
