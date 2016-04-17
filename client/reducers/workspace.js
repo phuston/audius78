@@ -52,3 +52,4 @@ export default handleActions({
     return {...state, rows: {...state.rows, [action.rowId]:action.newRow}};
   }
 }, {});
+
