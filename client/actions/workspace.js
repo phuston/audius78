@@ -2,7 +2,7 @@ import { createAction } from 'redux-actions';
 import * as types from '../constants/ActionTypes';
 import utils from '../../utils';
 
-export const newWorkspace = createAction(types.NEW_WORKSPACE, ()=>{
+export const newWorkspace = createAction(types.LOAD_WORKSPACE, (audioCtx)=>{
   return fetch(`/workspace/create`, {
     headers: {
       'Accept': 'application/json',
@@ -13,15 +13,36 @@ export const newWorkspace = createAction(types.NEW_WORKSPACE, ()=>{
   })
   .then((response) => {
     return response.json();
-  }).then((data) => {
-    return {id: data.hash, rows: utils.modelToState(data.workspace)};
+  })
+  .then((data) => {
+    return Promise.all(data.workspace.rows.map((row) => {
+      return fetch(row.rawAudio);
+    }))
+    .then((files) => {
+      return Promise.all(files.map((file) => {
+        return file.arrayBuffer();
+      }))
+      .then((arrayBuffers) => {
+        return Promise.all(arrayBuffers.map((arrayBuffer) => {
+          return audioCtx.decodeAudioData(arrayBuffer);
+        }))
+        .then((buffers) => {
+          let rows = utils.modelToState(data.workspace);
+          rows = Array.prototype.map.call(rows, (row, i) => {
+            row.rawAudio = buffers[i];
+            return row;
+          });
+          return {id: data.workspace.id, rows: rows}; 
+        });
+      });
+    });
   })
   .catch(err =>{
     console.log(err);
   });
 });
 
-export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId) => {
+export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, audioCtx) => {
   return fetch(`/workspace/load`, {
     headers: {
       'Accept': 'application/json',
@@ -42,12 +63,20 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId) =>
       return Promise.all(files.map((file) => {
         return file.arrayBuffer();
       }))
-      .then((buffers) => {
-        return {id: data.workspace.id, rows: utils.modelToState(data.workspace), files: buffers}; 
+      .then((arrayBuffers) => {
+        return Promise.all(arrayBuffers.map((arrayBuffer) => {
+          return audioCtx.decodeAudioData(arrayBuffer);
+        }))
+        .then((buffers) => {
+          let rows = utils.modelToState(data.workspace);
+          rows = Array.prototype.map.call(rows, (row, i) => {
+            row.rawAudio = buffers[i];
+            return row;
+          });
+          return {id: data.workspace.id, rows: rows}; 
+        });
       });
     });
-  }).then((newState) => {
-    return newState;
   })
   .catch(err =>{
     console.log(err);

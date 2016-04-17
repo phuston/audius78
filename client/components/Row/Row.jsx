@@ -15,7 +15,7 @@ class Row extends Component{
     return (
       <div className={styles.row} >
         <RowTool />
-        <AudioBlock />
+        <AudioBlock data={this.props.rowData}/>
       </div>
     )
   }

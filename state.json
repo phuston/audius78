@@ -1,4 +1,5 @@
 {
+  Users: [Id,...],
   workspace: {
     id: String,
     Socket: socket,
@@ -24,5 +25,4 @@
       }
     }
   }
-  Users: [Id,...],
 }

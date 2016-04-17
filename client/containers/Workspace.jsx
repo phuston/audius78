@@ -17,27 +17,17 @@ class Workspace extends Component {
 
   constructor(props) {
     super(props);
-
-    let dispatch = this.props.dispatch;
-    let audioCtx = new (window.AudioContext || window.webkitAudioContexet)();
-    dispatch(workspaceActions.audioContext(audioCtx));
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (!prevProps.workspace.id) {
-      if (this.props.workspace instanceof Promise) {
-        this.props.workspace.then((workspace) => {
-          let dispatch = this.props.dispatch;
-          let socket = io();
+      let dispatch = this.props.dispatch;
+      let socket = io();
 
-          // dispatch(workspaceActions.socketConnection(socket));
-
-          socket.emit('newWorkspace', workspace.id);
-          socket.on('workspaceCreated', (data) => {
-            socket = io('/' + workspace.id);
-          });
-        });
-      }
+      socket.emit('newWorkspace', this.props.workspace.id);
+      socket.on('workspaceCreated', (data) => {
+        socket = io('/' + this.props.workspace.id);
+      });
     }
   }
 
@@ -60,7 +50,7 @@ class Workspace extends Component {
           <Toolbar className={styles.toolbar}/>
 
           <div className={styles.songs}>
-            <TrackBox className={styles.trackbox}/>
+            <TrackBox className={styles.trackbox} workspace={this.props.workspace}/>
           </div>
 
           <Dropzone onDrop={this.onDrop}/>

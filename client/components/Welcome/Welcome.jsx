@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 
+import * as workspaceActions from '../../actions/workspace.js'
 import styles from './Welcome.scss';
 
 class Welcome extends Component{
   constructor(props) {
     super(props);
 
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.loadWorkspace = this.loadWorkspace.bind(this);
-  }
+    this.handleInputChange = (e) => this.workspaceId = e.target.value;
 
-  handleInputChange(e) {
-    this.workspaceId = e.target.value;
-  }
+    let dispatch = this.props.dispatch;
+    let audioCtx = new (window.AudioContext || window.webkitAudioContexet)();
+    // dispatch(workspaceActions.audioContext(audioCtx));
 
-  loadWorkspace() {
-    this.props.onLoadWorkspace(this.workspaceId);
+    this.loadWorkspace = () => this.props.onLoadWorkspace(this.workspaceId, audioCtx);
+    this.createWorkspace = () => this.props.onNewWorkspace(audioCtx);
   }
 
   render() {
@@ -28,7 +27,7 @@ class Welcome extends Component{
           className={styles.workspaceButton}
           type='button' 
           value='New Workspace' 
-          onClick={this.props.onNewWorkspace}/>
+          onClick={this.createWorkspace}/>
         </Link>
 
         <input
