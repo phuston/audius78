@@ -17,6 +17,7 @@ class Workspace extends Component {
 
   constructor(props) {
     super(props);
+    this.onDrop = this.onDrop.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -32,10 +33,22 @@ class Workspace extends Component {
   }
 
   onDrop(files){
-    console.log(files);
-    console.log(this.props);
-    var socket = this.props.workspace.socket;
-    //this.props.workspace.socket.emit('fileUpload', files[0].name);
+    var data = new FormData();
+    data.append('file', files[0]);
+    data.append('name', 'song');
+
+    fetch('/api/upload', {
+      method: 'POST',
+      body: data
+    })
+    .then( function(res){
+      // Handle socket business here such as:
+      //var socket = this.props.workspace.socket;
+      //this.props.workspace.socket.emit('fileUpload', res);
+    }.bind(this))
+    .catch( function(err){
+      console.error(err);
+    });
   }
 
   render() {
@@ -54,23 +67,10 @@ class Workspace extends Component {
           </div>
 
           <Dropzone onDrop={this.onDrop}/>
-
         </div>
       </div>
     )
   }
 }
-/*
-          <form 
-            id =  "uploadForm"
-            encType = "multipart/form-data"
-            action =  "/api/upload"
-            method =  "post"
-            className={styles.uploadform} >
-            
-            <input type="file" name="song" className={styles.filechoose} />
-            <input type="submit" value="Upload" name="submit" className={styles.upload} />
-          </form>
-*/
 
 export default connect(x=>x)(Workspace);
