@@ -1,6 +1,7 @@
 var router = require('express').Router();
 var sockets = require('../sockets');
 var Workspace = require('../models/workspace');
+var defaultWorkspace = require('../models/defaultWorkspace');
 
 function generateUUID() {
   var d = new Date().getTime();
@@ -13,9 +14,28 @@ function generateUUID() {
 };
 
 router.post('/create', function(req, res, next) {
-  // Compute real hash for new workspace here
+  // Compute real hash for new workspace here}
   var hash = generateUUID();
-  res.json({"hash": hash});
+  var newWorkspace = Object.assign(defaultWorkspace);
+  newWorkspace.id = hash;
+  Workspace.create(newWorkspace, function (err, workspace) {
+    if (err) {
+      return console.log(err);
+    }
+
+    res.json({hash: hash, workspace: workspace});
+  });
+});
+
+router.post('/load', function(req, res, next) {
+  Workspace.findOne({'id': req.body.id}, function(err, workspace) {
+    if (err) {
+      return console.error(err);
+    }
+
+    console.log(workspace);
+    res.json({'workspace': workspace});
+  })
 });
 
 module.exports = router;
