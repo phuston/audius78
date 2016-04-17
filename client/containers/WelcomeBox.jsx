@@ -2,8 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
-
-import * as rowActions from '../actions/rows.js'
+import * as workspaceActions from '../actions/workspace.js'
 
 //Components
 import Welcome from '../components/Welcome/Welcome.jsx'
@@ -11,22 +10,22 @@ import Welcome from '../components/Welcome/Welcome.jsx'
 //Styling
 import styles from './Containers.scss'
 
-class WelcomeBox extends Component{
+class WelcomeBox extends Component {
 
   constructor(props) {
     super(props);
     var dispatch = this.props.dispatch;
 
     //Bind Actions
-    this.newWorkspace = () => dispatch(rowActions.newWorkspace());
-    this.loadWorkspace = (workspaceId) => dispatch(rowActions.loadWorkspace(workspaceId));
+    this.newWorkspace = (audioCtx) => dispatch(workspaceActions.newWorkspace(audioCtx));
+    this.loadWorkspace = (workspaceId, audioCtx) => dispatch(workspaceActions.loadWorkspace(workspaceId, audioCtx));
   }
 
   render(){
     return (
       <div className={styles.welcome}>
         <h1>Welcome to Audius78</h1>
-        <Welcome onNewWorkspace={this.newWorkspace}/>
+        <Welcome onNewWorkspace={this.newWorkspace} onLoadWorkspace={this.loadWorkspace}/>
       </div>
     )
   }

@@ -6,11 +6,12 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var webpack = require('webpack');
 var config = require('./webpack.config.js');
+var workspace = require( './routes/workspace');
+var app = express();
 var index =require('./routes/index.js')();
+var db = require('./db.js');
 
 var isDeveloping = process.env.NODE_ENV !== 'production';
-
-var app = express();
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -43,11 +44,16 @@ if(isDeveloping) {
 app.use(express.static(path.join(__dirname, '/public')));  
 app.use(express.static(path.join(__dirname, '/static')));  
 
+app.use('/workspace/', workspace);
 app.post('/api/upload', index.upload);
 
 var PORT = process.env.PORT || 3000;
-app.listen(PORT, function() {
+var server = app.listen(PORT, function() {
   console.log('Application running on port:', PORT);
 });
+
+// Socket.IO Port
+var sockets = require('./sockets');
+sockets.socketServer(server);
 
 module.exports = app;

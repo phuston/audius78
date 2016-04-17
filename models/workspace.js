@@ -1,15 +1,14 @@
-var mongoose = require("mongoose") ;
+var mongoose = require("mongoose");
 
-var Schema = mongoose.Schema,
-  ObjectId = Schema.ObjectId;
+var Schema = mongoose.Schema;
 
-var workspacesSchema = mongoose.Schema({
-  _id: {type: String},
+var workspaceSchema = mongoose.Schema({
+  id: {type: String},
   rows: [{
-    rowId: String,
+    rowId: Number,
     rawAudio: String,
     audioBlocks: [{
-      length: Number,
+      length: Number, // seconds
       row_offset: Number,
       file_offset: Number,
       flags: [{
@@ -20,6 +19,5 @@ var workspacesSchema = mongoose.Schema({
     }]
   }]
 });
-
 
 module.exports = mongoose.model('Workspace', workspaceSchema);
