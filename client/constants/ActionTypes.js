@@ -2,7 +2,7 @@
 export const ADD_USER = 'ADD_USER';
 export const REMOVE_USER = 'REMOVE_USER';
 
-// Row actions
+// Workspace actions
 export const NEW_WORKSPACE = 'NEW_WORKSPACE';
 export const LOAD_WORKSPACE = 'LOAD_WORKSPACE';
 export const CONN_SOCKET = 'CONN_SOCKET';

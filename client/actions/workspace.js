@@ -111,3 +111,4 @@ export const splitBlock = createAction(types.SPLIT_BLOCK, (newBlocks) => {
 export const moveBlock = createAction(types.MOVE_BLOCK, (newBlocks) => {
   return newBlocks;
 });
+
