@@ -45,8 +45,9 @@ class Workspace extends Component{
       body: data
     })
     .then( function(res){
-      var socket = this.props.workspace.socket;
-      this.props.workspace.socket.emit('fileUpload', res);
+      // Handle socket business here such as:
+      //var socket = this.props.workspace.socket;
+      //this.props.workspace.socket.emit('fileUpload', res);
     }.bind(this))
     .catch( function(err){
       console.error(err);
