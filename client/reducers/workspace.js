@@ -23,6 +23,7 @@ export default handleActions({
     return {...state, rows: {filter(...state.rows, query)}};
   },
 
+  // TODO: Fix this (maybe) - not sure if actually broken
   FLAG_BLOCK: (state, action) => {
     var block = {...state.rows[action.rowId][action.blockId], flags: action.newFlags};
     var row = {...state[action.rowId], [action.blockId]:block};
