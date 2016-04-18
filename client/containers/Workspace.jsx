@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Dropzone from 'react-dropzone';
+import { playingMode } from '../../utils.js';
 
 //Containers
 import TrackBox from './TrackBox.jsx';
@@ -38,19 +39,35 @@ class Workspace extends Component {
       });
     }
 
-    if( this.props.workspace.playing && !prevProps.workspace.playing){
-      console.log("play now!");
-      let audioCtx = this.playMusic();
-      
-      dispatch(workspaceActions.audioContext(audioCtx));
-      
-    } else if( !this.props.workspace.playing && prevProps.workspace.playing ){
-      console.log("Destroy the play!");
+    /*
+    if( this.props.workspace.playing !== prevProps.workspace.playing){
+      let playingState = this.props.workspace.playing;
 
-      let audioCtx = this.props.workspace.audioCtx;
-      audioCtx.close();
+      if( playingState === playingMode.PLAYING ){
+        console.log("play now!");
+        if( this.props.workspace.audioContext === null ){
+          let audioCtx = this.playMusic();
+          dispatch(workspaceActions.audioContext(audioCtx));
+        } else {
+          let audioCtx = this.props.workspace.audioContext;
+          audioCtx.resume();
+        }
+      } else if( playingState === playingMode.PAUSE){
+        console.log("Pause me bro!");
+        if( this.props.workspace.playing === playingMode.PAUSE ){
+          let audioCtx = this.props.workspace.audioCtx;
+          auioCtx.suspend();
+        }
+      } else if( playingState === playingMode.STOP ){
+        console.log("Destroy the play!");
+
+        let audioCtx = this.props.workspace.audioCtx;
+        audioCtx.close();
+
+        dispatch(workspaceActions.audioContext(null));
+      }
     }
-
+    */
   }
 
   onDrop(files){
