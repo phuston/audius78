@@ -14,13 +14,13 @@ export default handleActions({
   	return {...state, audioCtx: action.payload};
   },
   
-  // TODO: These below need to be rewritten
 	ADD_ROW: (state, action) => {
-		return {...state, rows: {...state.rows, [action.rowId]:action.newRow}};
+		return {...state, rows: {...state.rows, [action.payload.rowId]:action.payload.newRow}};
   },
 
   REMOVE_ROW: (state, action) => {
-    return {...state, [action.rowId]: action.rows};
+    let query = '!' + action.payload;
+    return {...state, rows: {filter(...state.rows, query)}};
   },
 
   FLAG_BLOCK: (state, action) => {

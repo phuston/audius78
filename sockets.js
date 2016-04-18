@@ -18,19 +18,19 @@ var socketObject = {
         // TODO: What do we need to emit to let the other users know to add a new user?
       });
 
-      socket.on('split', function(splitOperation){
+      socket.on('splitBlock', function(splitOperation){
         // TODO: Grab the correct workspace using socket.workspace
         // TODO: Update the state
         // TODO: Emit event using 'io.sockets.in(socket.workspace).emit('applySplit', newRow)'
       });
 
-      socket.on('flag', function(flagOperation){
+      socket.on('flagBlock', function(flagOperation){
         // TODO: Grab the correct workspace using socket.workspace
         // TODO: Update the workspace object from mongo
         // TODO: Emit event with updated block flags using 'io.sockets.in(socket.workspace).emit('applyFlag', data)''
       });
 
-      socket.on('move', function(moveOperation){
+      socket.on('moveBlock', function(moveOperation){
         // TODO: Same pattern as above operations
       });
 
