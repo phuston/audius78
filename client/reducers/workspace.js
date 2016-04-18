@@ -16,7 +16,7 @@ export default handleActions({
 
   REMOVE_ROW: (state, action) => {
     let query = '!' + action.payload;
-    return {...state, rows: {filter(...state.rows, query)}};
+    return {...state, rows: filter(...state.rows, query)};
   },
 
   // TODO: Fix this (maybe) - not sure if actually broken
