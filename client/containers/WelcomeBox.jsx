@@ -20,7 +20,7 @@ class WelcomeBox extends Component {
     this.newWorkspace = (audioCtx) => dispatch(workspaceActions.newWorkspace(audioCtx));
     this.loadWorkspace = (workspaceId, audioCtx) => dispatch(workspaceActions.loadWorkspace(workspaceId, audioCtx));
   }
-  
+
   render(){
     return (
       <div className={styles.welcome}>
