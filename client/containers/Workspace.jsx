@@ -18,6 +18,7 @@ class Workspace extends Component {
   constructor(props) {
     super(props);
     this.onDrop = this.onDrop.bind(this);
+    this.playMusic = this.playMusic.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -51,6 +52,24 @@ class Workspace extends Component {
     });
   }
 
+  playMusic(){
+    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    let workspace = this.props.workspace;
+    let sources = workspace.rows.map( function(elem){
+      let source = audioCtx.createBufferSource();
+      source.buffer = elem.rawAudio;
+      source.connect(audioCtx.destination);
+
+      return source;
+    });
+
+    sources.map( function(elem){
+      elem.start();
+    });
+    //audioCtx.close();
+  }
+
   render() {
     return (
       <div className={styles.page} >
@@ -61,6 +80,7 @@ class Workspace extends Component {
         <div className={styles.workspace} >
 
           <Toolbar className={styles.toolbar}/>
+          <button onClick={this.playMusic}> Play </button>
 
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} workspace={this.props.workspace}/>
