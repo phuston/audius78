@@ -3,6 +3,7 @@
   workspace: {
     id: String,
     Socket: socket,
+    zoomLevel: Number,
     Rows: {
       Id: {
         raw_audio: audiobuffer,
