@@ -34,6 +34,16 @@ var socketObject = {
         // TODO: Same pattern as above operations
       });
 
+      socket.on('addRow', function(addOperation){
+        // TODO: Same pattern as above
+        // TODO: Create mock row object, with the rawAudio as the filename sent in
+        // Then, save that row and emit a new object
+      });
+
+      socket.on('removeRow', function(removeOperation){
+        // TODO: Same pattern as above
+      })
+
       // TODO: What other operations do we need to support? Adding a row? Does that happen here?
     });
   },

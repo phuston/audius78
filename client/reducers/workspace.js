@@ -6,10 +6,6 @@ export default handleActions({
     return {...state, id: action.payload.id, rows: action.payload.rows};
   },
 
-  CONN_SOCKET: (state, action) => {
-  	return {...state, socket: action.payload};
-  },
-
   AUDIO_CONTEXT: (state, action) => {
   	return {...state, audioCtx: action.payload};
   },
