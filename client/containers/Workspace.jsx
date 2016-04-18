@@ -2,22 +2,27 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Dropzone from 'react-dropzone';
-import * as workspaceActions from '../actions/workspace.js'
 
 //Containers
-import TrackBox from './TrackBox.jsx'
-import Navbar from './NavbarBox.jsx'
-import Toolbar from './Toolbar.jsx'
+import TrackBox from './TrackBox.jsx';
+import Navbar from './NavbarBox.jsx';
+import Toolbar from './Toolbar.jsx';
 
+// Outside
+import * as workspaceActions from '../actions/workspace.js';
 
 //Styling 
-import styles from './Containers.scss'
+import styles from './Containers.scss';
 
 class Workspace extends Component {
 
   constructor(props) {
     super(props);
     this.onDrop = this.onDrop.bind(this);
+
+    // BindActions
+    let dispatch = this.props.dispatch;
+    this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -60,7 +65,7 @@ class Workspace extends Component {
 
         <div className={styles.workspace} >
 
-          <Toolbar className={styles.toolbar}/>
+          <Toolbar className={styles.toolbar} togglePlaying={this.togglePlaying} playing={this.props.workspace.playing}/>
 
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} workspace={this.props.workspace}/>

@@ -16,23 +16,18 @@ class Waveform extends Component {
   }
 
   componentDidMount() {
-    // super(props);
     let ctx = ReactDOM.findDOMNode(this).getContext('2d');
-    console.log(ctx);
     this.draw(ctx);
   }
 
   draw(ctx) {
     let peaks = this.props.peaks.data[0];
     let bits = this.props.peaks.bits;
-    console.log(this.props.block);
     let offset = this.props.block.row_offset;
 
     let i;
     let length = peaks.length/2;
     let h2 = 50; // canvas.height / 2;
-
-    console.log(length);
 
     let minPeak, min;
     let maxPeak, max;
@@ -69,6 +64,7 @@ class Waveform extends Component {
 class AudioBlock extends Component {
 	constructor(props) {
 		super(props);
+    this.left = 84;
 	}
 
   render(){
@@ -88,6 +84,7 @@ class AudioBlock extends Component {
 
     return (
       <div className={styles.audioBlock}>
+        <div id='seeker' style={{'position': 'absolute', 'top': '273px', 'left': this.left, 'width': '4px', 'border': '1px solid white', 'background': 'rgba(0,0,0,0.3)', 'zIndex': '5', 'height': '100px'}}/>
         {waveforms}
       </div>
     )
