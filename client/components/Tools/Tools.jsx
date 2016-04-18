@@ -8,11 +8,19 @@ class Tools extends Component{
     super(props);
 
     this.togglePlaying = this.togglePlaying.bind(this);
+    this.stopPlaying = this.stopPlaying.bind(this);
   }
 
-  togglePlaying( playingState ) {
-    //this.props.togglePlaying(!this.props.playing);
-    this.props.togglePlaying( playingState );
+  togglePlaying() {
+    if( this.props.playing === playingMode.PLAYING ){
+      this.props.togglePlaying(playingMode.PAUSE);
+    } else {
+      this.props.togglePlaying(playingMode.PLAYING);
+    }
+  }
+
+  stopPlaying(){
+    this.props.stopPlaying();
   }
 
   render() {
@@ -21,9 +29,9 @@ class Tools extends Component{
         <input type='button' 
           value={this.props.playing === playingMode.PLAYING ? 'Pause' : 'Play'} 
           className={styles.pauseplay} 
-          onClick={this.togglePlaying(this.props.playing === playingMode.PLAYING ? playingMode.PAUSE : playingMode.PLAY)}/>
+          onClick={this.togglePlaying}/>
         <input type='button' value='Stop' className={styles.stop}
-          onClick={this.togglePlaying(playingMode.STOP)} />
+          onClick={this.stopPlaying} />
         <input type='button' value='Cut' className={styles.cut} />
         <input type='button' value='Move' className={styles.move} />
         <input type='button' value='Split' className={styles.split} />

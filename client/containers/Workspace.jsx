@@ -25,6 +25,7 @@ class Workspace extends Component {
     // BindActions
     let dispatch = this.props.dispatch;
     this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
+    this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -39,24 +40,23 @@ class Workspace extends Component {
       });
     }
 
-    /*
     if( this.props.workspace.playing !== prevProps.workspace.playing){
       let playingState = this.props.workspace.playing;
 
       if( playingState === playingMode.PLAYING ){
         console.log("play now!");
-        if( this.props.workspace.audioContext === null ){
+        if(this.props.workspace.audioCtx === undefined){
           let audioCtx = this.playMusic();
           dispatch(workspaceActions.audioContext(audioCtx));
         } else {
-          let audioCtx = this.props.workspace.audioContext;
+          let audioCtx = this.props.workspace.audioCtx;
           audioCtx.resume();
         }
       } else if( playingState === playingMode.PAUSE){
         console.log("Pause me bro!");
         if( this.props.workspace.playing === playingMode.PAUSE ){
           let audioCtx = this.props.workspace.audioCtx;
-          auioCtx.suspend();
+          audioCtx.suspend();
         }
       } else if( playingState === playingMode.STOP ){
         console.log("Destroy the play!");
@@ -64,10 +64,9 @@ class Workspace extends Component {
         let audioCtx = this.props.workspace.audioCtx;
         audioCtx.close();
 
-        dispatch(workspaceActions.audioContext(null));
+        dispatch(workspaceActions.audioContext(undefined));
       }
     }
-    */
   }
 
   onDrop(files){
@@ -118,7 +117,10 @@ class Workspace extends Component {
 
         <div className={styles.workspace} >
 
-          <Toolbar className={styles.toolbar} togglePlaying={this.togglePlaying} playing={this.props.workspace.playing}/>
+          <Toolbar className={styles.toolbar} 
+            togglePlaying={this.togglePlaying} 
+            stopPlaying={this.stopPlaying}
+            playing={this.props.workspace.playing}/>
 
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} workspace={this.props.workspace}/>
