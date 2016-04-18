@@ -2,16 +2,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Dropzone from 'react-dropzone';
-import * as workspaceActions from '../actions/workspace.js'
 
 //Containers
-import TrackBox from './TrackBox.jsx'
-import Navbar from './NavbarBox.jsx'
-import Toolbar from './Toolbar.jsx'
+import TrackBox from './TrackBox.jsx';
+import Navbar from './NavbarBox.jsx';
+import Toolbar from './Toolbar.jsx';
 
+// Outside
+import * as workspaceActions from '../actions/workspace.js';
 
 //Styling 
-import styles from './Containers.scss'
+import styles from './Containers.scss';
 
 class Workspace extends Component {
 
@@ -19,11 +20,16 @@ class Workspace extends Component {
     super(props);
     this.onDrop = this.onDrop.bind(this);
     this.playMusic = this.playMusic.bind(this);
+
+    // BindActions
+    let dispatch = this.props.dispatch;
+    this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
   }
 
   componentDidUpdate(prevProps, prevState) {
+    let dispatch = this.props.dispatch;
+
     if (!prevProps.workspace.id) {
-      let dispatch = this.props.dispatch;
       let socket = io();
 
       socket.emit('newWorkspace', this.props.workspace.id);
@@ -31,6 +37,20 @@ class Workspace extends Component {
         socket = io('/' + this.props.workspace.id);
       });
     }
+
+    if( this.props.workspace.playing && !prevProps.workspace.playing){
+      console.log("play now!");
+      let audioCtx = this.playMusic();
+      
+      dispatch(workspaceActions.audioContext(audioCtx));
+      
+    } else if( !this.props.workspace.playing && prevProps.workspace.playing ){
+      console.log("Destroy the play!");
+
+      let audioCtx = this.props.workspace.audioCtx;
+      audioCtx.close();
+    }
+
   }
 
   onDrop(files){
@@ -68,6 +88,8 @@ class Workspace extends Component {
       elem.start();
     });
     //audioCtx.close();
+    //
+    return audioCtx;
   }
 
   render() {
@@ -79,8 +101,7 @@ class Workspace extends Component {
 
         <div className={styles.workspace} >
 
-          <Toolbar className={styles.toolbar}/>
-          <button onClick={this.playMusic}> Play </button>
+          <Toolbar className={styles.toolbar} togglePlaying={this.togglePlaying} playing={this.props.workspace.playing}/>
 
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} workspace={this.props.workspace}/>
