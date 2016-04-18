@@ -19,6 +19,7 @@ class Workspace extends Component {
   constructor(props) {
     super(props);
     this.onDrop = this.onDrop.bind(this);
+    this.playMusic = this.playMusic.bind(this);
 
     // BindActions
     let dispatch = this.props.dispatch;
@@ -26,8 +27,9 @@ class Workspace extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    let dispatch = this.props.dispatch;
+
     if (!prevProps.workspace.id) {
-      let dispatch = this.props.dispatch;
       let socket = io();
 
       socket.emit('newWorkspace', this.props.workspace.id);
@@ -35,6 +37,20 @@ class Workspace extends Component {
         socket = io('/' + this.props.workspace.id);
       });
     }
+
+    if( this.props.workspace.playing && !prevProps.workspace.playing){
+      console.log("play now!");
+      let audioCtx = this.playMusic();
+      
+      dispatch(workspaceActions.audioContext(audioCtx));
+      
+    } else if( !this.props.workspace.playing && prevProps.workspace.playing ){
+      console.log("Destroy the play!");
+
+      let audioCtx = this.props.workspace.audioCtx;
+      audioCtx.close();
+    }
+
   }
 
   onDrop(files){
@@ -54,6 +70,26 @@ class Workspace extends Component {
     .catch( function(err){
       console.error(err);
     });
+  }
+
+  playMusic(){
+    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    let workspace = this.props.workspace;
+    let sources = workspace.rows.map( function(elem){
+      let source = audioCtx.createBufferSource();
+      source.buffer = elem.rawAudio;
+      source.connect(audioCtx.destination);
+
+      return source;
+    });
+
+    sources.map( function(elem){
+      elem.start();
+    });
+    //audioCtx.close();
+    //
+    return audioCtx;
   }
 
   render() {
