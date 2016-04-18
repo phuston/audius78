@@ -18,7 +18,10 @@ class Toolbar extends Component{
     return (
       <div className = {styles.toolbar}>
         <h2> Toolbar </h2>
-        <Tools togglePlaying={this.props.togglePlaying} playing={this.props.playing}/>
+        <Tools 
+          togglePlaying={this.props.togglePlaying}
+          stopPlaying={this.props.stopPlaying}
+          playing={this.props.playing}/>
       </div>
     )
   }

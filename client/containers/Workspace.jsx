@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Dropzone from 'react-dropzone';
+import { playingMode } from '../../utils.js';
 
 //Containers
 import TrackBox from './TrackBox.jsx';
@@ -24,6 +25,7 @@ class Workspace extends Component {
     // BindActions
     let dispatch = this.props.dispatch;
     this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
+    this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -38,19 +40,33 @@ class Workspace extends Component {
       });
     }
 
-    if( this.props.workspace.playing && !prevProps.workspace.playing){
-      console.log("play now!");
-      let audioCtx = this.playMusic();
-      
-      dispatch(workspaceActions.audioContext(audioCtx));
-      
-    } else if( !this.props.workspace.playing && prevProps.workspace.playing ){
-      console.log("Destroy the play!");
+    if( this.props.workspace.playing !== prevProps.workspace.playing){
+      let playingState = this.props.workspace.playing;
 
-      let audioCtx = this.props.workspace.audioCtx;
-      audioCtx.close();
+      if( playingState === playingMode.PLAYING ){
+        console.log("play now!");
+        if(this.props.workspace.audioCtx === undefined){
+          let audioCtx = this.playMusic();
+          dispatch(workspaceActions.audioContext(audioCtx));
+        } else {
+          let audioCtx = this.props.workspace.audioCtx;
+          audioCtx.resume();
+        }
+      } else if( playingState === playingMode.PAUSE){
+        console.log("Pause me bro!");
+        if( this.props.workspace.playing === playingMode.PAUSE ){
+          let audioCtx = this.props.workspace.audioCtx;
+          audioCtx.suspend();
+        }
+      } else if( playingState === playingMode.STOP ){
+        console.log("Destroy the play!");
+
+        let audioCtx = this.props.workspace.audioCtx;
+        audioCtx.close();
+
+        dispatch(workspaceActions.audioContext(undefined));
+      }
     }
-
   }
 
   onDrop(files){
@@ -101,7 +117,10 @@ class Workspace extends Component {
 
         <div className={styles.workspace} >
 
-          <Toolbar className={styles.toolbar} togglePlaying={this.togglePlaying} playing={this.props.workspace.playing}/>
+          <Toolbar className={styles.toolbar} 
+            togglePlaying={this.togglePlaying} 
+            stopPlaying={this.stopPlaying}
+            playing={this.props.workspace.playing}/>
 
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} workspace={this.props.workspace}/>
