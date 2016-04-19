@@ -18,9 +18,10 @@ class Toolbar extends Component{
       <div className = {styles.toolbar}>
         <h2> Toolbar </h2>
         <Tools togglePlaying={this.props.togglePlaying} 
-          playing={this.props.playing}
           updateZoom={this.props.updateZoom}
-          currentZoom={this.props.currentZoom}/>
+          currentZoom={this.props.currentZoom}
+          stopPlaying={this.props.stopPlaying}
+          playing={this.props.playing}/>
       </div>
     )
   }

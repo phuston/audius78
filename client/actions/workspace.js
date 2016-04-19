@@ -99,6 +99,10 @@ export const updateZoom = createAction(types.UPDATE_ZOOM, (newZoom) => {
   return newZoom;
 });
 
+export const stopPlaying = createAction(types.STOP_PLAYING, (stop) => {
+  return stop;
+})
+
 export const addRow = createAction(types.ADD_ROW, (newRow, audioCtx) => {
   // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that
   // Not sure if this works

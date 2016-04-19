@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { playingMode } from '../../../utils.js';
 
 import styles from './Tools.scss';
 
@@ -9,10 +10,19 @@ class Tools extends Component{
     this.togglePlaying = this.togglePlaying.bind(this);
     this.zoomIn = this.zoomIn.bind(this);
     this.zoomOut = this.zoomOut.bind(this);
+    this.stopPlaying = this.stopPlaying.bind(this);
   }
 
   togglePlaying() {
-    this.props.togglePlaying(!this.props.playing);
+    if( this.props.playing === playingMode.PLAYING ){
+      this.props.togglePlaying(playingMode.PAUSE);
+    } else {
+      this.props.togglePlaying(playingMode.PLAYING);
+    }
+  }
+
+  stopPlaying(){
+    this.props.stopPlaying();
   }
 
   zoomIn() {
@@ -27,10 +37,12 @@ class Tools extends Component{
   render() {
     return (
       <div className = {styles.tools} >
-        <input type='button' value={this.props.playing ? 'Pause' : 'Play'} 
-            className={styles.pauseplay} 
-            onClick={this.togglePlaying}/>
-        <input type='button' value='Stop' className={styles.stop} />
+        <input type='button' 
+          value={this.props.playing === playingMode.PLAYING ? 'Pause' : 'Play'} 
+          className={styles.pauseplay} 
+          onClick={this.togglePlaying}/>
+        <input type='button' value='Stop' className={styles.stop}
+          onClick={this.stopPlaying} />
         <input type='button' value='Cut' className={styles.cut} />
         <input type='button' value='Move' className={styles.move} />
         <input type='button' value='Split' className={styles.split} />

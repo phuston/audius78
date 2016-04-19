@@ -22,9 +22,12 @@ export default handleActions({
     let zoom = Math.min(Math.max(action.payload, 1/8), 8);
     console.log('reducer', zoom);
     return {...state, zoomLevel: zoom};
+
+  STOP_PLAYING: (state, action) => {
+    return {...state, playing: action.payload};
   },
   
-	ADD_ROW: (state, action) => {
+  ADD_ROW: (state, action) => {
 		return {...state, rows: {...state.rows, [action.payload.rowId]:action.payload.newRow}};
   },
 

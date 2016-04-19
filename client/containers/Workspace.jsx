@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Dropzone from 'react-dropzone';
+import { playingMode } from '../../utils.js';
 
 //Containers
 import TrackBox from './TrackBox.jsx';
@@ -19,23 +20,54 @@ class Workspace extends Component {
   constructor(props) {
     super(props);
     this.onDrop = this.onDrop.bind(this);
+    this.playMusic = this.playMusic.bind(this);
 
     // BindActions
     let dispatch = this.props.dispatch;
     this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
     this.updateTimescale = (left) => dispatch(workspaceActions.updateTimescale(left));
     this.updateZoom = (newZoom) => dispatch(workspaceActions.updateZoom(newZoom));
+    this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
   }
 
   componentDidUpdate(prevProps, prevState) {
+    let dispatch = this.props.dispatch;
+
     if (!prevProps.workspace.id) {
-      let dispatch = this.props.dispatch;
       let socket = io();
 
       socket.emit('newWorkspace', this.props.workspace.id);
       socket.on('workspaceCreated', (data) => {
         socket = io('/' + this.props.workspace.id);
       });
+    }
+
+    if( this.props.workspace.playing !== prevProps.workspace.playing){
+      let playingState = this.props.workspace.playing;
+
+      if( playingState === playingMode.PLAYING ){
+        console.log("play now!");
+        if(this.props.workspace.audioCtx === undefined){
+          let audioCtx = this.playMusic();
+          dispatch(workspaceActions.audioContext(audioCtx));
+        } else {
+          let audioCtx = this.props.workspace.audioCtx;
+          audioCtx.resume();
+        }
+      } else if( playingState === playingMode.PAUSE){
+        console.log("Pause me bro!");
+        if( this.props.workspace.playing === playingMode.PAUSE ){
+          let audioCtx = this.props.workspace.audioCtx;
+          audioCtx.suspend();
+        }
+      } else if( playingState === playingMode.STOP ){
+        console.log("Destroy the play!");
+
+        let audioCtx = this.props.workspace.audioCtx;
+        audioCtx.close();
+
+        dispatch(workspaceActions.audioContext(undefined));
+      }
     }
   }
 
@@ -58,6 +90,26 @@ class Workspace extends Component {
     });
   }
 
+  playMusic(){
+    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    let workspace = this.props.workspace;
+    let sources = workspace.rows.map( function(elem){
+      let source = audioCtx.createBufferSource();
+      source.buffer = elem.rawAudio;
+      source.connect(audioCtx.destination);
+
+      return source;
+    });
+
+    sources.map( function(elem){
+      elem.start();
+    });
+    //audioCtx.close();
+    //
+    return audioCtx;
+  }
+
   render() {
     return (
       <div className={styles.page} >
@@ -69,9 +121,14 @@ class Workspace extends Component {
 
           <Toolbar className={styles.toolbar} 
             togglePlaying={this.togglePlaying} 
+<<<<<<< HEAD
             playing={this.props.workspace.playing}
             updateZoom={this.updateZoom}
             currentZoom={this.props.workspace.zoomLevel}/>
+=======
+            stopPlaying={this.stopPlaying}
+            playing={this.props.workspace.playing}/>
+>>>>>>> master
 
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} workspace={this.props.workspace} updateTimescale={this.updateTimescale}/>
