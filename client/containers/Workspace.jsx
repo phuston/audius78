@@ -17,19 +17,43 @@ class Workspace extends Component {
 
   constructor(props) {
     super(props);
+
+    var dispatch = this.props.dispatch;
+
     this.onDrop = this.onDrop.bind(this);
+    this.socket = io('http://localhost:3000');
+
+    this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
+    this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
+    this.flagBlock = (newFlags) => dispatch(workspaceActions.flagBlock(newFlags));
+    this.splitBlock = (newBlocks) => dispatch(workspaceActions.splitBlock(newBlocks));
+    this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (!prevProps.workspace.id) {
-      let dispatch = this.props.dispatch;
-      let socket = io();
+  componentDidMount() {
+    socket.emit('/connectWorkspace', 'patrick', this.props.workspace.id);
+    socket.on('addRow', newRow => {
+      this.addRow(newRow, audioCtx);
+    });
 
-      socket.emit('newWorkspace', this.props.workspace.id);
-      socket.on('workspaceCreated', (data) => {
-        socket = io('/' + this.props.workspace.id);
-      });
-    }
+    socket.on('removeRow', rowId => {
+      this.removeRow(rowId);
+    });
+
+    socket.on('flagBlock', newFlags => {
+      // TODO: Figure out where the row and block Ids will be coming from for this
+      this.flagBlock(newFlags);
+    });
+
+    socket.on('splitBlock', newBlocks => {
+      // TODO: Figure out where the rowId will be coming from for this
+      this.splitBlock(newBlocks);
+    });
+
+    socket.on('moveBlock', newBlocks => {
+      // TODO: Again, where does the rowId come from? This should be returned as an operation
+      this.moveBlock(newBlocks);
+    });
   }
 
   onDrop(files){

@@ -3,6 +3,8 @@ import { filter } from 'filter-object';
 
 export default handleActions({
   LOAD_WORKSPACE: (state, action) => {
+    console.log("ACTION");
+    console.log(action);
     return {...state, id: action.payload.id, rows: action.payload.rows};
   },
 
@@ -16,7 +18,7 @@ export default handleActions({
 
   REMOVE_ROW: (state, action) => {
     let query = '!' + action.payload;
-    return {...state, rows: {filter(...state.rows, query)}};
+    return {...state, rows: filter(...state.rows, query)};
   },
 
   // TODO: Fix this (maybe) - not sure if actually broken
