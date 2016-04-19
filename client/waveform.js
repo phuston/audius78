@@ -134,6 +134,7 @@ function drawTimescale(x) {
 	$('#cursor').css({'left': x});
 }
 
+
 function draw(buffer) {
 	/*
 	Get the peaks and the number of bits from data given by extractPeaks.

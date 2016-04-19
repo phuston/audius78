@@ -14,11 +14,13 @@ class Toolbar extends Component{
 	}
 
   render() {
-  	console.log('toggleplaying', this.props.togglePlaying);
     return (
       <div className = {styles.toolbar}>
         <h2> Toolbar </h2>
-        <Tools togglePlaying={this.props.togglePlaying} playing={this.props.playing}/>
+        <Tools togglePlaying={this.props.togglePlaying} 
+          playing={this.props.playing}
+          updateZoom={this.props.updateZoom}
+          currentZoom={this.props.currentZoom}/>
       </div>
     )
   }

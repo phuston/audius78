@@ -89,7 +89,15 @@ export const audioContext = createAction(types.AUDIO_CONTEXT, (audioCtx) => {
 
 export const togglePlaying = createAction(types.TOGGLE_PLAYING, (playing) => {
   return playing;
-})
+});
+
+export const updateTimescale = createAction(types.UPDATE_TIMESCALE, (left) => {
+  return left;
+});
+
+export const updateZoom = createAction(types.UPDATE_ZOOM, (newZoom) => {
+  return newZoom;
+});
 
 export const addRow = createAction(types.ADD_ROW, (newRow, audioCtx) => {
   // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that

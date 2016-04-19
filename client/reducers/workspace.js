@@ -13,6 +13,16 @@ export default handleActions({
   TOGGLE_PLAYING: (state, action) => {
     return {...state, playing: action.payload};
   },
+
+  UPDATE_TIMESCALE: (state, action) => {
+    return {...state, left: action.payload};
+  },
+
+  UPDATE_ZOOM: (state, action) => {
+    let zoom = Math.min(Math.max(action.payload, 1/8), 8);
+    console.log('reducer', zoom);
+    return {...state, zoomLevel: zoom};
+  },
   
 	ADD_ROW: (state, action) => {
 		return {...state, rows: {...state.rows, [action.payload.rowId]:action.payload.newRow}};

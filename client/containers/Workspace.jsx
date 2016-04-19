@@ -23,6 +23,8 @@ class Workspace extends Component {
     // BindActions
     let dispatch = this.props.dispatch;
     this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
+    this.updateTimescale = (left) => dispatch(workspaceActions.updateTimescale(left));
+    this.updateZoom = (newZoom) => dispatch(workspaceActions.updateZoom(newZoom));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -65,10 +67,14 @@ class Workspace extends Component {
 
         <div className={styles.workspace} >
 
-          <Toolbar className={styles.toolbar} togglePlaying={this.togglePlaying} playing={this.props.workspace.playing}/>
+          <Toolbar className={styles.toolbar} 
+            togglePlaying={this.togglePlaying} 
+            playing={this.props.workspace.playing}
+            updateZoom={this.updateZoom}
+            currentZoom={this.props.workspace.zoomLevel}/>
 
           <div className={styles.songs}>
-            <TrackBox className={styles.trackbox} workspace={this.props.workspace}/>
+            <TrackBox className={styles.trackbox} workspace={this.props.workspace} updateTimescale={this.updateTimescale}/>
           </div>
 
           <Dropzone onDrop={this.onDrop}/>
