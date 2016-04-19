@@ -20,8 +20,10 @@ export default handleActions({
 
   UPDATE_ZOOM: (state, action) => {
     let zoom = Math.min(Math.max(action.payload, 1/8), 8);
-    console.log('reducer', zoom);
+    console.log('state', state.zoomLevel);
+    let zoomRatio = state.zoomLevel/zoom;
     return {...state, zoomLevel: zoom};
+  },
 
   STOP_PLAYING: (state, action) => {
     return {...state, playing: action.payload};

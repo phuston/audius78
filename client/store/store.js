@@ -15,7 +15,7 @@ middlewares.push(reduxRouter);
 if (process.env.NODE_ENV != 'production') {
     const createLogger = require('redux-logger');
     const logger = createLogger({collapse:true});
-    middlewares.push(logger);
+    // middlewares.push(logger);
 }
 
 const devTools = window.devToolsExtension ? window.devToolsExtension() : f => f;

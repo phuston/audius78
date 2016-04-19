@@ -1,6 +1,7 @@
 // Outside
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { playingMode } from '../../utils.js';
 
 // Styling 
 import styles from './Containers.scss';
@@ -38,10 +39,18 @@ class TrackBox extends Component{
     this.updating = false;
 	}
 
+  componentDidUpdate(prevProps, prevState) {
+    let audio = this.props.workspace.rows[0].rawAudio;
+    let zoom = this.props.workspace.zoomLevel;
+    console.log('raw length', Math.ceil(audio.length / (zoom*2000))/audio.duration);
+    console.log('new method', 44100 / (this.props.workspace.zoomLevel * 2000));
+    this.pixPerSec = 44100 / (this.props.workspace.zoomLevel * 2000);
+  }
+
   drawTimescale(x) {
     this.updating = true;
-    if (this.props.workspace.playing === true) {
-      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x+5/60));
+    if (this.props.workspace.playing === playingMode.PLAYING) {
+      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.pixPerSec/50));
       this.props.updateTimescale(x);
     } else {
       this.updating = false;
@@ -55,7 +64,7 @@ class TrackBox extends Component{
 	  	});
   	}
 
-    if (this.props.workspace.playing === true && this.updating === false) {
+    if (this.props.workspace.playing === playingMode.PLAYING && this.updating === false) {
       this.drawTimescale(this.props.workspace.left);
     }
 
