@@ -101,7 +101,7 @@ class Workspace extends Component {
         let audioCtx = this.props.workspace.audioCtx;
         audioCtx.close();
 
-        this.audioContext(undefined));
+        this.audioContext(undefined);
       }
     }
   }
