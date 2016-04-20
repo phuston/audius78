@@ -27,7 +27,7 @@ var socketObject = {
           } else {
             console.log(workspace);
             // TODO: update the workspace here!
-            let updatedState = {};
+            var updatedState = {};
             io.sockets.in(socket.workspaceId).emit('applySplitBlock', updatedState);
           }
         });
@@ -40,7 +40,7 @@ var socketObject = {
           } else {
             // TODO: update the workspace here!
             console.log(workspace);
-            let updatedState = {};
+            var updatedState = {};
             io.sockets.in(socket.workspaceId).emit('applyFlagBlock', updatedState);
           }
         })
@@ -53,7 +53,7 @@ var socketObject = {
           } else {
             console.log(workspace);
             // TODO: update the workspace here!
-            let updatedState = {};
+            var updatedState = {};
             io.sockets.in(socket.workspaceId).emit('applyMoveBlock', updatedState);
           }
         })

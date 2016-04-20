@@ -23,10 +23,7 @@ class Workspace extends Component {
     let dispatch = this.props.dispatch;
 
     this.onDrop = this.onDrop.bind(this);
-<<<<<<< HEAD
 
-=======
->>>>>>> redux_components
     this.playMusic = this.playMusic.bind(this);
 
     this.socket = io('http://localhost:3000');
@@ -44,7 +41,7 @@ class Workspace extends Component {
   }
 
   componentDidMount() {
-<<<<<<< HEAD
+    
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
 
     this.socket.on('addRow', newRow => {
