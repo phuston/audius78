@@ -87,6 +87,14 @@ export const audioContext = createAction(types.AUDIO_CONTEXT, (audioCtx) => {
   return audioCtx;
 });
 
+export const togglePlaying = createAction(types.TOGGLE_PLAYING, (playing) => {
+  return playing;
+})
+
+export const stopPlaying = createAction(types.STOP_PLAYING, (stop) => {
+  return stop;
+})
+
 export const addRow = createAction(types.ADD_ROW, (newRow, audioCtx) => {
   // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that
   // Not sure if this works

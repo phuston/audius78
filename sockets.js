@@ -17,6 +17,8 @@ var socketObject = {
         // Send client to workspace at hashcode
         socket.join(hashcode);
         // TODO: What do we need to emit to let the other users know to add a new user?
+        console.log("CONNECTED ", username);
+        console.log("WORKSPACE ", hashcode);
       });
 
       socket.on('splitBlock', function(splitOperation){

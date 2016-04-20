@@ -4,6 +4,7 @@
     id: String,
     Socket: socket,
     zoomLevel: Number,
+    playing: Boolean,
     Rows: {
       Id: {
         raw_audio: audiobuffer,

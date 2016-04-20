@@ -2,32 +2,41 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Dropzone from 'react-dropzone';
-import * as workspaceActions from '../actions/workspace.js'
+import { playingMode } from '../../utils.js';
 
 //Containers
-import TrackBox from './TrackBox.jsx'
-import Navbar from './NavbarBox.jsx'
-import Toolbar from './Toolbar.jsx'
+import TrackBox from './TrackBox.jsx';
+import Navbar from './NavbarBox.jsx';
+import Toolbar from './Toolbar.jsx';
 
+// Outside
+import * as workspaceActions from '../actions/workspace.js';
 
 //Styling 
-import styles from './Containers.scss'
+import styles from './Containers.scss';
 
 class Workspace extends Component {
 
   constructor(props) {
     super(props);
 
-    var dispatch = this.props.dispatch;
+    let dispatch = this.props.dispatch;
 
     this.onDrop = this.onDrop.bind(this);
+    this.playMusic = this.playMusic.bind(this);
+
     this.socket = io('http://localhost:3000');
+    // TODO: pass this socket connection all the way down to the components that need it
 
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
     this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
     this.flagBlock = (newFlags) => dispatch(workspaceActions.flagBlock(newFlags));
     this.splitBlock = (newBlocks) => dispatch(workspaceActions.splitBlock(newBlocks));
     this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
+
+    this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
+    this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
+    this.audioContext = (audioCtx) => dispatch(workspaceActions.audioContext(audioCtx));
   }
 
   componentDidMount() {
@@ -56,6 +65,37 @@ class Workspace extends Component {
     });
   }
 
+  componentDidUpdate(prevProps, prevState) {
+
+    if( this.props.workspace.playing !== prevProps.workspace.playing){
+      let playingState = this.props.workspace.playing;
+
+      if( playingState === playingMode.PLAYING ){
+        console.log("play now!");
+        if(this.props.workspace.audioCtx === undefined){
+          let audioCtx = this.playMusic();
+          dispatch(workspaceActions.audioContext(audioCtx));
+        } else {
+          let audioCtx = this.props.workspace.audioCtx;
+          audioCtx.resume();
+        }
+      } else if( playingState === playingMode.PAUSE){
+        console.log("Pause me bro!");
+        if( this.props.workspace.playing === playingMode.PAUSE ){
+          let audioCtx = this.props.workspace.audioCtx;
+          audioCtx.suspend();
+        }
+      } else if( playingState === playingMode.STOP ){
+        console.log("Destroy the play!");
+
+        let audioCtx = this.props.workspace.audioCtx;
+        audioCtx.close();
+
+        this.audioContext(undefined));
+      }
+    }
+  }
+
   onDrop(files){
     var data = new FormData();
     data.append('file', files[0]);
@@ -75,6 +115,26 @@ class Workspace extends Component {
     });
   }
 
+  playMusic(){
+    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    let workspace = this.props.workspace;
+    let sources = workspace.rows.map( function(elem){
+      let source = audioCtx.createBufferSource();
+      source.buffer = elem.rawAudio;
+      source.connect(audioCtx.destination);
+
+      return source;
+    });
+
+    sources.map( function(elem){
+      elem.start();
+    });
+    //audioCtx.close();
+    //
+    return audioCtx;
+  }
+
   render() {
     return (
       <div className={styles.page} >
@@ -84,7 +144,10 @@ class Workspace extends Component {
 
         <div className={styles.workspace} >
 
-          <Toolbar className={styles.toolbar}/>
+          <Toolbar className={styles.toolbar} 
+            togglePlaying={this.togglePlaying} 
+            stopPlaying={this.stopPlaying}
+            playing={this.props.workspace.playing}/>
 
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} workspace={this.props.workspace}/>

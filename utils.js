@@ -7,3 +7,5 @@ module.exports.modelToState = function(model) {
 	console.log(typeof rows);
 	return rows;
 }
+
+module.exports.playingMode = Object.freeze({ PLAYING: 0, PAUSE: 1, STOP: 2 });

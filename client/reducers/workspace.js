@@ -11,8 +11,16 @@ export default handleActions({
   AUDIO_CONTEXT: (state, action) => {
   	return {...state, audioCtx: action.payload};
   },
+
+  TOGGLE_PLAYING: (state, action) => {
+    return {...state, playing: action.payload};
+  },
+
+  STOP_PLAYING: (state, action) => {
+    return {...state, playing: action.payload};
+  },
   
-	ADD_ROW: (state, action) => {
+  ADD_ROW: (state, action) => {
 		return {...state, rows: {...state.rows, [action.payload.rowId]:action.payload.newRow}};
   },
 
