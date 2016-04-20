@@ -89,7 +89,15 @@ export const audioContext = createAction(types.AUDIO_CONTEXT, (audioCtx) => {
 
 export const togglePlaying = createAction(types.TOGGLE_PLAYING, (playing) => {
   return playing;
-})
+});
+
+export const updateTimescale = createAction(types.UPDATE_TIMESCALE, (left) => {
+  return left;
+});
+
+export const updateZoom = createAction(types.UPDATE_ZOOM, (newZoom) => {
+  return newZoom;
+});
 
 export const stopPlaying = createAction(types.STOP_PLAYING, (stop) => {
   return stop;

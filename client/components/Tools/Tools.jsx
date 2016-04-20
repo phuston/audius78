@@ -8,6 +8,8 @@ class Tools extends Component{
     super(props);
 
     this.togglePlaying = this.togglePlaying.bind(this);
+    this.zoomIn = this.zoomIn.bind(this);
+    this.zoomOut = this.zoomOut.bind(this);
     this.stopPlaying = this.stopPlaying.bind(this);
   }
 
@@ -23,6 +25,15 @@ class Tools extends Component{
     this.props.stopPlaying();
   }
 
+  zoomIn() {
+    console.log(this.props.currentZoom);
+    this.props.updateZoom(this.props.currentZoom/2);
+  }
+
+  zoomOut() {
+    this.props.updateZoom(this.props.currentZoom*2);
+  }
+
   render() {
     return (
       <div className = {styles.tools} >
@@ -35,6 +46,8 @@ class Tools extends Component{
         <input type='button' value='Cut' className={styles.cut} />
         <input type='button' value='Move' className={styles.move} />
         <input type='button' value='Split' className={styles.split} />
+        <input type='button' value='Zoom In' onClick={this.zoomIn} />
+        <input type='button' value='Zoom Out' onClick={this.zoomOut} />
       </div>
     )
   }
