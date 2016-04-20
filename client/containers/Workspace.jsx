@@ -19,21 +19,11 @@ class Workspace extends Component {
 
   constructor(props) {
     super(props);
-
-    let dispatch = this.props.dispatch;
-
     this.onDrop = this.onDrop.bind(this);
     this.playMusic = this.playMusic.bind(this);
 
-    this.socket = io('http://localhost:3000');
-    // TODO: pass this socket connection all the way down to the components that need it
-
-    this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
-    this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
-    this.flagBlock = (newFlags) => dispatch(workspaceActions.flagBlock(newFlags));
-    this.splitBlock = (newBlocks) => dispatch(workspaceActions.splitBlock(newBlocks));
-    this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
-
+    // BindActions
+    let dispatch = this.props.dispatch;
     this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
     this.updateTimescale = (left) => dispatch(workspaceActions.updateTimescale(left));
     this.updateZoom = (newZoom) => {
@@ -46,36 +36,19 @@ class Workspace extends Component {
       }
     };
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
-    this.audioContext = (audioCtx) => dispatch(workspaceActions.audioContext(audioCtx));
-  }
-
-  componentDidMount() {
-    socket.emit('/connectWorkspace', 'patrick', this.props.workspace.id);
-    socket.on('addRow', newRow => {
-      this.addRow(newRow, audioCtx);
-    });
-
-    socket.on('removeRow', rowId => {
-      this.removeRow(rowId);
-    });
-
-    socket.on('flagBlock', newFlags => {
-      // TODO: Figure out where the row and block Ids will be coming from for this
-      this.flagBlock(newFlags);
-    });
-
-    socket.on('splitBlock', newBlocks => {
-      // TODO: Figure out where the rowId will be coming from for this
-      this.splitBlock(newBlocks);
-    });
-
-    socket.on('moveBlock', newBlocks => {
-      // TODO: Again, where does the rowId come from? This should be returned as an operation
-      this.moveBlock(newBlocks);
-    });
   }
 
   componentDidUpdate(prevProps, prevState) {
+    let dispatch = this.props.dispatch;
+
+    if (!prevProps.workspace.id) {
+      let socket = io();
+
+      socket.emit('newWorkspace', this.props.workspace.id);
+      socket.on('workspaceCreated', (data) => {
+        socket = io('/' + this.props.workspace.id);
+      });
+    }
 
     if( this.props.workspace.playing !== prevProps.workspace.playing){
       let playingState = this.props.workspace.playing;
@@ -101,7 +74,7 @@ class Workspace extends Component {
         let audioCtx = this.props.workspace.audioCtx;
         audioCtx.close();
 
-        this.audioContext(undefined));
+        dispatch(workspaceActions.audioContext(undefined));
       }
     }
   }
