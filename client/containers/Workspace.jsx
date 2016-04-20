@@ -41,7 +41,7 @@ class Workspace extends Component {
   }
 
   componentDidMount() {
-    
+
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
 
     this.socket.on('addRow', newRow => {
@@ -77,7 +77,7 @@ class Workspace extends Component {
         console.log("play now!");
         if(this.props.workspace.audioCtx === undefined){
           let audioCtx = this.playMusic();
-          dispatch(workspaceActions.audioContext(audioCtx));
+          this.audioContext(audioCtx);
         } else {
           let audioCtx = this.props.workspace.audioCtx;
           audioCtx.resume();
