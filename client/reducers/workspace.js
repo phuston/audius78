@@ -3,26 +3,33 @@ import { filter } from 'filter-object';
 
 export default handleActions({
   LOAD_WORKSPACE: (state, action) => {
+    console.log("ACTION");
+    console.log(action);
     return {...state, id: action.payload.id, rows: action.payload.rows};
-  },
-
-  CONN_SOCKET: (state, action) => {
-  	return {...state, socket: action.payload};
   },
 
   AUDIO_CONTEXT: (state, action) => {
   	return {...state, audioCtx: action.payload};
   },
+
+  TOGGLE_PLAYING: (state, action) => {
+    return {...state, playing: action.payload};
+  },
+
+  STOP_PLAYING: (state, action) => {
+    return {...state, playing: action.payload};
+  },
   
-	ADD_ROW: (state, action) => {
+  ADD_ROW: (state, action) => {
 		return {...state, rows: {...state.rows, [action.payload.rowId]:action.payload.newRow}};
   },
 
   REMOVE_ROW: (state, action) => {
     let query = '!' + action.payload;
-    return {...state, rows: {filter(...state.rows, query)}};
+    return {...state, rows: filter(...state.rows, query)};
   },
 
+  // TODO: Fix this (maybe) - not sure if actually broken
   FLAG_BLOCK: (state, action) => {
     var block = {...state.rows[action.rowId][action.blockId], flags: action.newFlags};
     var row = {...state[action.rowId], [action.blockId]:block};

@@ -3,6 +3,7 @@
   workspace: {
     id: String,
     zoomLevel: Number,
+    playing: Boolean,
     Rows: {
       Id: {
         raw_audio: audiobuffer,

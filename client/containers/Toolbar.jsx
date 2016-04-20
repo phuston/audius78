@@ -9,12 +9,19 @@ import Tools from '../components/Tools/Tools.jsx'
 
 
 class Toolbar extends Component{
+	constructor(props) {
+		super(props);
+	}
 
   render() {
+  	console.log('toggleplaying', this.props.togglePlaying);
     return (
-      <div className = {styles.toolbar} >
+      <div className = {styles.toolbar}>
         <h2> Toolbar </h2>
-        <Tools />
+        <Tools 
+          togglePlaying={this.props.togglePlaying}
+          stopPlaying={this.props.stopPlaying}
+          playing={this.props.playing}/>
       </div>
     )
   }

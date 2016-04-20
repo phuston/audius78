@@ -2,23 +2,31 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Dropzone from 'react-dropzone';
-import * as workspaceActions from '../actions/workspace.js'
+import { playingMode } from '../../utils.js';
 
 //Containers
-import TrackBox from './TrackBox.jsx'
-import Navbar from './NavbarBox.jsx'
-import Toolbar from './Toolbar.jsx'
+import TrackBox from './TrackBox.jsx';
+import Navbar from './NavbarBox.jsx';
+import Toolbar from './Toolbar.jsx';
 
+// Outside
+import * as workspaceActions from '../actions/workspace.js';
 
 //Styling 
-import styles from './Containers.scss'
+import styles from './Containers.scss';
 
 class Workspace extends Component {
 
   constructor(props) {
     super(props);
-    this.onDrop = this.onDrop.bind(this);
 
+    let dispatch = this.props.dispatch;
+
+    this.onDrop = this.onDrop.bind(this);
+<<<<<<< HEAD
+
+=======
+>>>>>>> redux_components
     this.playMusic = this.playMusic.bind(this);
 
     this.socket = io('http://localhost:3000');
@@ -36,6 +44,7 @@ class Workspace extends Component {
   }
 
   componentDidMount() {
+<<<<<<< HEAD
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
 
     this.socket.on('addRow', newRow => {
@@ -110,6 +119,26 @@ class Workspace extends Component {
     });
   }
 
+  playMusic(){
+    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    let workspace = this.props.workspace;
+    let sources = workspace.rows.map( function(elem){
+      let source = audioCtx.createBufferSource();
+      source.buffer = elem.rawAudio;
+      source.connect(audioCtx.destination);
+
+      return source;
+    });
+
+    sources.map( function(elem){
+      elem.start();
+    });
+    //audioCtx.close();
+    //
+    return audioCtx;
+  }
+
   render() {
     return (
       <div className={styles.page} >
@@ -123,7 +152,6 @@ class Workspace extends Component {
             togglePlaying={this.togglePlaying} 
             stopPlaying={this.stopPlaying}
             playing={this.props.workspace.playing} />
-            
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} workspace={this.props.workspace} socket={this.socket} />
           </div>
