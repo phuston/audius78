@@ -3,6 +3,8 @@ import { filter } from 'filter-object';
 
 export default handleActions({
   LOAD_WORKSPACE: (state, action) => {
+    console.log("ACTION");
+    console.log(action);
     return {...state, id: action.payload.id, rows: action.payload.rows};
   },
 

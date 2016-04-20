@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
+import { routeActions } from 'redux-simple-router';
 import * as workspaceActions from '../actions/workspace.js'
 
 //Components
@@ -17,8 +18,12 @@ class WelcomeBox extends Component {
     var dispatch = this.props.dispatch;
 
     //Bind Actions
-    this.newWorkspace = (audioCtx) => dispatch(workspaceActions.newWorkspace(audioCtx));
-    this.loadWorkspace = (workspaceId, audioCtx) => dispatch(workspaceActions.loadWorkspace(workspaceId, audioCtx));
+    this.newWorkspace = (audioCtx) => dispatch(workspaceActions.newWorkspace(audioCtx)).then(() => {
+      dispatch(routeActions.push('/workspace'));
+    });
+    this.loadWorkspace = (workspaceId, audioCtx) => dispatch(workspaceActions.loadWorkspace(workspaceId, audioCtx)).then(() => {
+      dispatch(routeActions.push('/workspace'));
+    });
   }
 
   render(){
