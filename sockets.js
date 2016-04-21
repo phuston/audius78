@@ -5,7 +5,6 @@ var socketObject = {
     var io = socketIO.listen(server);
 
     io.sockets.on('connection', function(socket) {
-      console.log('connected');
 
       socket.on('adduser', function(username, hashcode){
         // TODO: Perform some sort of validation to ensure that workspace exists
@@ -19,19 +18,42 @@ var socketObject = {
       });
 
       socket.on('splitBlock', function(splitOperation){
-        // TODO: Grab the correct workspace using socket.workspace
-        // TODO: Update the state
-        // TODO: Emit event using 'io.sockets.in(socket.workspace).emit('applySplit', newRow)'
+        Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(workspace);
+            // TODO: update the workspace here!
+            var updatedState = {};
+            io.sockets.in(socket.workspaceId).emit('applySplitBlock', updatedState);
+          }
+        });
       });
 
       socket.on('flagBlock', function(flagOperation){
-        // TODO: Grab the correct workspace using socket.workspace
-        // TODO: Update the workspace object from mongo
-        // TODO: Emit event with updated block flags using 'io.sockets.in(socket.workspace).emit('applyFlag', data)''
+        Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
+          if (err) {
+            console.log(err);
+          } else {
+            // TODO: update the workspace here!
+            console.log(workspace);
+            var updatedState = {};
+            io.sockets.in(socket.workspaceId).emit('applyFlagBlock', updatedState);
+          }
+        })
       });
 
       socket.on('moveBlock', function(moveOperation){
-        // TODO: Same pattern as above operations
+        Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(workspace);
+            // TODO: update the workspace here!
+            var updatedState = {};
+            io.sockets.in(socket.workspaceId).emit('applyMoveBlock', updatedState);
+          }
+        })
       });
 
       socket.on('addRow', function(addOperation){

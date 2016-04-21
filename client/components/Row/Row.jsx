@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import AudioBlock from '../AudioBlock/AudioBlock.jsx';
 import RowTool from '../RowTool/RowTool.jsx';
 
-
 //Styling 
 import styles from './Row.scss';
 

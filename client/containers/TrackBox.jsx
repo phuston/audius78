@@ -10,6 +10,7 @@ import styles from './Containers.scss';
 import Row from '../components/Row/Row.jsx';
 import Time from '../components/Time/Time.jsx'
 
+
 class Seeker extends Component {
   constructor(props) {
     super(props);
@@ -35,8 +36,50 @@ class TrackBox extends Component{
 		super(props);
 
     this.drawTimescale = this.drawTimescale.bind(this);
+    this.emitSplitBlock = this.emitSplitBlock.bind(this);
+    this.emitFlagBlock = this.emitFlagBlock.bind(this);
+    this.emitMoveBlock = this.emitMoveBlock.bind(this);
     this.updating = false;
 	}
+
+  emitSplitBlock(rowId, blockId, splitTime) {
+    console.log("Emitting split operation");
+    let splitOperation = {
+      rowId: rowId,
+      blockId: blockId,
+      operation: {
+        splitTime: splitTime
+      }
+    }
+    this.props.socket.emit('splitBlock', splitOperation)
+  }
+
+  emitFlagBlock(rowId, blockId, flagType, startTime, duration) {
+    console.log("Emitting flag operation");
+    let flagOperation = {
+      rowId: rowId,
+      blockId: blockId,
+      operation: {
+        type: flagType,
+        startTime: startTime,
+        duration: duration
+      }
+    }
+    this.props.socket.emit('flagBlock', flagOperation)
+  }
+
+  emitMoveBlock(rowId, blockId, moveShift) {
+    console.log("Emitting move operation");
+    let moveOperation = {
+      rowId: rowId,
+      blockId: blockId,
+      operation: {
+        moveShift: moveShift
+      }
+    }
+    this.props.socket.emit('moveBlock', moveOperation)
+  }
+
 
   componentDidUpdate(prevProps, prevState) {
     let audio = this.props.workspace.rows[0].rawAudio;

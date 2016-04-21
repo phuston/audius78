@@ -19,8 +19,16 @@ class Workspace extends Component {
 
   constructor(props) {
     super(props);
+    this.socket = io('http://localhost:3000');
     this.onDrop = this.onDrop.bind(this);
+
     this.playMusic = this.playMusic.bind(this);
+
+    this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
+    this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
+    this.flagBlock = (newFlags) => dispatch(workspaceActions.flagBlock(newFlags));
+    this.splitBlock = (newBlocks) => dispatch(workspaceActions.splitBlock(newBlocks));
+    this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
 
     // BindActions
     let dispatch = this.props.dispatch;
@@ -28,6 +36,7 @@ class Workspace extends Component {
     this.updateTimescale = (left) => dispatch(workspaceActions.updateTimescale(left));
     this.updateZoom = this.updateZoom.bind(this);
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
+    this.audioContext = (audioCtx) => dispatch(workspaceActions.audioContext(audioCtx));
   }
 
   updateZoom(newZoom) {
@@ -42,14 +51,33 @@ class Workspace extends Component {
   componentDidUpdate(prevProps, prevState) {
     let dispatch = this.props.dispatch;
 
-    if (!prevProps.workspace.id) {
-      let socket = io();
+    this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
 
-      socket.emit('newWorkspace', this.props.workspace.id);
-      socket.on('workspaceCreated', (data) => {
-        socket = io('/' + this.props.workspace.id);
-      });
-    }
+    this.socket.on('addRow', newRow => {
+      this.addRow(newRow, audioCtx);
+    });
+
+    this.socket.on('removeRow', rowId => {
+      this.removeRow(rowId);
+    });
+
+    this.socket.on('flagBlock', newFlags => {
+      // TODO: Figure out where the row and block Ids will be coming from for this
+      this.flagBlock(newFlags);
+    });
+
+    this.socket.on('splitBlock', newBlocks => {
+      // TODO: Figure out where the rowId will be coming from for this
+      this.splitBlock(newBlocks);
+    });
+
+    this.socket.on('moveBlock', newBlocks => {
+      // TODO: Again, where does the rowId come from? This should be returned as an operation
+      this.moveBlock(newBlocks);
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
 
     if( this.props.workspace.playing !== prevProps.workspace.playing){
       let playingState = this.props.workspace.playing;
@@ -58,7 +86,7 @@ class Workspace extends Component {
         console.log("play now!");
         if(this.props.workspace.audioCtx === undefined){
           let audioCtx = this.playMusic();
-          dispatch(workspaceActions.audioContext(audioCtx));
+          this.audioContext(audioCtx);
         } else {
           let audioCtx = this.props.workspace.audioCtx;
           audioCtx.resume();
@@ -74,8 +102,7 @@ class Workspace extends Component {
 
         let audioCtx = this.props.workspace.audioCtx;
         audioCtx.close();
-
-        dispatch(workspaceActions.audioContext(undefined));
+        this.audioContext(undefined);
       }
     }
   }
@@ -90,9 +117,7 @@ class Workspace extends Component {
       body: data
     })
     .then( function(res){
-      // Handle socket business here such as:
-      //var socket = this.props.workspace.socket;
-      //this.props.workspace.socket.emit('fileUpload', res);
+      this.socket.emit('uploadFile', res);
     }.bind(this))
     .catch( function(err){
       console.error(err);
@@ -122,7 +147,7 @@ class Workspace extends Component {
   render() {
     return (
       <div className={styles.page} >
-        <Navbar className={styles.navbar}/>
+        <Navbar className={styles.navbar} />
 
         <div><h1>{this.props.workspace.id}</h1></div>
 
@@ -139,7 +164,7 @@ class Workspace extends Component {
             <TrackBox className={styles.trackbox} workspace={this.props.workspace} updateTimescale={this.updateTimescale}/>
           </div>
 
-          <Dropzone onDrop={this.onDrop}/>
+          <Dropzone onDrop={this.onDrop} />
         </div>
       </div>
     )
