@@ -31,7 +31,6 @@ class Waveform extends Component {
   }
 
   draw(ctx) {
-    console.log('drawing');
     let peaks = this.peaks.data[0];
     let bits = this.peaks.bits;
     let offset = this.props.block.row_offset;

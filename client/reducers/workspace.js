@@ -1,5 +1,6 @@
 import { handleActions } from 'redux-actions';
 import { filter } from 'filter-object';
+import { zoomLimits } from '../../utils';
 
 export default handleActions({
   LOAD_WORKSPACE: (state, action) => {
@@ -15,12 +16,11 @@ export default handleActions({
   },
 
   UPDATE_TIMESCALE: (state, action) => {
-    return {...state, left: action.payload};
+    return {...state, timing: {left: action.payload}};
   },
 
   UPDATE_ZOOM: (state, action) => {
-    let zoom = Math.min(Math.max(action.payload, 1/8), 8);
-    console.log('state', state.zoomLevel);
+    let zoom = Math.min(Math.max(action.payload, zoomLimits.LOWER), zoomLimits.UPPER);
     let zoomRatio = state.zoomLevel/zoom;
     return {...state, zoomLevel: zoom};
   },

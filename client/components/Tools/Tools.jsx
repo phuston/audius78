@@ -26,12 +26,15 @@ class Tools extends Component{
   }
 
   zoomIn() {
-    console.log(this.props.currentZoom);
-    this.props.updateZoom(this.props.currentZoom/2);
+    if (this.props.playing !== playingMode.PLAYING) {
+      this.props.updateZoom(this.props.currentZoom/2);
+    }
   }
 
   zoomOut() {
-    this.props.updateZoom(this.props.currentZoom*2);
+    if (this.props.playing !== playingMode.PLAYING) {
+      this.props.updateZoom(this.props.currentZoom*2);
+    }
   }
 
   render() {
