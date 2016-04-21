@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Dropzone from 'react-dropzone';
-import { playingMode } from '../../utils.js';
+import { playingMode, zoomLimits } from '../../utils.js';
 
 //Containers
 import TrackBox from './TrackBox.jsx';
@@ -34,20 +34,22 @@ class Workspace extends Component {
     let dispatch = this.props.dispatch;
     this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
     this.updateTimescale = (left) => dispatch(workspaceActions.updateTimescale(left));
-    this.updateZoom = (newZoom) => {
-      let zoomRatio = this.props.workspace.zoomLevel/newZoom;
-      dispatch(workspaceActions.updateZoom(newZoom));
-      let newLeft = ((this.props.workspace.left-84) * zoomRatio) + 84;
-      if (newZoom <= 8 && newZoom >= 1/8) {
-        console.log(this.props.workspace.left, newLeft);
-        this.updateTimescale(newLeft);
-      }
-    };
+    this.updateZoom = this.updateZoom.bind(this);
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.audioContext = (audioCtx) => dispatch(workspaceActions.audioContext(audioCtx));
   }
 
-  componentDidMount() {
+  updateZoom(newZoom) {
+    let zoomRatio = this.props.workspace.zoomLevel/newZoom;
+    this.props.dispatch(workspaceActions.updateZoom(newZoom));
+    let newLeft = ((this.props.workspace.timing.left) * zoomRatio);
+    if (newZoom <= zoomLimits.UPPER && newZoom >= zoomLimits.LOWER) {
+      this.updateTimescale(newLeft);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    let dispatch = this.props.dispatch;
 
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
 

@@ -22,8 +22,8 @@ const devTools = window.devToolsExtension ? window.devToolsExtension() : f => f;
 let store = createStore(rootReducer, compose(applyMiddleware(...middlewares), devTools));
 
 store.dispatch(workspaceActions.togglePlaying(false));
-store.dispatch(workspaceActions.updateTimescale(84));
-store.dispatch(workspaceActions.updateZoom(2));
+store.dispatch(workspaceActions.updateTimescale(0));
+store.dispatch(workspaceActions.updateZoom(1));
 
 reduxRouter.listenForReplays(store);
 
