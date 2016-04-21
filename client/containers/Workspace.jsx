@@ -49,30 +49,30 @@ class Workspace extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidMount() {
     let dispatch = this.props.dispatch;
 
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
 
-    this.socket.on('addRow', newRow => {
+    this.socket.on('applyAddRow', newRow => {
       this.addRow(newRow, audioCtx);
     });
 
-    this.socket.on('removeRow', rowId => {
+    this.socket.on('applyRemoveRow', rowId => {
       this.removeRow(rowId);
     });
 
-    this.socket.on('flagBlock', newFlags => {
+    this.socket.on('applyFlagBlock', newFlags => {
       // TODO: Figure out where the row and block Ids will be coming from for this
       this.flagBlock(newFlags);
     });
 
-    this.socket.on('splitBlock', newBlocks => {
+    this.socket.on('applySplitBlock', newBlocks => {
       // TODO: Figure out where the rowId will be coming from for this
       this.splitBlock(newBlocks);
     });
 
-    this.socket.on('moveBlock', newBlocks => {
+    this.socket.on('applyMoveBlock', newBlocks => {
       // TODO: Again, where does the rowId come from? This should be returned as an operation
       this.moveBlock(newBlocks);
     });
@@ -112,13 +112,15 @@ class Workspace extends Component {
     var data = new FormData();
     data.append('file', files[0]);
     data.append('name', 'song');
+    data.append('workspaceId', this.props.workspace.id);
 
     fetch('/api/upload', {
       method: 'POST',
       body: data
     })
-    .then( function(res){
-      this.socket.emit('uploadFile', res);
+    .then( function(rowId){
+      console.log("FILE_UPLOADED", rowId);
+      this.socket.emit('addRow', rowId);
     }.bind(this))
     .catch( function(err){
       console.error(err);

@@ -8,7 +8,7 @@ var workspaceSchema = mongoose.Schema({
     rowId: Number,
     rawAudio: String,
     audioBlocks: [{
-      length: Number, // seconds
+      file_end: Number,
       row_offset: Number,
       file_offset: Number,
       flags: [{

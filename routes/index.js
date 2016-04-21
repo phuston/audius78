@@ -1,7 +1,10 @@
 var fs = require('fs');
 var multer = require('multer');
 var sox = require('sox.js');
-var workspaceSchema = require('../models/workspace');
+var mongoose = require('mongoose');
+var ObjectId = mongoose.Types.ObjectId;
+
+var Workspace = require('../models/workspace');
 
 var multerHandle = multer({
   dest: 'uploads/',
@@ -16,6 +19,8 @@ module.exports = function(){
           console.error('Multer failure');
           return res.status(500).json(err);
         }
+        console.log('req.body', req.body);
+        console.log('workspace', req.body.workspaceId);
         sox([req.file.path, 
             req.file.filename + '.ogg'],
             function(err, outFP){ 
@@ -40,7 +45,31 @@ module.exports = function(){
                       return res.status(500).json(err);
                     }
                     console.log("Uploaded file "+outFP);
-                    return res.json({fd: "static/"+outFP});
+
+                    var rowId = new ObjectId();
+                    var newRow = {
+                      _id: rowId,
+                      rawAudio: outFP,
+                      audioBlocks: [{
+                        file_end: undefined,
+                        row_offset: 0,
+                        file_offset: 0,
+                        flags: []
+                      }],
+                    }
+
+                    Workspace.findOneAndUpdate(
+                      {id: req.body.workspaceId},
+                      {$push: {rows: newRow}},
+                      {safe: true, upsert: false},
+                      function(err, workspace) {
+                        if (err) {
+                          res.json({err: err});
+                        } else {
+                          res.json({rowId: rowId});
+                        }
+                      }
+                    );
                   });
                 });
               });
