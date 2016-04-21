@@ -16,6 +16,17 @@ export default handleActions({
     return {...state, playing: action.payload};
   },
 
+  UPDATE_TIMESCALE: (state, action) => {
+    return {...state, left: action.payload};
+  },
+
+  UPDATE_ZOOM: (state, action) => {
+    let zoom = Math.min(Math.max(action.payload, 1/8), 8);
+    console.log('state', state.zoomLevel);
+    let zoomRatio = state.zoomLevel/zoom;
+    return {...state, zoomLevel: zoom};
+  },
+
   STOP_PLAYING: (state, action) => {
     return {...state, playing: action.payload};
   },

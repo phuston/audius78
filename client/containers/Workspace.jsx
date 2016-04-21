@@ -36,6 +36,16 @@ class Workspace extends Component {
     this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
 
     this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
+    this.updateTimescale = (left) => dispatch(workspaceActions.updateTimescale(left));
+    this.updateZoom = (newZoom) => {
+      let zoomRatio = this.props.workspace.zoomLevel/newZoom;
+      dispatch(workspaceActions.updateZoom(newZoom));
+      let newLeft = ((this.props.workspace.left-84) * zoomRatio) + 84;
+      if (newZoom <= 8 && newZoom >= 1/8) {
+        console.log(this.props.workspace.left, newLeft);
+        this.updateTimescale(newLeft);
+      }
+    };
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.audioContext = (audioCtx) => dispatch(workspaceActions.audioContext(audioCtx));
   }
@@ -147,10 +157,13 @@ class Workspace extends Component {
 
           <Toolbar className={styles.toolbar} 
             togglePlaying={this.togglePlaying} 
-            stopPlaying={this.stopPlaying}
-            playing={this.props.workspace.playing} />
+            playing={this.props.workspace.playing}
+            updateZoom={this.updateZoom}
+            currentZoom={this.props.workspace.zoomLevel}
+            stopPlaying={this.stopPlaying}/>
+
           <div className={styles.songs}>
-            <TrackBox className={styles.trackbox} workspace={this.props.workspace} socket={this.socket} />
+            <TrackBox className={styles.trackbox} workspace={this.props.workspace} updateTimescale={this.updateTimescale}/>
           </div>
 
           <Dropzone onDrop={this.onDrop} />
