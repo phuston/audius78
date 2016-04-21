@@ -50,6 +50,7 @@ class Waveform extends Component {
     let i;
     let length = peaks.length/2;
     let h2 = 50; // canvas.height / 2;
+    this.props.setSpeed(length/this.props.rawAudio.duration);
 
     let minPeak, min;
     let maxPeak, max;
@@ -102,7 +103,8 @@ class AudioBlock extends Component {
             currentZoom={this.props.currentZoom} 
             rawAudio={this.props.data.rawAudio}
             setCursor={this.props.setCursor}
-            setSeeker={this.props.setSeeker}/>
+            setSeeker={this.props.setSeeker}
+            setSpeed={this.props.setSpeed}/>
   			</div>
 			);
   	});

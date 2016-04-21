@@ -95,8 +95,8 @@ export const setSeeker = createAction(types.SET_SEEKER, (seeker) => {
   return seeker;
 });
 
-export const setZoom = createAction(types.SET_ZOOM, (newZoom) => {
-  return newZoom;
+export const setZoom = createAction(types.SET_ZOOM, (zoom) => {
+  return zoom;
 });
 
 export const stopPlaying = createAction(types.STOP_PLAYING, (stop) => {

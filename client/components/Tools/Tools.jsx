@@ -23,7 +23,6 @@ class Tools extends Component{
 
   stopPlaying(){
     this.props.stopPlaying();
-    console.log('tools cursor', this.props.cursor);
     this.props.setSeeker(this.props.cursor); // Change this to cursor position
   }
 

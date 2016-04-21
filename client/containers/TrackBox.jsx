@@ -19,13 +19,12 @@ class Cursor extends Component {
     let cursorStyle = {
       'position': 'absolute', 
       'top': '273px', 
-      'left': this.props.left + 88, 
+      'left': this.props.styling.left + 88, 
       'width': '1px', 
       'background': 'red', 
       'zIndex': '5', 
-      'height': '100px' // Change this to # of rows * 100px
-    }
-
+      'height': this.props.styling.numRows * 110 // Change this to # of rows * 100px
+    };
     return <div id='cursor' style={cursorStyle}/>;
   }
 }
@@ -39,12 +38,12 @@ class Seeker extends Component {
     let seekerStyle = {
       'position': 'absolute', 
       'top': '273px', 
-      'left': this.props.left + 88, 
+      'left': this.props.styling.left + 88, 
       'width': '4px', 
       'border': '1px solid white', 
       'background': 'rgba(0,0,0,0.3)', 
       'zIndex': '5', 
-      'height': '100px' // Change this to # of rows * 100px
+      'height': this.props.styling.numRows * 110 // Change this to # of rows * 100px
     };
     return <div id='seeker' style={seekerStyle}/>;
   }
@@ -58,9 +57,16 @@ class TrackBox extends Component{
     this.emitSplitBlock = this.emitSplitBlock.bind(this);
     this.emitFlagBlock = this.emitFlagBlock.bind(this);
     this.emitMoveBlock = this.emitMoveBlock.bind(this);
+    this.setSpeed = this.setSpeed.bind(this);
     this.updating = false;
     this.seekedNew = false;
+    let zoom = this.props.workspace.zoomLevel;
+    this.pixPerSec = 44100 / (zoom * 2000);
 	}
+
+  setSpeed(speed) {
+    this.speed = speed;
+  }
 
   emitSplitBlock(rowId, blockId, splitTime) {
     console.log("Emitting split operation");
@@ -110,7 +116,9 @@ class TrackBox extends Component{
 
   componentDidUpdate(prevProps, prevState) {
     let zoom = this.props.workspace.zoomLevel;
-    this.pixPerSec = 44100 / (zoom * 2000);
+    if (zoom !== prevProps.workspace.zoomLevel) {
+      this.pixPerSec = 44100 / (zoom * 2000);
+    }
   }
 
   drawTimescale(x) {
@@ -121,7 +129,7 @@ class TrackBox extends Component{
     }
 
     if (this.props.workspace.playing === playingMode.PLAYING) {
-      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.pixPerSec/60));
+      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.speed/60));
       this.props.setSeeker(x);
     } else {
       this.updating = false;
@@ -138,6 +146,7 @@ class TrackBox extends Component{
             playing={this.props.workspace.playing}
             setCursor={this.props.setCursor}
             setSeeker={this.props.setSeeker}
+            setSpeed={this.setSpeed}
           />
         );
 	  	});
@@ -150,8 +159,8 @@ class TrackBox extends Component{
     return (
       <div>
         <Time workspace={this.props.workspace}/>
-        <Seeker left={this.props.workspace.timing.seeker}/>
-        <Cursor left={this.props.workspace.timing.cursor}/>
+        <Seeker styling={{left: this.props.workspace.timing.seeker, numRows: this.props.workspace.rows.length}}/>
+        <Cursor styling={{left: this.props.workspace.timing.cursor, numRows: this.props.workspace.rows.length}}/>
         {rows}
       </div>
     )

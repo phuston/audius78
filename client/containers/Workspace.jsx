@@ -170,7 +170,8 @@ class Workspace extends Component {
             <TrackBox className={styles.trackbox} 
               workspace={this.props.workspace} 
               setCursor={this.setCursor}
-              setSeeker={this.setSeeker}/>
+              setSeeker={this.setSeeker}
+            />
           </div>
 
           <Dropzone onDrop={this.onDrop} />

@@ -18,7 +18,8 @@ class Row extends Component{
           playing={this.props.playing}
         	currentZoom={this.props.currentZoom}
         	setCursor={this.props.setCursor}
-        	setSeeker={this.props.setSeeker}/>
+        	setSeeker={this.props.setSeeker}
+          setSpeed={this.props.setSpeed}/>
       </div>
     )
   }
