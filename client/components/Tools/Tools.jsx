@@ -23,17 +23,19 @@ class Tools extends Component{
 
   stopPlaying(){
     this.props.stopPlaying();
+    console.log('tools cursor', this.props.cursor);
+    this.props.setSeeker(this.props.cursor); // Change this to cursor position
   }
 
   zoomIn() {
     if (this.props.playing !== playingMode.PLAYING) {
-      this.props.updateZoom(this.props.currentZoom/2);
+      this.props.setZoom(this.props.currentZoom/2);
     }
   }
 
   zoomOut() {
     if (this.props.playing !== playingMode.PLAYING) {
-      this.props.updateZoom(this.props.currentZoom*2);
+      this.props.setZoom(this.props.currentZoom*2);
     }
   }
 

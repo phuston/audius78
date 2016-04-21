@@ -15,11 +15,11 @@ export default handleActions({
     return {...state, playing: action.payload};
   },
 
-  UPDATE_TIMESCALE: (state, action) => {
-    return {...state, timing: {left: action.payload}};
+  SET_SEEKER: (state, action) => {
+    return {...state, timing: {...state.timing, seeker: action.payload}};
   },
 
-  UPDATE_ZOOM: (state, action) => {
+  SET_ZOOM: (state, action) => {
     let zoom = Math.min(Math.max(action.payload, zoomLimits.LOWER), zoomLimits.UPPER);
     let zoomRatio = state.zoomLevel/zoom;
     return {...state, zoomLevel: zoom};
@@ -27,6 +27,10 @@ export default handleActions({
 
   STOP_PLAYING: (state, action) => {
     return {...state, playing: action.payload};
+  },
+
+  SET_CURSOR: (state, action) => {
+    return {...state, timing: {...state.timing, cursor: action.payload}};
   },
   
   ADD_ROW: (state, action) => {

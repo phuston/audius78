@@ -14,7 +14,11 @@ class Row extends Component{
     return (
       <div className={styles.row} >
         <RowTool />
-        <AudioBlock data={this.props.rowData} currentZoom={this.props.currentZoom}/>
+        <AudioBlock data={this.props.rowData} 
+          playing={this.props.playing}
+        	currentZoom={this.props.currentZoom}
+        	setCursor={this.props.setCursor}
+        	setSeeker={this.props.setSeeker}/>
       </div>
     )
   }
