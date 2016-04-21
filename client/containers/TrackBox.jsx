@@ -92,7 +92,7 @@ class TrackBox extends Component{
   drawTimescale(x) {
     this.updating = true;
     if (this.props.workspace.playing === playingMode.PLAYING) {
-      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.pixPerSec/50));
+      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.pixPerSec/60));
       this.props.updateTimescale(x);
     } else {
       this.updating = false;

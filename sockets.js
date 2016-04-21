@@ -1,5 +1,4 @@
 var socketIO = require('socket.io');
-var Workspace = require('./models/workspace.js');
 
 var socketObject = {
   socketServer: function (server) {
@@ -7,12 +6,12 @@ var socketObject = {
 
     io.sockets.on('connection', function(socket) {
 
-      socket.on('connectWorkspace', function(username, hashcode){
+      socket.on('adduser', function(username, hashcode){
         // TODO: Perform some sort of validation to ensure that workspace exists
         // Store username in socket session for this client
         socket.username = username;
         // Store room name in socket session for this client
-        socket.workspaceId = hashcode;
+        socket.workspace = hashcode;
         // Send client to workspace at hashcode
         socket.join(hashcode);
         // TODO: What do we need to emit to let the other users know to add a new user?

@@ -19,15 +19,10 @@ class Workspace extends Component {
 
   constructor(props) {
     super(props);
-
-    let dispatch = this.props.dispatch;
-
+    this.socket = io('http://localhost:3000');
     this.onDrop = this.onDrop.bind(this);
 
     this.playMusic = this.playMusic.bind(this);
-
-    this.socket = io('http://localhost:3000');
-    // TODO: pass this socket connection all the way down to the components that need it
 
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
     this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
@@ -35,6 +30,8 @@ class Workspace extends Component {
     this.splitBlock = (newBlocks) => dispatch(workspaceActions.splitBlock(newBlocks));
     this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
 
+    // BindActions
+    let dispatch = this.props.dispatch;
     this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
     this.updateTimescale = (left) => dispatch(workspaceActions.updateTimescale(left));
     this.updateZoom = (newZoom) => {
@@ -103,7 +100,6 @@ class Workspace extends Component {
 
         let audioCtx = this.props.workspace.audioCtx;
         audioCtx.close();
-
         this.audioContext(undefined);
       }
     }
