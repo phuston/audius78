@@ -10,9 +10,7 @@ class Welcome extends Component{
 
     this.handleInputChange = (e) => this.workspaceId = e.target.value;
 
-    let dispatch = this.props.dispatch;
     let audioCtx = new (window.AudioContext || window.webkitAudioContexet)();
-    // dispatch(workspaceActions.audioContext(audioCtx));
 
     this.loadWorkspace = () => this.props.onLoadWorkspace(this.workspaceId, audioCtx);
     this.createWorkspace = () => this.props.onNewWorkspace(audioCtx);
@@ -21,30 +19,27 @@ class Welcome extends Component{
   render() {
     return (
       <div className={styles.existingWorkspace} >
-
-        <Link to='/workspace'> 
         <input 
           className={styles.workspaceButton}
           type='button' 
           value='New Workspace' 
-          onClick={this.createWorkspace}/>
-        </Link>
+          onClick={this.createWorkspace}
+        />
 
         <input
           id='workspaceId'
           className={styles.existingInput}
           type='text' 
           placeholder='Enter Code'
-          onChange={this.handleInputChange} />
+          onChange={this.handleInputChange} 
+        />
         
-        <Link to='/workspace'>
         <input 
           className={styles.existingButton}
           type='button' 
           value='Enter Existing Workspace'
           onClick={this.loadWorkspace}
         />
-        </Link>
       </div>
     );
   }

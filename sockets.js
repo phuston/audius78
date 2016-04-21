@@ -6,15 +6,17 @@ var socketObject = {
 
     io.sockets.on('connection', function(socket) {
 
-      socket.on('adduser', function(username, hashcode){
+      socket.on('connectWorkspace', function(username, hashcode){
         // TODO: Perform some sort of validation to ensure that workspace exists
         // Store username in socket session for this client
         socket.username = username;
         // Store room name in socket session for this client
-        socket.workspace = hashcode;
+        socket.workspaceId = hashcode;
         // Send client to workspace at hashcode
         socket.join(hashcode);
         // TODO: What do we need to emit to let the other users know to add a new user?
+
+        console.log("hashcode ", hashcode);
       });
 
       socket.on('splitBlock', function(splitOperation){
