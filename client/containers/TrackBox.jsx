@@ -105,7 +105,6 @@ class TrackBox extends Component{
     let oldSeeker = this.props.workspace.timing.seeker;
     if (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) {
       this.seekedNew = true;
-      // this.drawTimescale(newSeeker, 'new');
     }
   }
 
@@ -114,16 +113,15 @@ class TrackBox extends Component{
     this.pixPerSec = 44100 / (zoom * 2000);
   }
 
-  drawTimescale(x, mess) {
+  drawTimescale(x) {
     this.updating = true;
-    console.log(mess, this.props.workspace.timing.seeker);
     if (this.seekedNew) {
       x = this.props.workspace.timing.seeker;
       this.seekedNew = false;
     }
 
     if (this.props.workspace.playing === playingMode.PLAYING) {
-      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.pixPerSec/60, mess));
+      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.pixPerSec/60));
       this.props.setSeeker(x);
     } else {
       this.updating = false;
@@ -146,7 +144,7 @@ class TrackBox extends Component{
   	}
 
     if (this.props.workspace.playing === playingMode.PLAYING && this.updating === false) {
-      this.drawTimescale(this.props.workspace.timing.seeker, 'original');
+      this.drawTimescale(this.props.workspace.timing.seeker);
     }
 
     return (
