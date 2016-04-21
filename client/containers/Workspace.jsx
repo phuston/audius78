@@ -19,14 +19,10 @@ class Workspace extends Component {
 
   constructor(props) {
     super(props);
-
-    let dispatch = this.props.dispatch;
-
-    this.onDrop = this.onDrop.bind(this);
-    this.playMusic = this.playMusic.bind(this);
-
     this.socket = io('http://localhost:3000');
-    // TODO: pass this socket connection all the way down to the components that need it
+    this.onDrop = this.onDrop.bind(this);
+
+    this.playMusic = this.playMusic.bind(this);
 
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
     this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
@@ -34,6 +30,8 @@ class Workspace extends Component {
     this.splitBlock = (newBlocks) => dispatch(workspaceActions.splitBlock(newBlocks));
     this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
 
+    // BindActions
+    let dispatch = this.props.dispatch;
     this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
     this.updateTimescale = (left) => dispatch(workspaceActions.updateTimescale(left));
     this.updateZoom = (newZoom) => {
@@ -50,26 +48,28 @@ class Workspace extends Component {
   }
 
   componentDidMount() {
-    socket.emit('/connectWorkspace', 'patrick', this.props.workspace.id);
-    socket.on('addRow', newRow => {
+
+    this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
+
+    this.socket.on('addRow', newRow => {
       this.addRow(newRow, audioCtx);
     });
 
-    socket.on('removeRow', rowId => {
+    this.socket.on('removeRow', rowId => {
       this.removeRow(rowId);
     });
 
-    socket.on('flagBlock', newFlags => {
+    this.socket.on('flagBlock', newFlags => {
       // TODO: Figure out where the row and block Ids will be coming from for this
       this.flagBlock(newFlags);
     });
 
-    socket.on('splitBlock', newBlocks => {
+    this.socket.on('splitBlock', newBlocks => {
       // TODO: Figure out where the rowId will be coming from for this
       this.splitBlock(newBlocks);
     });
 
-    socket.on('moveBlock', newBlocks => {
+    this.socket.on('moveBlock', newBlocks => {
       // TODO: Again, where does the rowId come from? This should be returned as an operation
       this.moveBlock(newBlocks);
     });
@@ -84,7 +84,7 @@ class Workspace extends Component {
         console.log("play now!");
         if(this.props.workspace.audioCtx === undefined){
           let audioCtx = this.playMusic();
-          dispatch(workspaceActions.audioContext(audioCtx));
+          this.audioContext(audioCtx);
         } else {
           let audioCtx = this.props.workspace.audioCtx;
           audioCtx.resume();
@@ -100,7 +100,6 @@ class Workspace extends Component {
 
         let audioCtx = this.props.workspace.audioCtx;
         audioCtx.close();
-
         this.audioContext(undefined);
       }
     }
@@ -116,9 +115,7 @@ class Workspace extends Component {
       body: data
     })
     .then( function(res){
-      // Handle socket business here such as:
-      //var socket = this.props.workspace.socket;
-      //this.props.workspace.socket.emit('fileUpload', res);
+      this.socket.emit('uploadFile', res);
     }.bind(this))
     .catch( function(err){
       console.error(err);
@@ -148,7 +145,7 @@ class Workspace extends Component {
   render() {
     return (
       <div className={styles.page} >
-        <Navbar className={styles.navbar}/>
+        <Navbar className={styles.navbar} />
 
         <div><h1>{this.props.workspace.id}</h1></div>
 
@@ -165,7 +162,7 @@ class Workspace extends Component {
             <TrackBox className={styles.trackbox} workspace={this.props.workspace} updateTimescale={this.updateTimescale}/>
           </div>
 
-          <Dropzone onDrop={this.onDrop}/>
+          <Dropzone onDrop={this.onDrop} />
         </div>
       </div>
     )
