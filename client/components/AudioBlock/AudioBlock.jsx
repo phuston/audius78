@@ -2,8 +2,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
-//Styling 
+// Styling 
 import styles from './AudioBlock.scss'
+
+// Others
+import { playingMode } from '../../../utils.js';
 
 // Audio Processing
 import extractPeaks from 'webaudio-peaks';
@@ -14,6 +17,7 @@ class Waveform extends Component {
 
     this.draw = this.draw.bind(this);
     this.peaks = extractPeaks(this.props.rawAudio, 2000*this.props.currentZoom, true);
+    this.handleCanvasClick = this.handleCanvasClick.bind(this);
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -28,6 +32,14 @@ class Waveform extends Component {
   componentDidMount() {
     let ctx = ReactDOM.findDOMNode(this).getContext('2d');
     this.draw(ctx);
+  }
+
+  handleCanvasClick(e) {
+    if (this.props.playing === playingMode.PLAYING) {
+      this.props.setSeeker(e.pageX-90);
+    } else {
+      this.props.setCursor(e.pageX-90);
+    }
   }
 
   draw(ctx) {
@@ -66,7 +78,11 @@ class Waveform extends Component {
 
   render() {
     let width = this.peaks.data[0].length/2;
-    return <canvas width={width} height={100}/>;
+    return (
+      <canvas width={width} height={100}
+        onClick={this.handleCanvasClick}
+      />
+    );
   }
 }
 
@@ -81,7 +97,12 @@ class AudioBlock extends Component {
   	let waveforms = data.audioBlocks.map((block, i) => {
   		return (
   			<div key={i} height={100} style={{'border': 'none'}}>
-  				<Waveform block={block} currentZoom={this.props.currentZoom} rawAudio={this.props.data.rawAudio}/>
+  				<Waveform block={block} 
+            playing={this.props.playing}
+            currentZoom={this.props.currentZoom} 
+            rawAudio={this.props.data.rawAudio}
+            setCursor={this.props.setCursor}
+            setSeeker={this.props.setSeeker}/>
   			</div>
 			);
   	});

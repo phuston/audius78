@@ -33,18 +33,19 @@ class Workspace extends Component {
     // BindActions
     let dispatch = this.props.dispatch;
     this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
-    this.updateTimescale = (left) => dispatch(workspaceActions.updateTimescale(left));
-    this.updateZoom = this.updateZoom.bind(this);
+    this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
+    this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
+    this.setZoom = this.setZoom.bind(this);
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.audioContext = (audioCtx) => dispatch(workspaceActions.audioContext(audioCtx));
   }
 
-  updateZoom(newZoom) {
+  setZoom(newZoom) {
     let zoomRatio = this.props.workspace.zoomLevel/newZoom;
-    this.props.dispatch(workspaceActions.updateZoom(newZoom));
-    let newLeft = ((this.props.workspace.timing.left) * zoomRatio);
+    this.props.dispatch(workspaceActions.setZoom(newZoom));
+    let newSeeker = ((this.props.workspace.timing.seeker) * zoomRatio);
     if (newZoom <= zoomLimits.UPPER && newZoom >= zoomLimits.LOWER) {
-      this.updateTimescale(newLeft);
+      this.setSeeker(newSeeker);
     }
   }
 
@@ -156,12 +157,18 @@ class Workspace extends Component {
           <Toolbar className={styles.toolbar} 
             togglePlaying={this.togglePlaying} 
             playing={this.props.workspace.playing}
-            updateZoom={this.updateZoom}
+            setZoom={this.setZoom}
             currentZoom={this.props.workspace.zoomLevel}
-            stopPlaying={this.stopPlaying}/>
+            stopPlaying={this.stopPlaying}
+            setSeeker={this.setSeeker}
+            cursor={this.props.workspace.timing.cursor}
+            />
 
           <div className={styles.songs}>
-            <TrackBox className={styles.trackbox} workspace={this.props.workspace} updateTimescale={this.updateTimescale}/>
+            <TrackBox className={styles.trackbox} 
+              workspace={this.props.workspace} 
+              setCursor={this.setCursor}
+              setSeeker={this.setSeeker}/>
           </div>
 
           <Dropzone onDrop={this.onDrop} />

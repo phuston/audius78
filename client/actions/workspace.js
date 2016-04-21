@@ -91,17 +91,21 @@ export const togglePlaying = createAction(types.TOGGLE_PLAYING, (playing) => {
   return playing;
 });
 
-export const updateTimescale = createAction(types.UPDATE_TIMESCALE, (left) => {
-  return left;
+export const setSeeker = createAction(types.SET_SEEKER, (seeker) => {
+  return seeker;
 });
 
-export const updateZoom = createAction(types.UPDATE_ZOOM, (newZoom) => {
+export const setZoom = createAction(types.SET_ZOOM, (newZoom) => {
   return newZoom;
 });
 
 export const stopPlaying = createAction(types.STOP_PLAYING, (stop) => {
   return stop;
-})
+});
+
+export const setCursor = createAction(types.SET_CURSOR, (cursor) => {
+  return cursor;
+});
 
 export const addRow = createAction(types.ADD_ROW, (newRow, audioCtx) => {
   // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that
