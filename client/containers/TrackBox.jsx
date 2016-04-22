@@ -60,12 +60,11 @@ class TrackBox extends Component{
     this.setSpeed = this.setSpeed.bind(this);
     this.updating = false;
     this.seekedNew = false;
-    let zoom = this.props.workspace.zoomLevel;
-    this.pixPerSec = 44100 / (zoom * 2000);
 	}
 
   setSpeed(speed) {
-    this.speed = speed;
+    // this.speed = speed;
+    this.props.setSpeed(speed);
   }
 
   emitSplitBlock(rowId, blockId, splitTime) {
@@ -111,15 +110,8 @@ class TrackBox extends Component{
     let oldSeeker = this.props.workspace.timing.seeker;
     if (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) {
       // Pass workspace the new audio time in seconds
-      this.props.seekTime(newSeeker / this.speed);
+      this.props.seekTime(newSeeker / this.props.workspace.timing.speed);
       this.seekedNew = true;
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    let zoom = this.props.workspace.zoomLevel;
-    if (zoom !== prevProps.workspace.zoomLevel) {
-      this.pixPerSec = 44100 / (zoom * 2000);
     }
   }
 
@@ -131,7 +123,7 @@ class TrackBox extends Component{
     }
 
     if (this.props.workspace.playing === playingMode.PLAYING) {
-      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.speed/60));
+      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.props.workspace.timing.speed/60));
       this.props.setSeeker(x);
     } else {
       this.updating = false;

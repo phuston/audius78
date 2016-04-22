@@ -7,7 +7,7 @@ export default handleActions({
     return {...state, id: action.payload.id, rows: action.payload.rows};
   },
 
-  TOGGLE_PLAYING: (state, action) => {
+  SET_PLAYING_MODE: (state, action) => {
     return {...state, playing: action.payload};
   },
 
@@ -27,6 +27,10 @@ export default handleActions({
 
   SET_CURSOR: (state, action) => {
     return {...state, timing: {...state.timing, cursor: action.payload}};
+  },
+
+  SET_SPEED: (state, action) => {
+    return {...state, timing: {...state.timing, speed: action.payload}};
   },
   
   ADD_ROW: (state, action) => {

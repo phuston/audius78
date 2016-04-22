@@ -26,7 +26,9 @@ class Waveform extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     let ctx = ReactDOM.findDOMNode(this).getContext('2d');
-    this.draw(ctx);
+    if (prevProps.currentZoom !== this.props.currentZoom) {
+      this.draw(ctx);
+    }
   }
 
   componentDidMount() {
