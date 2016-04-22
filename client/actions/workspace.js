@@ -83,8 +83,8 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, au
   });
 });
 
-export const togglePlaying = createAction(types.TOGGLE_PLAYING, (playing) => {
-  return playing;
+export const setPlayingMode = createAction(types.SET_PLAYING_MODE, (mode) => {
+  return mode;
 });
 
 export const setSeeker = createAction(types.SET_SEEKER, (seeker) => {
@@ -101,6 +101,10 @@ export const stopPlaying = createAction(types.STOP_PLAYING, (stop) => {
 
 export const setCursor = createAction(types.SET_CURSOR, (cursor) => {
   return cursor;
+});
+
+export const setSpeed = createAction(types.SET_SPEED, (speed) => {
+  return speed;
 });
 
 export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
