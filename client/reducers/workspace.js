@@ -7,10 +7,6 @@ export default handleActions({
     return {...state, id: action.payload.id, rows: action.payload.rows};
   },
 
-  SET_AUDIO_CONTEXT: (state, action) => {
-  	return {...state, audioCtx: action.payload};
-  },
-
   TOGGLE_PLAYING: (state, action) => {
     return {...state, playing: action.payload};
   },
