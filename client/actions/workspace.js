@@ -83,7 +83,7 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, au
   });
 });
 
-export const audioContext = createAction(types.AUDIO_CONTEXT, (audioCtx) => {
+export const setAudioContext = createAction(types.SET_AUDIO_CONTEXT, (audioCtx) => {
   return audioCtx;
 });
 
@@ -107,10 +107,10 @@ export const setCursor = createAction(types.SET_CURSOR, (cursor) => {
   return cursor;
 });
 
-export const addRow = createAction(types.ADD_ROW, (newRow, audioCtx) => {
+export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
   // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that
   // Not sure if this works
-  return fetch(newRow.rawAudio)
+  return fetch(addOperation.newRow.rawAudio)
   .then((file) => {
     return file.arrayBuffer();
   })
@@ -118,8 +118,8 @@ export const addRow = createAction(types.ADD_ROW, (newRow, audioCtx) => {
     return audioCtx.decodeAudioData(arrayBuffer)
   })
   .then((buffer) => {
-    newRow.rawAudio = buffer;
-    return newRow;
+    addOperation.newRow.rawAudio = buffer;
+    return addOperation.newRow;
   })
   .catch(err => {
     console.log(err);

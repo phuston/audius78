@@ -1,4 +1,5 @@
 var socketIO = require('socket.io');
+var Workspace = require('./models/workspace')
 
 var socketObject = {
   socketServer: function (server) {
@@ -59,9 +60,20 @@ var socketObject = {
       });
 
       socket.on('addRow', function(addOperation){
-        // TODO: Same pattern as above
-        // TODO: Create mock row object, with the rawAudio as the filename sent in
-        // Then, save that row and emit a new object
+        Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
+          var newRow;
+
+          for (var i = 0; i < workspace.rows.length; i++) {
+            if(workspace.rows[i]._id == addOperation.rowId) {
+              newRow = workspace.rows[i];
+              newRow.rowId = i;
+            }
+          }
+          var applyOperation = {
+            newRow: newRow
+          }
+          io.sockets.in(socket.workspaceId).emit('applyAddRow', applyOperation);
+        })
       });
 
       socket.on('removeRow', function(removeOperation){

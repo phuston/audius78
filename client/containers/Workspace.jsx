@@ -37,7 +37,7 @@ class Workspace extends Component {
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
     this.setZoom = this.setZoom.bind(this);
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
-    this.audioContext = (audioCtx) => dispatch(workspaceActions.audioContext(audioCtx));
+    this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
   }
 
   setZoom(newZoom) {
@@ -54,8 +54,10 @@ class Workspace extends Component {
 
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
 
-    this.socket.on('applyAddRow', newRow => {
-      this.addRow(newRow, audioCtx);
+    this.socket.on('applyAddRow', applyOperation => {
+      let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      console.log(applyOperation);
+      this.addRow(applyOperation, audioCtx);
     });
 
     this.socket.on('applyRemoveRow', rowId => {
@@ -87,7 +89,7 @@ class Workspace extends Component {
         console.log("play now!");
         if(this.props.workspace.audioCtx === undefined){
           let audioCtx = this.playMusic();
-          this.audioContext(audioCtx);
+          this.setAudioContext(audioCtx);
         } else {
           let audioCtx = this.props.workspace.audioCtx;
           audioCtx.resume();
@@ -103,7 +105,7 @@ class Workspace extends Component {
 
         let audioCtx = this.props.workspace.audioCtx;
         audioCtx.close();
-        this.audioContext(undefined);
+        this.setAudioContext(undefined);
       }
     }
   }
@@ -118,12 +120,18 @@ class Workspace extends Component {
       method: 'POST',
       body: data
     })
-    .then( function(rowId){
-      console.log("FILE_UPLOADED", rowId);
-      this.socket.emit('addRow', rowId);
-    }.bind(this))
-    .catch( function(err){
-      console.error(err);
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      let addRowOperation = {
+        workspaceId: this.props.workspace.id,
+        rowId: data.rowId
+      }
+      this.socket.emit('addRow', addRowOperation);
+    })
+    .catch((err) => {
+      console.log(err);
     });
   }
 
@@ -131,7 +139,7 @@ class Workspace extends Component {
     let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     let workspace = this.props.workspace;
-    let sources = workspace.rows.map( function(elem){
+    let sources = Array.prototype.map.call(workspace.rows, function(elem){
       let source = audioCtx.createBufferSource();
       source.buffer = elem.rawAudio;
       source.connect(audioCtx.destination);

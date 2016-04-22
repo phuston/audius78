@@ -7,7 +7,7 @@ export default handleActions({
     return {...state, id: action.payload.id, rows: action.payload.rows};
   },
 
-  AUDIO_CONTEXT: (state, action) => {
+  SET_AUDIO_CONTEXT: (state, action) => {
   	return {...state, audioCtx: action.payload};
   },
 
@@ -34,12 +34,16 @@ export default handleActions({
   },
   
   ADD_ROW: (state, action) => {
-		return {...state, rows: {...state.rows, [action.payload.rowId]:action.payload.newRow}};
+    let oldLength = state.rows.length;
+		return {...state, rows: {...state.rows, [action.payload.rowId]:action.payload, length: oldLength+1}};
   },
 
   REMOVE_ROW: (state, action) => {
+    // TODO: Tentative, might not work. Also update indices
     let query = '!' + action.payload;
-    return {...state, rows: filter(...state.rows, query)};
+    let newRows = filter(state.rows, query);
+    newRows.length -= 1;
+    return {...state, rows: newRows};
   },
 
   // TODO: Fix this (maybe) - not sure if actually broken

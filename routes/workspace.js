@@ -33,8 +33,7 @@ router.post('/load', function(req, res, next) {
       return console.error(err);
     }
 
-    console.log(workspace);
-    res.json({'workspace': workspace});
+    res.json({workspace: workspace});
   })
 });
 
