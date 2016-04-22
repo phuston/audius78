@@ -21,6 +21,7 @@ class Workspace extends Component {
     super(props);
     this.socket = io('http://localhost:3000');
     this.audioCtx = undefined;
+    this.time = 0;
     this.sourceBuffers = [];
     this.onDrop = this.onDrop.bind(this);
 
@@ -144,12 +145,18 @@ class Workspace extends Component {
     }.bind(this));
 
     this.sourceBuffers.map( function(elem){
-      elem.start();
-    });
+      elem.start(this.audioCtx.currentTime, this.time);
+    }.bind(this));
   }
 
   seekTime(time) {
+    this.time = time;
     console.log(time);
+    if( this.props.workspace.playing === playingMode.PLAYING ){
+      this.audioCtx.close();
+      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      this.playMusic();
+    }
   }
 
   render() {
