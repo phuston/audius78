@@ -44,7 +44,7 @@ module.exports = function(){
                     console.error("Rename error");
                     return res.status(500).json(err);
                   }
-                  fs.unlink(req.file.path, function(err){
+                  fs.unlink(req.file.path+req.file.originalname, function(err){
                     if( err ){
                       console.error("Unlink error");
                       return res.status(500).json(err);

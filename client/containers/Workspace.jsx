@@ -119,6 +119,9 @@ class Workspace extends Component {
 
     fetch('/api/upload', {
       method: 'POST',
+      headers: {
+        'Accept': 'application/json'
+      },
       body: data
     })
     .then((response) => {
