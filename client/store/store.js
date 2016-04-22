@@ -24,7 +24,7 @@ let store = createStore(rootReducer, compose(applyMiddleware(...middlewares), de
 
 store.dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
 store.dispatch(workspaceActions.setSeeker(0));
-store.dispatch(workspaceActions.setZoom(0.5));
+store.dispatch(workspaceActions.setZoom(1));
 store.dispatch(workspaceActions.setCursor(0));
 
 reduxRouter.listenForReplays(store);
