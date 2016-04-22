@@ -16,7 +16,7 @@ function generateUUID() {
 router.post('/create', function(req, res, next) {
   // Compute real hash for new workspace here}
   var hash = generateUUID();
-  var newWorkspace = Object.assign(defaultWorkspace);
+  var newWorkspace = defaultWorkspace;
   newWorkspace.id = hash;
   Workspace.create(newWorkspace, function (err, workspace) {
     if (err) {
