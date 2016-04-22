@@ -37,6 +37,8 @@ auth.js
 
 # Don't push compiled code
 bundle.js
+/static/
+/uploads/
 
 # Swap files for vim
 *.swp

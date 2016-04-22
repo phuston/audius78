@@ -9,4 +9,4 @@ module.exports.modelToState = function(model) {
 
 module.exports.playingMode = Object.freeze({ PLAYING: 0, PAUSE: 1, STOP: 2 });
 
-module.exports.zoomLimits = Object.freeze({ LOWER: 1/16, UPPER: 4 });
+module.exports.zoomLimits = Object.freeze({ LOWER: 1/8, UPPER: 4 });
