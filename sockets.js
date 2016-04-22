@@ -26,8 +26,15 @@ var socketObject = {
             console.log(err);
           } else {
             console.log(workspace);
-            // TODO: update the workspace here!
-            var updatedState = {};
+            
+            var row = workspace.rows.filter(function(row){ return row.rowId == splitOperation })[0];
+            var splitBlock = row.audioBlocks.filter(function(block) { return block.blockId == splitOperation.blockId})[0];
+
+            console.log(splitBlock);
+
+            // TODO: Figure out how to split the time and create the two audioblocks to replace the one
+            // TODO: Remove `splitblock` from the mongo object
+
             io.sockets.in(socket.workspaceId).emit('applySplitBlock', updatedState);
           }
         });
