@@ -21,7 +21,12 @@ module.exports = function(){
         }
         console.log('req.body', req.body);
         console.log('workspace', req.body.workspaceId);
-        sox([req.file.path, 
+
+        var extension =
+        fs.renameSync(req.file.path, req.file.path+req.file.originalname);
+
+        console.log(req.file);
+        sox([req.file.path+req.file.originalname, 
             req.file.filename + '.ogg'],
             function(err, outFP){ 
               console.log(outFP);
