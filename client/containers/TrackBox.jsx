@@ -110,6 +110,8 @@ class TrackBox extends Component{
     let newSeeker = nextProps.workspace.timing.seeker;
     let oldSeeker = this.props.workspace.timing.seeker;
     if (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) {
+      // Pass workspace the new audio time in seconds
+      this.props.seekTime(newSeeker / this.speed);
       this.seekedNew = true;
     }
   }

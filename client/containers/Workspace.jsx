@@ -25,6 +25,7 @@ class Workspace extends Component {
     this.onDrop = this.onDrop.bind(this);
 
     this.playMusic = this.playMusic.bind(this);
+    this.seekTime = this.seekTime.bind(this);
 
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
     this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
@@ -147,6 +148,10 @@ class Workspace extends Component {
     });
   }
 
+  seekTime(time) {
+    console.log(time);
+  }
+
   render() {
     return (
       <div className={styles.page} >
@@ -171,6 +176,7 @@ class Workspace extends Component {
               workspace={this.props.workspace} 
               setCursor={this.setCursor}
               setSeeker={this.setSeeker}
+              seekTime={this.seekTime}
             />
           </div>
 
