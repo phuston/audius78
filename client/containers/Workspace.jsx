@@ -27,6 +27,7 @@ class Workspace extends Component {
 
     this.playMusic = this.playMusic.bind(this);
     this.seekTime = this.seekTime.bind(this);
+    this.setZoom = this.setZoom.bind(this);
 
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
     this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
@@ -36,10 +37,10 @@ class Workspace extends Component {
 
     // BindActions
     let dispatch = this.props.dispatch;
-    this.togglePlaying = (playing) => dispatch(workspaceActions.togglePlaying(playing));
+    this.setSpeed = (speed) => dispatch(workspaceActions.setSpeed(speed));
+    this.setPlayingMode = (playing) => dispatch(workspaceActions.setPlayingMode(playing));
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
-    this.setZoom = this.setZoom.bind(this);
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
   }
@@ -101,6 +102,7 @@ class Workspace extends Component {
       } else if( playingState === playingMode.PAUSE){
         console.log('Pause');
         this.audioCtx.suspend();
+        this.setSeeker(this.audioCtx.currentTime * this.props.workspace.timing.speed);
       } else if( playingState === playingMode.STOP ){
         console.log('Stop');
         this.audioCtx.close();
@@ -151,7 +153,6 @@ class Workspace extends Component {
 
   seekTime(time) {
     this.time = time;
-    console.log(time);
     if( this.props.workspace.playing === playingMode.PLAYING ){
       this.audioCtx.close();
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -169,7 +170,7 @@ class Workspace extends Component {
         <div className={styles.workspace} >
 
           <Toolbar className={styles.toolbar} 
-            togglePlaying={this.togglePlaying} 
+            setPlayingMode={this.setPlayingMode} 
             playing={this.props.workspace.playing}
             setZoom={this.setZoom}
             currentZoom={this.props.workspace.zoomLevel}
@@ -184,6 +185,7 @@ class Workspace extends Component {
               setCursor={this.setCursor}
               setSeeker={this.setSeeker}
               seekTime={this.seekTime}
+              setSpeed={this.setSpeed}
             />
           </div>
 

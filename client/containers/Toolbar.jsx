@@ -17,7 +17,7 @@ class Toolbar extends Component{
     return (
       <div className = {styles.toolbar}>
         <h2> Toolbar </h2>
-        <Tools togglePlaying={this.props.togglePlaying} 
+        <Tools setPlayingMode={this.props.setPlayingMode} 
           setZoom={this.props.setZoom}
           currentZoom={this.props.currentZoom}
           stopPlaying={this.props.stopPlaying}

@@ -7,17 +7,17 @@ class Tools extends Component{
   constructor(props) {
     super(props);
 
-    this.togglePlaying = this.togglePlaying.bind(this);
+    this.setPlayingMode = this.setPlayingMode.bind(this);
     this.zoomIn = this.zoomIn.bind(this);
     this.zoomOut = this.zoomOut.bind(this);
     this.stopPlaying = this.stopPlaying.bind(this);
   }
 
-  togglePlaying() {
+  setPlayingMode() {
     if( this.props.playing === playingMode.PLAYING ){
-      this.props.togglePlaying(playingMode.PAUSE);
+      this.props.setPlayingMode(playingMode.PAUSE);
     } else {
-      this.props.togglePlaying(playingMode.PLAYING);
+      this.props.setPlayingMode(playingMode.PLAYING);
     }
   }
 
@@ -44,7 +44,7 @@ class Tools extends Component{
         <input type='button' 
           value={this.props.playing === playingMode.PLAYING ? 'Pause' : 'Play'} 
           className={styles.pauseplay} 
-          onClick={this.togglePlaying}/>
+          onClick={this.setPlayingMode}/>
         <input type='button' value='Stop' className={styles.stop}
           onClick={this.stopPlaying} />
         <input type='button' value='Cut' className={styles.cut} />
