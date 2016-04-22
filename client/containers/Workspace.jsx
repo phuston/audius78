@@ -102,7 +102,7 @@ class Workspace extends Component {
       } else if( playingState === playingMode.PAUSE){
         console.log('Pause');
         this.audioCtx.suspend();
-        this.setSeeker(this.audioCtx.currentTime * this.props.workspace.timing.speed);
+        this.setSeeker((this.time+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
       } else if( playingState === playingMode.STOP ){
         console.log('Stop');
         this.audioCtx.close();
