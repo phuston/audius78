@@ -118,6 +118,9 @@ export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
     return audioCtx.decodeAudioData(arrayBuffer)
   })
   .then((buffer) => {
+    // Have to close the audioCtx used to create buffer objects
+    audioCtx.close();
+
     addOperation.newRow.rawAudio = buffer;
     return addOperation.newRow;
   })
