@@ -20,6 +20,8 @@ class Workspace extends Component {
   constructor(props) {
     super(props);
     this.socket = io('http://localhost:3000');
+    this.audioCtx = undefined;
+    this.sourceBuffers = [];
     this.onDrop = this.onDrop.bind(this);
 
     this.playMusic = this.playMusic.bind(this);
@@ -86,26 +88,21 @@ class Workspace extends Component {
       let playingState = this.props.workspace.playing;
 
       if( playingState === playingMode.PLAYING ){
-        console.log("play now!");
-        if(this.props.workspace.audioCtx === undefined){
-          let audioCtx = this.playMusic();
-          this.setAudioContext(audioCtx);
+        if(this.audioCtx === undefined){
+          console.log("New play");
+          this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          this.playMusic();
         } else {
-          let audioCtx = this.props.workspace.audioCtx;
-          audioCtx.resume();
+          console.log("Old play");
+          this.audioCtx.resume();
         }
       } else if( playingState === playingMode.PAUSE){
-        console.log("Pause me bro!");
-        if( this.props.workspace.playing === playingMode.PAUSE ){
-          let audioCtx = this.props.workspace.audioCtx;
-          audioCtx.suspend();
-        }
+        console.log('Pause');
+        this.audioCtx.suspend();
       } else if( playingState === playingMode.STOP ){
-        console.log("Destroy the play!");
-
-        let audioCtx = this.props.workspace.audioCtx;
-        audioCtx.close();
-        this.setAudioContext(undefined);
+        console.log('Stop');
+        this.audioCtx.close();
+        this.audioCtx = undefined;
       }
     }
   }
@@ -136,23 +133,18 @@ class Workspace extends Component {
   }
 
   playMusic(){
-    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
     let workspace = this.props.workspace;
-    let sources = Array.prototype.map.call(workspace.rows, function(elem){
-      let source = audioCtx.createBufferSource();
+    this.sourceBuffers = Array.prototype.map.call(workspace.rows, function(elem){
+      let source = this.audioCtx.createBufferSource();
       source.buffer = elem.rawAudio;
-      source.connect(audioCtx.destination);
+      source.connect(this.audioCtx.destination);
 
       return source;
-    });
+    }.bind(this));
 
-    sources.map( function(elem){
+    this.sourceBuffers.map( function(elem){
       elem.start();
     });
-    //audioCtx.close();
-    //
-    return audioCtx;
   }
 
   render() {

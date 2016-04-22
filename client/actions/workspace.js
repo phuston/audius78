@@ -83,10 +83,6 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, au
   });
 });
 
-export const setAudioContext = createAction(types.SET_AUDIO_CONTEXT, (audioCtx) => {
-  return audioCtx;
-});
-
 export const togglePlaying = createAction(types.TOGGLE_PLAYING, (playing) => {
   return playing;
 });
@@ -141,3 +137,4 @@ export const splitBlock = createAction(types.SPLIT_BLOCK, (newBlocks) => {
 export const moveBlock = createAction(types.MOVE_BLOCK, (newBlocks) => {
   return newBlocks;
 });
+
