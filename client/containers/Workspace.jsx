@@ -136,17 +136,17 @@ class Workspace extends Component {
 
   playMusic(){
     let workspace = this.props.workspace;
-    this.sourceBuffers = Array.prototype.map.call(workspace.rows, function(elem){
+    this.sourceBuffers = Array.prototype.map.call(workspace.rows, (elem) => {
       let source = this.audioCtx.createBufferSource();
       source.buffer = elem.rawAudio;
       source.connect(this.audioCtx.destination);
 
       return source;
-    }.bind(this));
+    });
 
-    this.sourceBuffers.map( function(elem){
+    this.sourceBuffers.map( (elem) => {
       elem.start(this.audioCtx.currentTime, this.time);
-    }.bind(this));
+    });
   }
 
   seekTime(time) {
