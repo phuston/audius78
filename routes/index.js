@@ -64,8 +64,9 @@ module.exports = function(){
                       {safe: true, upsert: false},
                       function(err, workspace) {
                         if (err) {
-                          res.json({err: err});
+                          res.status(500).json(err);
                         } else {
+                          console.log("ROWID", rowId);
                           res.json({rowId: rowId});
                         }
                       }
