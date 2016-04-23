@@ -7,6 +7,7 @@ export const NEW_WORKSPACE = 'NEW_WORKSPACE';
 export const LOAD_WORKSPACE = 'LOAD_WORKSPACE';
 export const CONN_SOCKET = 'CONN_SOCKET';
 export const SET_PLAYING_MODE = 'SET_PLAYING_MODE';
+export const SET_TOOL_MODE = 'SET_TOOL_MODE';
 export const SET_SEEKER = 'SET_SEEKER';
 export const SET_ZOOM = 'SET_ZOOM';
 export const STOP_PLAYING = 'STOP_PLAYING';

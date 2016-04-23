@@ -1,5 +1,6 @@
 var socketIO = require('socket.io');
-var Workspace = require('./models/workspace')
+var Workspace = require('./models/workspace');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 var socketObject = {
   socketServer: function (server) {
@@ -23,19 +24,43 @@ var socketObject = {
       socket.on('splitBlock', function(splitOperation){
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
           if (err) {
-            console.log(err);
+            console.error(err);
           } else {
-            console.log(workspace);
-            
-            var row = workspace.rows.filter(function(row){ return row.rowId == splitOperation })[0];
-            var splitBlock = row.audioBlocks.filter(function(block) { return block.blockId == splitOperation.blockId})[0];
+            var row = workspace.rows.filter(function (row){ 
+              return row._id == splitOperation.rowId 
+            })[0];
 
-            console.log(splitBlock);
+            var leftBlock, index, newBlocks;
+            var splitAt = splitOperation.operation.splitElement;
 
-            // TODO: Figure out how to split the time and create the two audioblocks to replace the one
-            // TODO: Remove `splitblock` from the mongo object
+            newBlocks = row.audioBlocks.filter(function(block, i) {
+              if (block._id == splitOperation.blockId) {
+                leftBlock = row.audioBlocks[i];
+                index = i;
+                return false;
+              }
+              return true;
+            });
 
-            io.sockets.in(socket.workspaceId).emit('applySplitBlock', updatedState);
+            var oldEnd = leftBlock.file_end;
+            leftBlock.file_end = (splitAt % 2 === 0) ? splitAt : splitAt+1;
+
+            var lengthOfBlock = (leftBlock.file_end - leftBlock.file_offset) / 2;
+            var rightBlock = {
+              row_offset: leftBlock.row_offset + lengthOfBlock,
+              file_offset: leftBlock.file_end,
+              file_end: oldEnd,
+              flags: [],
+              _id: new ObjectId()
+            }
+
+            console.log('leftBlock', leftBlock);
+            console.log('rightBlock', rightBlock);
+
+            newBlocks.push(leftBlock);
+            newBlocks.push(rightBlock);
+
+            // io.sockets.in(socket.workspaceId).emit('applySplitBlock', updatedState);
           }
         });
       });

@@ -11,6 +11,10 @@ export default handleActions({
     return {...state, playing: action.payload};
   },
 
+  SET_TOOL_MODE: (state, action) => {
+    return {...state, toolMode: action.payload};
+  },
+
   SET_SEEKER: (state, action) => {
     return {...state, timing: {...state.timing, seeker: action.payload}};
   },

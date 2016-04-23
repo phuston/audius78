@@ -37,6 +37,7 @@ class Workspace extends Component {
 
     // BindActions
     let dispatch = this.props.dispatch;
+    this.setToolMode = (mode) => dispatch(workspaceActions.setToolMode(mode));
     this.setSpeed = (speed) => dispatch(workspaceActions.setSpeed(speed));
     this.setPlayingMode = (playing) => dispatch(workspaceActions.setPlayingMode(playing));
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
@@ -92,19 +93,15 @@ class Workspace extends Component {
 
       if( playingState === playingMode.PLAYING ){
         if(this.audioCtx === undefined){
-          console.log("New play");
           this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
           this.playMusic();
         } else {
-          console.log("Old play");
           this.audioCtx.resume();
         }
       } else if( playingState === playingMode.PAUSE){
-        console.log('Pause');
         this.audioCtx.suspend();
         this.setSeeker((this.time+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
       } else if( playingState === playingMode.STOP ){
-        console.log('Stop');
         this.audioCtx.close();
         this.audioCtx = undefined;
       }
@@ -179,11 +176,13 @@ class Workspace extends Component {
             currentZoom={this.props.workspace.zoomLevel}
             stopPlaying={this.stopPlaying}
             setSeeker={this.setSeeker}
+            setToolMode={this.setToolMode}
             cursor={this.props.workspace.timing.cursor}
             />
 
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} 
+              socket={this.socket}
               workspace={this.props.workspace} 
               setCursor={this.setCursor}
               setSeeker={this.setSeeker}

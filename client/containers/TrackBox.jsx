@@ -67,13 +67,13 @@ class TrackBox extends Component{
     this.props.setSpeed(speed);
   }
 
-  emitSplitBlock(rowId, blockId, splitTime) {
+  emitSplitBlock(rowId, blockId, splitElement) {
     console.log("Emitting split operation");
     let splitOperation = {
       rowId: rowId,
       blockId: blockId,
       operation: {
-        splitTime: splitTime
+        splitElement: splitElement
       }
     }
     this.props.socket.emit('splitBlock', splitOperation)
@@ -137,10 +137,12 @@ class TrackBox extends Component{
           <Row key={row.rowId} 
             rowData={row} 
             currentZoom={this.props.workspace.zoomLevel}
+            toolMode={this.props.workspace.toolMode}
             playing={this.props.workspace.playing}
             setCursor={this.props.setCursor}
             setSeeker={this.props.setSeeker}
             setSpeed={this.setSpeed}
+            emitSplitBlock={this.emitSplitBlock}
           />
         );
 	  	});
