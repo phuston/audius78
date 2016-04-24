@@ -22,6 +22,7 @@ class Workspace extends Component {
     this.socket = io('http://localhost:3000');
     this.audioCtx = undefined;
     this.time = 0;
+    this.cursorTime = 0;
     this.sourceBuffers = [];
     this.onDrop = this.onDrop.bind(this);
 
@@ -41,7 +42,9 @@ class Workspace extends Component {
     this.setSpeed = (speed) => dispatch(workspaceActions.setSpeed(speed));
     this.setPlayingMode = (playing) => dispatch(workspaceActions.setPlayingMode(playing));
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
-    this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
+    this.setCursor = (cursor) => {
+      dispatch(workspaceActions.setCursor(cursor));
+    }
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
   }
@@ -50,8 +53,10 @@ class Workspace extends Component {
     let zoomRatio = this.props.workspace.zoomLevel/newZoom;
     this.props.dispatch(workspaceActions.setZoom(newZoom));
     let newSeeker = ((this.props.workspace.timing.seeker) * zoomRatio);
+    let newCursor = ((this.props.workspace.timing.cursor) * zoomRatio);
     if (newZoom <= zoomLimits.UPPER && newZoom >= zoomLimits.LOWER) {
       this.setSeeker(newSeeker);
+      this.setCursor(newCursor);
     }
   }
 
@@ -104,6 +109,7 @@ class Workspace extends Component {
       } else if( playingState === playingMode.STOP ){
         this.audioCtx.close();
         this.audioCtx = undefined;
+        this.time = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
       }
     }
   }

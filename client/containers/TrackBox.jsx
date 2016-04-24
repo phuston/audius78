@@ -57,15 +57,9 @@ class TrackBox extends Component{
     this.emitSplitBlock = this.emitSplitBlock.bind(this);
     this.emitFlagBlock = this.emitFlagBlock.bind(this);
     this.emitMoveBlock = this.emitMoveBlock.bind(this);
-    this.setSpeed = this.setSpeed.bind(this);
     this.updating = false;
     this.seekedNew = false;
 	}
-
-  setSpeed(speed) {
-    // this.speed = speed;
-    this.props.setSpeed(speed);
-  }
 
   emitSplitBlock(rowId, blockId, splitElement) {
     console.log("Emitting split operation");
@@ -108,8 +102,8 @@ class TrackBox extends Component{
   componentWillUpdate(nextProps, nextState) {
     let newSeeker = nextProps.workspace.timing.seeker;
     let oldSeeker = this.props.workspace.timing.seeker;
-    if (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) {
-      // Pass workspace the new audio time in seconds
+    if ( (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) 
+            && (this.props.workspace.playing === playingMode.PLAYING) ) {
       this.props.seekTime(newSeeker / this.props.workspace.timing.speed);
       this.seekedNew = true;
     }
@@ -141,7 +135,7 @@ class TrackBox extends Component{
             playing={this.props.workspace.playing}
             setCursor={this.props.setCursor}
             setSeeker={this.props.setSeeker}
-            setSpeed={this.setSpeed}
+            setSpeed={this.props.setSpeed}
             emitSplitBlock={this.emitSplitBlock}
           />
         );
