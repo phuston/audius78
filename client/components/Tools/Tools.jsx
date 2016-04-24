@@ -54,6 +54,16 @@ class Tools extends Component{
   }
 
   render() {
+    let cursorStyle, splitStyle, dragStyle;
+
+    if (this.props.toolMode === toolMode.CURSOR) {
+      cursorStyle = {'backgroundColor': 'red'};
+    } else if (this.props.toolMode === toolMode.SPLIT) {
+      splitStyle = {'backgroundColor': 'red'};
+    } else if (this.props.toolMode === toolMode.DRAG) {
+      dragStyle = {'backgroundColor': 'red'};
+    }
+
     return (
       <div className = {styles.tools} >
         <input type='button' 

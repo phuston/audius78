@@ -27,11 +27,18 @@ export const newWorkspace = createAction(types.LOAD_WORKSPACE, (audioCtx)=>{
           return audioCtx.decodeAudioData(arrayBuffer);
         }))
         .then((buffers) => {
-          let rows = utils.modelToState(data.workspace);
-          rows = Array.prototype.map.call(rows, (row, i) => {
+          let rows = {}
+          let len;
+
+          data.workspace.rows.map((row, i) => {
+            console.log(i, row);
             row.rawAudio = buffers[i];
+            rows[Number(i)] = row;
+            len = i;
             return row;
           });
+
+          rows.length = len+1;
           return {id: data.workspace.id, rows: rows}; 
         });
       });
@@ -68,11 +75,18 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, au
           return audioCtx.decodeAudioData(arrayBuffer);
         }))
         .then((buffers) => {
-          let rows = utils.modelToState(data.workspace);
-          rows = Array.prototype.map.call(rows, (row, i) => {
+          let rows = {}
+          let len;
+
+          data.workspace.rows.map((row, i) => {
+            console.log(i, row);
             row.rawAudio = buffers[i];
+            rows[Number(i)] = row;
+            len = i;
             return row;
           });
+
+          rows.length = len+1;
           return {id: data.workspace.id, rows: rows}; 
         });
       });
@@ -138,8 +152,8 @@ export const flagBlock = createAction(types.FLAG_TRACK, (newFlags) => {
   return newFlags;
 });
 
-export const splitBlock = createAction(types.SPLIT_BLOCK, (newBlocks) => {
-  return newBlocks;
+export const splitBlock = createAction(types.SPLIT_BLOCK, (splitOperation) => {
+  return splitOperation;
 });
 
 export const moveBlock = createAction(types.MOVE_BLOCK, (newBlocks) => {

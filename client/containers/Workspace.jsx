@@ -80,9 +80,9 @@ class Workspace extends Component {
       this.flagBlock(newFlags);
     });
 
-    this.socket.on('applySplitBlock', newBlocks => {
-      // TODO: Figure out where the rowId will be coming from for this
-      this.splitBlock(newBlocks);
+    this.socket.on('applySplitBlock', splitOperation => {
+      console.log('about to split block at', splitOperation);
+      this.splitBlock(splitOperation);
     });
 
     this.socket.on('applyMoveBlock', newBlocks => {
