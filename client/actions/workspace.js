@@ -87,6 +87,10 @@ export const setPlayingMode = createAction(types.SET_PLAYING_MODE, (mode) => {
   return mode;
 });
 
+export const setToolMode = createAction(types.SET_TOOL_MODE, (mode) => {
+  return mode;
+});
+
 export const setSeeker = createAction(types.SET_SEEKER, (seeker) => {
   return seeker;
 });

@@ -11,8 +11,12 @@ export default handleActions({
     return {...state, playing: action.payload};
   },
 
+  SET_TOOL_MODE: (state, action) => {
+    return {...state, toolMode: action.payload};
+  },
+
   SET_SEEKER: (state, action) => {
-    return {...state, timing: {...state.timing, seeker: action.payload}};
+    return {...state, timing: {...state.timing, seeker: Math.max(0,action.payload)}};
   },
 
   SET_ZOOM: (state, action) => {
@@ -26,7 +30,7 @@ export default handleActions({
   },
 
   SET_CURSOR: (state, action) => {
-    return {...state, timing: {...state.timing, cursor: action.payload}};
+    return {...state, timing: {...state.timing, cursor: Math.max(0,action.payload)}};
   },
 
   SET_SPEED: (state, action) => {

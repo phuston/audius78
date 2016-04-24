@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { playingMode } from '../../../utils.js';
+import { playingMode, toolMode } from '../../../utils.js';
 
 import styles from './Tools.scss';
 
@@ -11,6 +11,9 @@ class Tools extends Component{
     this.zoomIn = this.zoomIn.bind(this);
     this.zoomOut = this.zoomOut.bind(this);
     this.stopPlaying = this.stopPlaying.bind(this);
+    this.changeToCursor = this.changeToCursor.bind(this);
+    this.changeToDrag = this.changeToDrag.bind(this);
+    this.changeToSplit = this.changeToSplit.bind(this);
   }
 
   setPlayingMode() {
@@ -19,6 +22,18 @@ class Tools extends Component{
     } else {
       this.props.setPlayingMode(playingMode.PLAYING);
     }
+  }
+
+  changeToCursor() {
+    this.props.setToolMode(toolMode.CURSOR);
+  }
+
+  changeToSplit() {
+    this.props.setToolMode(toolMode.SPLIT);
+  }
+
+  changeToDrag() {
+    this.props.setToolMode(toolMode.DRAG);
   }
 
   stopPlaying(){
@@ -47,9 +62,9 @@ class Tools extends Component{
           onClick={this.setPlayingMode}/>
         <input type='button' value='Stop' className={styles.stop}
           onClick={this.stopPlaying} />
-        <input type='button' value='Cut' className={styles.cut} />
-        <input type='button' value='Move' className={styles.move} />
-        <input type='button' value='Split' className={styles.split} />
+        <input type='button' value='Cursor' className={styles.cut} onClick={this.changeToCursor} />
+        <input type='button' value='Drag' className={styles.move} onClick={this.changeToDrag} />
+        <input type='button' value='Split' className={styles.split} onClick={this.changeToSplit} />
         <input type='button' value='Zoom In' onClick={this.zoomIn} />
         <input type='button' value='Zoom Out' onClick={this.zoomOut} />
       </div>

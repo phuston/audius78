@@ -57,23 +57,17 @@ class TrackBox extends Component{
     this.emitSplitBlock = this.emitSplitBlock.bind(this);
     this.emitFlagBlock = this.emitFlagBlock.bind(this);
     this.emitMoveBlock = this.emitMoveBlock.bind(this);
-    this.setSpeed = this.setSpeed.bind(this);
     this.updating = false;
     this.seekedNew = false;
 	}
 
-  setSpeed(speed) {
-    // this.speed = speed;
-    this.props.setSpeed(speed);
-  }
-
-  emitSplitBlock(rowId, blockId, splitTime) {
+  emitSplitBlock(rowId, blockId, splitElement) {
     console.log("Emitting split operation");
     let splitOperation = {
       rowId: rowId,
       blockId: blockId,
       operation: {
-        splitTime: splitTime
+        splitElement: splitElement
       }
     }
     this.props.socket.emit('splitBlock', splitOperation)
@@ -108,8 +102,8 @@ class TrackBox extends Component{
   componentWillUpdate(nextProps, nextState) {
     let newSeeker = nextProps.workspace.timing.seeker;
     let oldSeeker = this.props.workspace.timing.seeker;
-    if (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) {
-      // Pass workspace the new audio time in seconds
+    if ( (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) 
+            && (this.props.workspace.playing === playingMode.PLAYING) ) {
       this.props.seekTime(newSeeker / this.props.workspace.timing.speed);
       this.seekedNew = true;
     }
@@ -137,10 +131,12 @@ class TrackBox extends Component{
           <Row key={row.rowId} 
             rowData={row} 
             currentZoom={this.props.workspace.zoomLevel}
+            toolMode={this.props.workspace.toolMode}
             playing={this.props.workspace.playing}
             setCursor={this.props.setCursor}
             setSeeker={this.props.setSeeker}
-            setSpeed={this.setSpeed}
+            setSpeed={this.props.setSpeed}
+            emitSplitBlock={this.emitSplitBlock}
           />
         );
 	  	});
