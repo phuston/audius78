@@ -17,27 +17,37 @@ class Waveform extends Component {
 
     this.draw = this.draw.bind(this);
     this.processProps = this.processProps.bind(this);
-    this.processProps(this.props.currentZoom);
+    this.needsToUpdate = this.needsToUpdate.bind(this);
+    this.processProps(this.props.currentZoom, this.props.block);
     this.handleCanvasClick = this.handleCanvasClick.bind(this);
     this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
   }
 
-  processProps(zoom) {
-  	let block = this.props.block;
+  needsToUpdate(oldProps, newProps) {
+  	return (
+  		(oldProps.currentZoom !== newProps.currentZoom) ||
+  		(oldProps.block.file_end !== newProps.block.file_end)
+		);
+  }
+
+  processProps(zoom, block) {
   	this.peaks = extractPeaks(this.props.rawAudio, 2000*zoom, true);
   	this.firstPeak = block.file_offset / zoom;
   	this.lastPeak = (block.file_end / zoom) || (this.peaks.data[0].length - 1);
   }
 
   componentWillReceiveProps(nextProps) {
-  	if (nextProps.currentZoom !== this.props.currentZoom) {
-    	this.processProps(nextProps.currentZoom);
+  	console.log(nextProps);
+  	console.log(this.props.block.file_end, nextProps.block.file_end);
+  	console.log(this.props.block.file_end !== nextProps.block.file_end);
+  	if (this.needsToUpdate(this.props, nextProps)) {
+    	this.processProps(nextProps.currentZoom, nextProps.block);
   	}
   }
 
   componentDidUpdate(prevProps, prevState) {
     let ctx = ReactDOM.findDOMNode(this).getContext('2d');
-    if (prevProps.currentZoom !== this.props.currentZoom) {
+    if (this.needsToUpdate(prevProps, this.props)) {
       this.draw(ctx);
       this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
     }
@@ -97,6 +107,7 @@ class Waveform extends Component {
 
   render() {
     let width = this.peaks.data[0].slice(this.firstPeak, this.lastPeak).length/2 - 2;
+    console.log('rendering', this.props.block);
     return (
       <canvas width={width} height={100}
         style={{'border': '1px solid black'}}

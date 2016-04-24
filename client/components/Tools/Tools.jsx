@@ -57,13 +57,10 @@ class Tools extends Component{
     let cursorStyle, splitStyle, dragStyle;
 
     if (this.props.toolMode === toolMode.CURSOR) {
-      console.log('setting cursor');
       cursorStyle = {'backgroundColor': 'red'};
     } else if (this.props.toolMode === toolMode.SPLIT) {
-      console.log('setting split');
       splitStyle = {'backgroundColor': 'red'};
     } else if (this.props.toolMode === toolMode.DRAG) {
-      console.log('setting drag');
       dragStyle = {'backgroundColor': 'red'};
     }
 

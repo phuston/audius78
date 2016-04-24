@@ -26,6 +26,8 @@ var socketObject = {
           if (err) {
             console.error(err);
           } else {
+            var newRows = workspace.rows;
+
             var row = workspace.rows.filter(function (row){ 
               return row._id == splitOperation.rowId 
             })[0];
@@ -57,10 +59,29 @@ var socketObject = {
             console.log('leftBlock', leftBlock);
             console.log('rightBlock', rightBlock);
 
-            newBlocks.push(leftBlock);
-            newBlocks.push(rightBlock);
+            newBlocks.splice(index, 0, leftBlock);
+            newBlocks.splice(index+1, 0, rightBlock);
 
-            // io.sockets.in(socket.workspaceId).emit('applySplitBlock', updatedState);
+            row.audioBlocks = newBlocks;
+            newRows[row.rowId] = row;
+
+            console.log(workspace._id);
+            Workspace.findByIdAndUpdate(
+              workspace._id,
+              {$set: {rows: newRows}},
+              {safe: true, upsert: false, new: true},
+              function(err, newWorkspace) {
+                if (err) {
+                  console.error(err);
+                }
+
+                console.log('newWorkspace', newWorkspace.rows[0].audioBlocks);
+                io.sockets.in(socket.workspaceId).emit('applySplitBlock', {
+                  rowId: row.rowId,
+                  newBlocks: newWorkspace.rows[row.rowId].audioBlocks
+                });
+              }
+            );
           }
         });
       });

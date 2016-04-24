@@ -54,11 +54,13 @@ export default handleActions({
   FLAG_BLOCK: (state, action) => {
     var block = {...state.rows[action.rowId][action.blockId], flags: action.newFlags};
     var row = {...state[action.rowId], [action.blockId]:block};
-    return {...state, rows: {...state.rows, [action.rowId]:row}};
+    return {...state, rows: {...state.rows, [action.payload.rowId]:row}};
   },
 
   SPLIT_BLOCK: (state, action) => {
-    return {...state, rows: {...state.rows, [action.rowId]:action.newRow}};
+    var rowToUpdate = state.rows[action.payload.rowId];
+    rowToUpdate.audioBlocks = action.payload.newBlocks;
+    return {...state, rows: {...state.rows, [action.payload.rowId]: rowToUpdate}};
   },
 
   MOVE_BLOCK: (state, action) => {

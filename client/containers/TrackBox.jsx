@@ -125,6 +125,7 @@ class TrackBox extends Component{
   }
 
   render() {
+    console.log('trackbox render');
   	if (this.props.workspace.rows !== undefined) {
 			var rows = Array.prototype.map.call(this.props.workspace.rows, (row) => {
 	  		return (
