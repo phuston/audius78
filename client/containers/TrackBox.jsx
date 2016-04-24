@@ -1,7 +1,7 @@
 // Outside
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { playingMode } from '../../utils.js';
+import { playingMode, toolMode } from '../../utils.js';
 
 // Styling 
 import styles from './Containers.scss';

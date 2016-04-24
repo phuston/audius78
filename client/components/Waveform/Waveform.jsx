@@ -77,7 +77,7 @@ class Waveform extends Component {
     let maxValue = Math.pow(2, bits-1);
 
     ctx.save();
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = '#fff';
 
     for (i=this.firstPeak+1; i < this.lastPeak-1; i+=2) {
       minPeak = peaks[i] / maxValue;
@@ -99,7 +99,7 @@ class Waveform extends Component {
     let width = this.peaks.data[0].slice(this.firstPeak, this.lastPeak).length/2 - 2;
     return (
       <canvas width={width} height={100}
-        style={{'border': '1px solid white'}}
+        style={{'border': '1px solid black'}}
         onClick={this.handleCanvasClick}
       />
     );
