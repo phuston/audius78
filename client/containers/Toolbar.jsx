@@ -22,6 +22,7 @@ class Toolbar extends Component{
           setZoom={this.props.setZoom}
           currentZoom={this.props.currentZoom}
           stopPlaying={this.props.stopPlaying}
+          toolMode={this.props.toolMode}
           playing={this.props.playing}
           setSeeker={this.props.setSeeker}
           cursor={this.props.cursor}

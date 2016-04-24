@@ -178,6 +178,7 @@ class Workspace extends Component {
           <Toolbar className={styles.toolbar} 
             setPlayingMode={this.setPlayingMode} 
             playing={this.props.workspace.playing}
+            toolMode={this.props.workspace.toolMode}
             setZoom={this.setZoom}
             currentZoom={this.props.workspace.zoomLevel}
             stopPlaying={this.stopPlaying}

@@ -72,9 +72,18 @@ class Tools extends Component{
           onClick={this.setPlayingMode}/>
         <input type='button' value='Stop' className={styles.stop}
           onClick={this.stopPlaying} />
-        <input type='button' value='Cursor' className={styles.cut} onClick={this.changeToCursor} />
-        <input type='button' value='Drag' className={styles.move} onClick={this.changeToDrag} />
-        <input type='button' value='Split' className={styles.split} onClick={this.changeToSplit} />
+        <input type='button' value='Cursor' 
+          className={styles.cut} 
+          onClick={this.changeToCursor}
+          style={cursorStyle} />
+        <input type='button' value='Drag' 
+          className={styles.move} 
+          onClick={this.changeToDrag} 
+          style={dragStyle} />
+        <input type='button' value='Split' 
+          className={styles.split} 
+          onClick={this.changeToSplit}
+          style={splitStyle} />
         <input type='button' value='Zoom In' onClick={this.zoomIn} />
         <input type='button' value='Zoom Out' onClick={this.zoomOut} />
       </div>
