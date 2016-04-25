@@ -134,10 +134,40 @@ var socketObject = {
           if (err) {
             console.log(err);
           } else {
-            console.log(workspace);
-            // TODO: update the workspace here!
-            var updatedState = {};
-            io.sockets.in(socket.workspaceId).emit('applyMoveBlock', updatedState);
+            var newRows = workspace.rows;
+
+            // Find correct row to update
+            var updateRow = workspace.rows.filter(function(row){
+              return row._id == moveOperation.rowId;
+            })[0];
+
+            // Find correct audioBlock to update
+            var audioBlock = updateRow.audioBlocks.filter(function (block){
+              return block._id == splitOperation.blockId;
+            })[0];
+
+            // Apply delta to block
+            audioBlock.file_offset += moveOperation.timeDelta;
+
+            newRows[updateRow.rowId] = updateRow;
+
+            Workspace.findByIdAndUpdate(
+              workspace._id,
+              {$set: {rows: newRows}},
+              {$safe: true, upsert: false, new: true},
+              function(err, newWorkspace) {
+                if (err) {
+                  res.status(500).json({error: err});
+                }
+
+                // Emit socket event to notify all clients to update state
+                io.sockets.in(socket.workspaceId).emit('applyMoveBlock', {
+                  rowId: updateRow.rowId,
+                  blockId: audioBlock.blockId,
+                  newBlock: newWorkspace.rows[row.rowId].audioBlocks[audioBlock.blockId]
+                })
+              }
+            )
           }
         })
       });
