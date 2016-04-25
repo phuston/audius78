@@ -8,7 +8,7 @@ import styles from './Containers.scss';
 
 // Components
 import Row from '../components/Row/Row.jsx';
-import Time from '../components/Time/Time.jsx'
+import TimeRuler from '../components/TimeRuler/TimeRuler.jsx'
 
 class Cursor extends Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class Cursor extends Component {
       'width': '1px', 
       'background': 'red', 
       'zIndex': '5', 
-      'height': this.props.styling.numRows * 110 // Change this to # of rows * 100px
+      'height': this.props.styling.numRows * 110
     };
     return <div id='cursor' style={cursorStyle}/>;
   }
@@ -43,7 +43,7 @@ class Seeker extends Component {
       'border': '1px solid white', 
       'background': 'rgba(0,0,0,0.3)', 
       'zIndex': '5', 
-      'height': this.props.styling.numRows * 110 // Change this to # of rows * 100px
+      'height': this.props.styling.numRows * 110
     };
     return <div id='seeker' style={seekerStyle}/>;
   }
@@ -102,6 +102,10 @@ class TrackBox extends Component{
   componentWillUpdate(nextProps, nextState) {
     let newSeeker = nextProps.workspace.timing.seeker;
     let oldSeeker = this.props.workspace.timing.seeker;
+
+    // If the new seeker is at least 10px from where the current seeker is
+    // tell Workspace component to update its AudioCtx time, and then set
+    // seekedNew to true so this.drawTimescale knows to update new value during its animation
     if ( (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) 
             && (this.props.workspace.playing === playingMode.PLAYING) ) {
       this.props.seekTime(newSeeker / this.props.workspace.timing.speed);
@@ -110,13 +114,17 @@ class TrackBox extends Component{
   }
 
   drawTimescale(x) {
+    // Animates the seeker across the screen. Stops on command.
     this.updating = true;
+
     if (this.seekedNew) {
+      // If a different part of audio is seeked, use that value instead of the passed in parameter
       x = this.props.workspace.timing.seeker;
       this.seekedNew = false;
     }
 
     if (this.props.workspace.playing === playingMode.PLAYING) {
+      // Only animate when audio is playing
       let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.props.workspace.timing.speed/60));
       this.props.setSeeker(x);
     } else {
@@ -125,7 +133,6 @@ class TrackBox extends Component{
   }
 
   render() {
-    console.log('trackbox render');
   	if (this.props.workspace.rows !== undefined) {
 			var rows = Array.prototype.map.call(this.props.workspace.rows, (row) => {
 	  		return (
@@ -149,7 +156,7 @@ class TrackBox extends Component{
 
     return (
       <div>
-        <Time workspace={this.props.workspace}/>
+        <TimeRuler workspace={this.props.workspace}/>
         <Seeker styling={{left: this.props.workspace.timing.seeker, numRows: this.props.workspace.rows.length}}/>
         <Cursor styling={{left: this.props.workspace.timing.cursor, numRows: this.props.workspace.rows.length}}/>
         {rows}

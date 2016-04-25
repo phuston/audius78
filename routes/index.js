@@ -19,13 +19,10 @@ module.exports = function(){
           console.error('Multer failure');
           return res.status(500).json(err);
         }
-        console.log('req.body', req.body);
-        console.log('workspace', req.body.workspaceId);
 
         var extension =
         fs.renameSync(req.file.path, req.file.path+req.file.originalname);
 
-        console.log(req.file);
         sox([req.file.path+req.file.originalname, 
             req.file.filename + '.ogg'],
             function(err, outFP){ 
@@ -49,10 +46,10 @@ module.exports = function(){
                       console.error("Unlink error");
                       return res.status(500).json(err);
                     }
-                    console.log("Uploaded file "+outFP);
 
                     var rowId = new ObjectId();
                     var newRow = {
+                      rowId: req.body.rowIndex,
                       _id: rowId,
                       rawAudio: outFP,
                       audioBlocks: [{
@@ -71,7 +68,6 @@ module.exports = function(){
                         if (err) {
                           res.status(500).json(err);
                         } else {
-                          console.log("ROWID", rowId);
                           res.json({rowId: rowId});
                         }
                       }
