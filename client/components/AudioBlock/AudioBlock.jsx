@@ -38,6 +38,7 @@ class AudioBlock extends Component {
 			);
   	});
 
+    // Sets cursor image depending on tool mode
     let cursorImage = {'cursor': 'auto'};
     switch (this.props.toolMode) {
       case (toolMode.SPLIT):

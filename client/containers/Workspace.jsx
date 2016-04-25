@@ -42,9 +42,7 @@ class Workspace extends Component {
     this.setSpeed = (speed) => dispatch(workspaceActions.setSpeed(speed));
     this.setPlayingMode = (playing) => dispatch(workspaceActions.setPlayingMode(playing));
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
-    this.setCursor = (cursor) => {
-      dispatch(workspaceActions.setCursor(cursor));
-    }
+    this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
   }
@@ -91,30 +89,33 @@ class Workspace extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (this.props.workspace.playing !== prevProps.workspace.playing) {
+      switch (this.props.workspace.playing) {
+        case (playingMode.PLAYING):
+          if (this.audioCtx === undefined) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            this.playMusic();
+          } else {
+            this.audioCtx.resume();
+          }
+          break;
 
-    if( this.props.workspace.playing !== prevProps.workspace.playing){
-      let playingState = this.props.workspace.playing;
+        case (playingMode.PAUSE):
+          this.audioCtx.suspend();
+          this.setSeeker((this.time+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
+          break;
 
-      if( playingState === playingMode.PLAYING ){
-        if(this.audioCtx === undefined){
-          this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          this.playMusic();
-        } else {
-          this.audioCtx.resume();
-        }
-      } else if( playingState === playingMode.PAUSE){
-        this.audioCtx.suspend();
-        this.setSeeker((this.time+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
-      } else if( playingState === playingMode.STOP ){
-        this.audioCtx.close();
-        this.audioCtx = undefined;
-        this.time = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
+        case (playingMode.STOP):
+          this.audioCtx.close();
+          this.audioCtx = undefined;
+          this.time = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
+          break;
       }
     }
   }
 
   onDrop(files){
-    var data = new FormData();
+    let data = new FormData();
     data.append('file', files[0]);
     data.append('name', 'song');
     data.append('workspaceId', this.props.workspace.id);

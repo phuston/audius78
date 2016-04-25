@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
-import styles from './Time.scss';
+import styles from './TimeRuler.scss';
 
 
-class Time extends Component{
+class TimeRuler extends Component{
 
   render() {
     return (
@@ -15,4 +15,4 @@ class Time extends Component{
   }
 }
 
-export default Time;
+export default TimeRuler;

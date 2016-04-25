@@ -8,7 +8,7 @@ import styles from './Containers.scss';
 
 // Components
 import Row from '../components/Row/Row.jsx';
-import Time from '../components/Time/Time.jsx'
+import TimeRuler from '../components/TimeRuler/TimeRuler.jsx'
 
 class Cursor extends Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class Cursor extends Component {
       'width': '1px', 
       'background': 'red', 
       'zIndex': '5', 
-      'height': this.props.styling.numRows * 110 // Change this to # of rows * 100px
+      'height': this.props.styling.numRows * 110
     };
     return <div id='cursor' style={cursorStyle}/>;
   }
@@ -43,7 +43,7 @@ class Seeker extends Component {
       'border': '1px solid white', 
       'background': 'rgba(0,0,0,0.3)', 
       'zIndex': '5', 
-      'height': this.props.styling.numRows * 110 // Change this to # of rows * 100px
+      'height': this.props.styling.numRows * 110
     };
     return <div id='seeker' style={seekerStyle}/>;
   }
@@ -70,7 +70,6 @@ class TrackBox extends Component{
         splitElement: splitElement
       }
     }
-    console.log('splitOperation', splitOperation);
     this.props.socket.emit('splitBlock', splitOperation)
   }
 
@@ -157,7 +156,7 @@ class TrackBox extends Component{
 
     return (
       <div>
-        <Time workspace={this.props.workspace}/>
+        <TimeRuler workspace={this.props.workspace}/>
         <Seeker styling={{left: this.props.workspace.timing.seeker, numRows: this.props.workspace.rows.length}}/>
         <Cursor styling={{left: this.props.workspace.timing.cursor, numRows: this.props.workspace.rows.length}}/>
         {rows}
