@@ -52,8 +52,8 @@ export default handleActions({
 
   // TODO: Fix this (maybe) - not sure if actually broken
   FLAG_BLOCK: (state, action) => {
-    var block = {...state.rows[action.rowId][action.blockId], flags: action.newFlags};
-    var row = {...state[action.rowId], [action.blockId]:block};
+    var block = {...state.rows[action.rowId][action.blockId], flags: action.payload.newFlags};
+    var row = {...state[action.payload.rowId], [action.payload.blockId]:block};
     return {...state, rows: {...state.rows, [action.payload.rowId]:row}};
   },
 
