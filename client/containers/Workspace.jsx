@@ -81,7 +81,6 @@ class Workspace extends Component {
     });
 
     this.socket.on('applySplitBlock', splitOperation => {
-      console.log('about to split block at', splitOperation);
       this.splitBlock(splitOperation);
     });
 
@@ -119,6 +118,7 @@ class Workspace extends Component {
     data.append('file', files[0]);
     data.append('name', 'song');
     data.append('workspaceId', this.props.workspace.id);
+    data.append('rowIndex', this.props.workspace.rows.length);
 
     fetch('/api/upload', {
       method: 'POST',

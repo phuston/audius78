@@ -70,6 +70,7 @@ class TrackBox extends Component{
         splitElement: splitElement
       }
     }
+    console.log('splitOperation', splitOperation);
     this.props.socket.emit('splitBlock', splitOperation)
   }
 
@@ -125,7 +126,6 @@ class TrackBox extends Component{
   }
 
   render() {
-    console.log('trackbox render');
   	if (this.props.workspace.rows !== undefined) {
 			var rows = Array.prototype.map.call(this.props.workspace.rows, (row) => {
 	  		return (

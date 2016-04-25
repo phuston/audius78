@@ -37,9 +37,6 @@ class Waveform extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-  	console.log(nextProps);
-  	console.log(this.props.block.file_end, nextProps.block.file_end);
-  	console.log(this.props.block.file_end !== nextProps.block.file_end);
   	if (this.needsToUpdate(this.props, nextProps)) {
     	this.processProps(nextProps.currentZoom, nextProps.block);
   	}
@@ -67,8 +64,10 @@ class Waveform extends Component {
       }
     } else if (this.props.toolMode === toolMode.SPLIT) {
       let splitElement = (e.pageX-90) * 2;
-      this.props.emitSplitBlock(this.props.block._id, splitElement);
-      // call emit socket
+      if (splitElement > this.firstPeak+10 && splitElement < this.lastPeak-10) {
+      	console.log('splitElement', splitElement, this.firstPeak, this.lastPeak);
+	      this.props.emitSplitBlock(this.props.block._id, splitElement);
+      }
     } else if (this.props.toolMode === toolMode.DRAG) {
       console.log('drag');
     }
@@ -107,7 +106,6 @@ class Waveform extends Component {
 
   render() {
     let width = this.peaks.data[0].slice(this.firstPeak, this.lastPeak).length/2 - 2;
-    console.log('rendering', this.props.block);
     return (
       <canvas width={width} height={100}
         style={{'border': '1px solid black'}}

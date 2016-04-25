@@ -17,8 +17,6 @@ var socketObject = {
         // Send client to workspace at hashcode
         socket.join(hashcode);
         // TODO: What do we need to emit to let the other users know to add a new user?
-
-        console.log("hashcode ", hashcode);
       });
 
       socket.on('splitBlock', function(splitOperation){
@@ -56,8 +54,8 @@ var socketObject = {
               _id: new ObjectId()
             }
 
-            console.log('leftBlock', leftBlock);
-            console.log('rightBlock', rightBlock);
+            // console.log('leftBlock', leftBlock);
+            // console.log('rightBlock', rightBlock);
 
             newBlocks.splice(index, 0, leftBlock);
             newBlocks.splice(index+1, 0, rightBlock);
@@ -65,7 +63,6 @@ var socketObject = {
             row.audioBlocks = newBlocks;
             newRows[row.rowId] = row;
 
-            console.log(workspace._id);
             Workspace.findByIdAndUpdate(
               workspace._id,
               {$set: {rows: newRows}},
@@ -75,7 +72,8 @@ var socketObject = {
                   console.error(err);
                 }
 
-                console.log('newWorkspace', newWorkspace.rows[0].audioBlocks);
+                // console.log('row', row);
+                // console.log('newWorkspace', newWorkspace);
                 io.sockets.in(socket.workspaceId).emit('applySplitBlock', {
                   rowId: row.rowId,
                   newBlocks: newWorkspace.rows[row.rowId].audioBlocks
@@ -122,10 +120,8 @@ var socketObject = {
               newRow.rowId = i;
             }
           }
-          var applyOperation = {
-            newRow: newRow
-          }
-          io.sockets.in(socket.workspaceId).emit('applyAddRow', applyOperation);
+
+          io.sockets.in(socket.workspaceId).emit('applyAddRow', {newRow: newRow});
         })
       });
 
