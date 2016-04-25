@@ -125,9 +125,6 @@ var socketObject = {
                 })
               }
             )
-
-
-            io.sockets.in(socket.workspaceId).emit('applyFlagBlock', updatedState);
           }
         })
       });
