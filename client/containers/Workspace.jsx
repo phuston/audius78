@@ -80,9 +80,8 @@ class Workspace extends Component {
       this.splitBlock(splitOperation);
     });
 
-    this.socket.on('applyMoveBlock', newBlocks => {
-      // TODO: Again, where does the rowId come from? This should be returned as an operation
-      this.moveBlock(newBlocks);
+    this.socket.on('applyMoveBlock', moveOperation => {
+      this.moveBlock(moveOperation);
     });
   }
 

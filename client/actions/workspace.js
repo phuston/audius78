@@ -97,34 +97,6 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, au
   });
 });
 
-export const setPlayingMode = createAction(types.SET_PLAYING_MODE, (mode) => {
-  return mode;
-});
-
-export const setToolMode = createAction(types.SET_TOOL_MODE, (mode) => {
-  return mode;
-});
-
-export const setSeeker = createAction(types.SET_SEEKER, (seeker) => {
-  return seeker;
-});
-
-export const setZoom = createAction(types.SET_ZOOM, (zoom) => {
-  return zoom;
-});
-
-export const stopPlaying = createAction(types.STOP_PLAYING, (stop) => {
-  return stop;
-});
-
-export const setCursor = createAction(types.SET_CURSOR, (cursor) => {
-  return cursor;
-});
-
-export const setSpeed = createAction(types.SET_SPEED, (speed) => {
-  return speed;
-});
-
 export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
   // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that
   // Not sure if this works
@@ -159,7 +131,37 @@ export const splitBlock = createAction(types.SPLIT_BLOCK, (splitOperation) => {
   return splitOperation;
 });
 
-export const moveBlock = createAction(types.MOVE_BLOCK, (newBlocks) => {
-  return newBlocks;
+export const moveBlock = createAction(types.MOVE_BLOCK, (moveOperation) => {
+  return moveOperation;
 });
+
+export const setPlayingMode = createAction(types.SET_PLAYING_MODE, (mode) => {
+  return mode;
+});
+
+export const setToolMode = createAction(types.SET_TOOL_MODE, (mode) => {
+  return mode;
+});
+
+export const setSeeker = createAction(types.SET_SEEKER, (seeker) => {
+  return seeker;
+});
+
+export const setZoom = createAction(types.SET_ZOOM, (zoom) => {
+  return zoom;
+});
+
+export const stopPlaying = createAction(types.STOP_PLAYING, (stop) => {
+  return stop;
+});
+
+export const setCursor = createAction(types.SET_CURSOR, (cursor) => {
+  return cursor;
+});
+
+export const setSpeed = createAction(types.SET_SPEED, (speed) => {
+  return speed;
+});
+
+
 
