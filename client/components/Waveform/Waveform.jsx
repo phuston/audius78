@@ -32,8 +32,9 @@ class Waveform extends Component {
 
   processProps(zoom, block) {
   	this.peaks = extractPeaks(this.props.rawAudio, 2000*zoom, true);
-  	this.firstPeak = block.file_offset / zoom;
-  	this.lastPeak = (block.file_end / zoom) || (this.peaks.data[0].length - 1);
+  	this.firstPeak = Math.floor(block.file_offset / zoom);
+  	this.lastPeak = Math.ceil((block.file_end / zoom) || (this.peaks.data[0].length - 1));
+  	console.log('peaks', this.firstPeak, this.lastPeak);
   }
 
   componentWillReceiveProps(nextProps) {
