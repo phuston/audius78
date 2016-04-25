@@ -72,9 +72,8 @@ class Workspace extends Component {
       this.removeRow(rowId);
     });
 
-    this.socket.on('applyFlagBlock', newFlags => {
-      // TODO: Figure out where the row and block Ids will be coming from for this
-      this.flagBlock(newFlags);
+    this.socket.on('applyFlagBlock', flagOperation => {
+      this.flagBlock(flagOperation);
     });
 
     this.socket.on('applySplitBlock', splitOperation => {

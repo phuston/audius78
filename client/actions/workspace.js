@@ -151,8 +151,8 @@ export const removeRow = createAction(types.REMOVE_ROW, (rowId) => {
   return rowId;
 });
 
-export const flagBlock = createAction(types.FLAG_TRACK, (newFlags) => {
-  return newFlags;
+export const flagBlock = createAction(types.FLAG_TRACK, (flagOperation) => {
+  return flagOperation;
 });
 
 export const splitBlock = createAction(types.SPLIT_BLOCK, (splitOperation) => {
