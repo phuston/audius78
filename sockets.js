@@ -26,6 +26,7 @@ var socketObject = {
           } else {
             var newRows = workspace.rows;
 
+            // Find correct row to update
             var row = workspace.rows.filter(function (row){ 
               return row._id == splitOperation.rowId 
             })[0];
@@ -33,6 +34,7 @@ var socketObject = {
             var leftBlock, index, newBlocks;
             var splitAt = splitOperation.operation.splitElement;
 
+            // Store unaltered blocks in a new array so later can use $set instead of nested $push
             newBlocks = row.audioBlocks.filter(function(block, i) {
               if (block._id == splitOperation.blockId) {
                 leftBlock = row.audioBlocks[i];
@@ -42,6 +44,7 @@ var socketObject = {
               return true;
             });
 
+            // Share and compute attributes of old block into the two new left and right blocks
             var oldEnd = leftBlock.file_end;
             leftBlock.file_end = (splitAt % 2 === 0) ? splitAt : splitAt+1;
 
@@ -52,17 +55,17 @@ var socketObject = {
               file_end: oldEnd,
               flags: [],
               _id: new ObjectId()
-            }
+            };
 
-            // console.log('leftBlock', leftBlock);
-            // console.log('rightBlock', rightBlock);
-
+            // Add left and right blocks back. Must maintain order or else front-end
+            // waveform generation will not work
             newBlocks.splice(index, 0, leftBlock);
             newBlocks.splice(index+1, 0, rightBlock);
 
             row.audioBlocks = newBlocks;
             newRows[row.rowId] = row;
 
+            // Updates DB state document
             Workspace.findByIdAndUpdate(
               workspace._id,
               {$set: {rows: newRows}},
@@ -72,8 +75,7 @@ var socketObject = {
                   console.error(err);
                 }
 
-                // console.log('row', row);
-                // console.log('newWorkspace', newWorkspace);
+                // Emit socket event to tell all clients to update state
                 io.sockets.in(socket.workspaceId).emit('applySplitBlock', {
                   rowId: row.rowId,
                   newBlocks: newWorkspace.rows[row.rowId].audioBlocks

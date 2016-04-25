@@ -41,7 +41,7 @@ class AudioBlock extends Component {
     let cursorImage = {'cursor': 'auto'};
     switch (this.props.toolMode) {
       case (toolMode.SPLIT):
-        cursorImage = {'cursor': 'url("http://localhost:3000/icons/cursorSplit.png"),auto'};
+        cursorImage = {'cursor': 'url("http://localhost:3000/icons/cut.png"),auto'};
         break;
 
       case (toolMode.DRAG):

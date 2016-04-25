@@ -103,6 +103,10 @@ class TrackBox extends Component{
   componentWillUpdate(nextProps, nextState) {
     let newSeeker = nextProps.workspace.timing.seeker;
     let oldSeeker = this.props.workspace.timing.seeker;
+
+    // If the new seeker is at least 10px from where the current seeker is
+    // tell Workspace component to update its AudioCtx time, and then set
+    // seekedNew to true so this.drawTimescale knows to update new value during its animation
     if ( (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) 
             && (this.props.workspace.playing === playingMode.PLAYING) ) {
       this.props.seekTime(newSeeker / this.props.workspace.timing.speed);
@@ -111,13 +115,17 @@ class TrackBox extends Component{
   }
 
   drawTimescale(x) {
+    // Animates the seeker across the screen. Stops on command.
     this.updating = true;
+
     if (this.seekedNew) {
+      // If a different part of audio is seeked, use that value instead of the passed in parameter
       x = this.props.workspace.timing.seeker;
       this.seekedNew = false;
     }
 
     if (this.props.workspace.playing === playingMode.PLAYING) {
+      // Only animate when audio is playing
       let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.props.workspace.timing.speed/60));
       this.props.setSeeker(x);
     } else {

@@ -24,6 +24,8 @@ class Waveform extends Component {
   }
 
   needsToUpdate(oldProps, newProps) {
+  	// New properties only need to be computed if a zoom event fires 
+  	// or a block changes.
   	return (
   		(oldProps.currentZoom !== newProps.currentZoom) ||
   		(oldProps.block.file_end !== newProps.block.file_end)
@@ -31,21 +33,23 @@ class Waveform extends Component {
   }
 
   processProps(zoom, block) {
+  	// Set new peaks and starting and ending points of waveform block
   	this.peaks = extractPeaks(this.props.rawAudio, 2000*zoom, true);
   	this.firstPeak = Math.floor(block.file_offset / zoom);
   	this.lastPeak = Math.ceil((block.file_end / zoom) || (this.peaks.data[0].length - 1));
-  	console.log('peaks', this.firstPeak, this.lastPeak);
   }
 
   componentWillReceiveProps(nextProps) {
+  	// Need to pre-emptively update state so that component can render with correct width
   	if (this.needsToUpdate(this.props, nextProps)) {
     	this.processProps(nextProps.currentZoom, nextProps.block);
   	}
   }
 
   componentDidUpdate(prevProps, prevState) {
-    let ctx = ReactDOM.findDOMNode(this).getContext('2d');
+  	// Only draw once the canvas has been rendered
     if (this.needsToUpdate(prevProps, this.props)) {
+    	let ctx = ReactDOM.findDOMNode(this).getContext('2d');
       this.draw(ctx);
       this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
     }
@@ -57,6 +61,7 @@ class Waveform extends Component {
   }
 
   handleCanvasClick(e) {
+  	// Figure out which tool mode the workspace is in to apply the correct operation
     if (this.props.toolMode === toolMode.CURSOR) {
       if (this.props.playing === playingMode.PLAYING) {
         this.props.setSeeker(e.pageX-90);
@@ -64,9 +69,10 @@ class Waveform extends Component {
         this.props.setCursor(e.pageX-90);
       }
     } else if (this.props.toolMode === toolMode.SPLIT) {
-      let splitElement = (e.pageX-90) * 2;
+    	// e.pageX - 83 so that it is exactly where the dashed line on the cursor is
+      let splitElement = (e.pageX-83) * 2;
+      // Only accept splitting if it's +/- 10px from left or right border
       if (splitElement > this.firstPeak+10 && splitElement < this.lastPeak-10) {
-      	console.log('splitElement', splitElement, this.firstPeak, this.lastPeak);
 	      this.props.emitSplitBlock(this.props.block._id, splitElement);
       }
     } else if (this.props.toolMode === toolMode.DRAG) {
@@ -75,6 +81,7 @@ class Waveform extends Component {
   }
 
   draw(ctx) {
+  	// Draws the waveforms using peaks gotten from extractPeaks
     let peaks = this.peaks.data[0];
     let bits = this.peaks.bits;
 
@@ -89,6 +96,7 @@ class Waveform extends Component {
     ctx.save();
     ctx.fillStyle = '#fff';
 
+    // Every two peaks fit into one pixel width: one from top and one from bottom border
     for (i=this.firstPeak+1; i < this.lastPeak-1; i+=2) {
       minPeak = peaks[i] / maxValue;
       maxPeak = peaks[i+1] / maxValue;
