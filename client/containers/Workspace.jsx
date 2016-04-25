@@ -65,7 +65,6 @@ class Workspace extends Component {
 
     this.socket.on('applyAddRow', applyOperation => {
       let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      console.log(applyOperation);
       this.addRow(applyOperation, audioCtx);
     });
 

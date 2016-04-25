@@ -67,14 +67,19 @@ class Waveform extends Component {
         this.props.setSeeker(e.pageX-90);
       } else {
         this.props.setCursor(e.pageX-90);
+        console.log('start at', this.firstPeak, 'end at', this.lastPeak);
       }
     } else if (this.props.toolMode === toolMode.SPLIT) {
     	// e.pageX - 83 so that it is exactly where the dashed line on the cursor is
-      let splitElement = (e.pageX-83) * 2;
-      // Only accept splitting if it's +/- 10px from left or right border
-      if (splitElement > this.firstPeak+10 && splitElement < this.lastPeak-10) {
+      let splitElement = Math.ceil(((e.pageX-83) * 2) * this.props.currentZoom);
+
+      // Only accept splitting if it's +/- 5px from left or right border
+      let start = this.firstPeak * this.props.currentZoom + 10;
+      let end = this.lastPeak * this.props.currentZoom - 10;
+      if (splitElement > start && splitElement < end) {
 	      this.props.emitSplitBlock(this.props.block._id, splitElement);
       }
+      
     } else if (this.props.toolMode === toolMode.DRAG) {
       console.log('drag');
     }
