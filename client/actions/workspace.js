@@ -101,6 +101,44 @@ export const setWorkspaceWidth = createAction(types.SET_WORKSPACE_WIDTH, (width)
   return width;
 });
 
+export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
+  // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that
+  // Not sure if this works
+  return fetch(addOperation.newRow.rawAudio)
+  .then((file) => {
+    return file.arrayBuffer();
+  })
+  .then((arrayBuffer) => {
+    return audioCtx.decodeAudioData(arrayBuffer)
+  })
+  .then((buffer) => {
+    // Have to close the audioCtx used to create buffer objects
+    audioCtx.close();
+
+    addOperation.newRow.rawAudio = buffer;
+    return addOperation.newRow;
+  })
+  .catch(err => {
+    console.log(err);
+  });
+});
+
+export const removeRow = createAction(types.REMOVE_ROW, (rowId) => {
+  return rowId;
+});
+
+export const flagBlock = createAction(types.FLAG_TRACK, (flagOperation) => {
+  return flagOperation;
+});
+
+export const splitBlock = createAction(types.SPLIT_BLOCK, (splitOperation) => {
+  return splitOperation;
+});
+
+export const moveBlock = createAction(types.MOVE_BLOCK, (moveOperation) => {
+  return moveOperation;
+});
+
 export const setPlayingMode = createAction(types.SET_PLAYING_MODE, (mode) => {
   return mode;
 });
@@ -129,41 +167,5 @@ export const setSpeed = createAction(types.SET_SPEED, (speed) => {
   return speed;
 });
 
-export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
-  // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that
-  // Not sure if this works
-  return fetch(addOperation.newRow.rawAudio)
-  .then((file) => {
-    return file.arrayBuffer();
-  })
-  .then((arrayBuffer) => {
-    return audioCtx.decodeAudioData(arrayBuffer)
-  })
-  .then((buffer) => {
-    // Have to close the audioCtx used to create buffer objects
-    audioCtx.close();
 
-    addOperation.newRow.rawAudio = buffer;
-    return addOperation.newRow;
-  })
-  .catch(err => {
-    console.log(err);
-  });
-});
-
-export const removeRow = createAction(types.REMOVE_ROW, (rowId) => {
-  return rowId;
-});
-
-export const flagBlock = createAction(types.FLAG_TRACK, (newFlags) => {
-  return newFlags;
-});
-
-export const splitBlock = createAction(types.SPLIT_BLOCK, (splitOperation) => {
-  return splitOperation;
-});
-
-export const moveBlock = createAction(types.MOVE_BLOCK, (newBlocks) => {
-  return newBlocks;
-});
 
