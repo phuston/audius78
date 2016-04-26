@@ -31,7 +31,6 @@ export const newWorkspace = createAction(types.LOAD_WORKSPACE, (audioCtx)=>{
           let len;
 
           data.workspace.rows.map((row, i) => {
-            console.log(i, row);
             row.rawAudio = buffers[i];
             rows[Number(i)] = row;
             len = i;
