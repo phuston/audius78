@@ -77,18 +77,16 @@ class Workspace extends Component {
       this.removeRow(rowId);
     });
 
-    this.socket.on('applyFlagBlock', newFlags => {
-      // TODO: Figure out where the row and block Ids will be coming from for this
-      this.flagBlock(newFlags);
+    this.socket.on('applyFlagBlock', flagOperation => {
+      this.flagBlock(flagOperation);
     });
 
     this.socket.on('applySplitBlock', splitOperation => {
       this.splitBlock(splitOperation);
     });
 
-    this.socket.on('applyMoveBlock', newBlocks => {
-      // TODO: Again, where does the rowId come from? This should be returned as an operation
-      this.moveBlock(newBlocks);
+    this.socket.on('applyMoveBlock', moveOperation => {
+      this.moveBlock(moveOperation);
     });
   }
 

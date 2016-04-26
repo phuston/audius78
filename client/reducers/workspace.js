@@ -54,21 +54,25 @@ export default handleActions({
     return {...state, rows: newRows};
   },
 
-  // TODO: Fix this (maybe) - not sure if actually broken
   FLAG_BLOCK: (state, action) => {
-    var block = {...state.rows[action.rowId][action.blockId], flags: action.newFlags};
-    var row = {...state[action.rowId], [action.blockId]:block};
-    return {...state, rows: {...state.rows, [action.payload.rowId]:row}};
+    let block = state.rows[action.payload.rowId][action.payload.blockId];
+    block.flags = action.payload.newFlags;
+    let newBlocks = {...state[action.payload.rowId].audioBlocks, [action.payload.blockId]:block};
+    let newRow = {...state[action.payload.rowId], audioBlocks: newBlocks}
+    return {...state, rows: {...state.rows, [action.payload.rowId]:newRow}};
   },
 
   SPLIT_BLOCK: (state, action) => {
-    var rowToUpdate = state.rows[action.payload.rowId];
+    let rowToUpdate = state.rows[action.payload.rowId];
     rowToUpdate.audioBlocks = action.payload.newBlocks;
     return {...state, rows: {...state.rows, [action.payload.rowId]: rowToUpdate}};
   },
 
   MOVE_BLOCK: (state, action) => {
-    return {...state, rows: {...state.rows, [action.rowId]:action.newRow}};
+    let newBlocks = {...state.rows[action.payload.rowId].audioBlocks, [action.payload.blockId]: action.payload.newBlock}
+    let rowToUpdate = state.rows[action.payload.rowId];
+    rowToUpdate.audioBlocks = newBlocks;
+    return {...state, rows: {...state.rows, [action.payload.rowId]:rowToUpdate}};
   }
 }, {});
 

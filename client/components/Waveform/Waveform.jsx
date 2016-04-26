@@ -69,7 +69,6 @@ class Waveform extends Component {
         this.props.setSeeker(e.pageX-90);
       } else {
         this.props.setCursor(e.pageX-90);
-        console.log('start at', this.firstPeak, 'end at', this.lastPeak);
       }
     } else if (this.props.toolMode === toolMode.SPLIT) {
     	// e.pageX - 83 so that it is exactly where the dashed line on the cursor is
@@ -83,7 +82,7 @@ class Waveform extends Component {
       }
       
     } else if (this.props.toolMode === toolMode.DRAG) {
-      console.log('drag');
+    	// Do something here. Probably nothing.
     }
   }
 

@@ -1,6 +1,7 @@
 // Outside
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import Draggable from 'react-draggable';
 
 // Styling 
 import styles from './AudioBlock.scss'
@@ -21,22 +22,32 @@ class AudioBlock extends Component {
 
   render(){
   	let data = this.props.data;
+    let dragDisabled = this.props.toolMode !== toolMode.DRAG;
 
   	let waveforms = data.audioBlocks.map((block, i) => {
   		return (
-  			<div key={i} height={100} style={{'border': 'none', 'display': 'inline-block'}}>
-  				<Waveform block={block} 
-            emitSplitBlock={this.props.emitSplitBlock}
-            playing={this.props.playing}
-            toolMode={this.props.toolMode}
-            currentZoom={this.props.currentZoom} 
-            rawAudio={this.props.data.rawAudio}
-            setCursor={this.props.setCursor}
-            setSeeker={this.props.setSeeker}
-            setSpeed={this.props.setSpeed}
-            setWorkspaceWidth={this.props.setWorkspaceWidth}
-          />
-  			</div>
+        <Draggable
+          key={i}
+          axis='x'
+          defaultPosition={{x: 0, y: 273}}
+          disabled={dragDisabled}
+          bounds={{left: 0}}
+          onDrag={this.handleDrag}
+          >
+    			<div height={100} style={{'border': 'none', 'display': 'inline-block'}}>
+    				<Waveform block={block} 
+              emitSplitBlock={this.props.emitSplitBlock}
+              playing={this.props.playing}
+              toolMode={this.props.toolMode}
+              currentZoom={this.props.currentZoom} 
+              rawAudio={this.props.data.rawAudio}
+              setCursor={this.props.setCursor}
+              setSeeker={this.props.setSeeker}
+              setSpeed={this.props.setSpeed}
+              setWorkspaceWidth={this.props.setWorkspaceWidth}
+            />
+    			</div>
+        </Draggable>
 			);
   	});
 
