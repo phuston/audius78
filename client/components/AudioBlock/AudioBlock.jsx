@@ -24,7 +24,7 @@ class AudioBlock extends Component {
 
   	let waveforms = data.audioBlocks.map((block, i) => {
   		return (
-  			<div key={i} height={100} style={{'border': 'none', 'display': 'inLine'}}>
+  			<div key={i} height={100} style={{'border': 'none', 'display': 'inline-block'}}>
   				<Waveform block={block} 
             emitSplitBlock={this.props.emitSplitBlock}
             playing={this.props.playing}
@@ -41,19 +41,19 @@ class AudioBlock extends Component {
   	});
 
     // Sets cursor image depending on tool mode
-    let cursorImage = {'cursor': 'auto'};
+    let audioBlockStyle = {'cursor': 'auto', 'width': this.props.width};
     switch (this.props.toolMode) {
       case (toolMode.SPLIT):
-        cursorImage = {'cursor': 'url("http://localhost:3000/icons/cut.png"),auto'};
+        audioBlockStyle.cursor = 'url("http://localhost:3000/icons/cut.png"),auto';
         break;
 
       case (toolMode.DRAG):
-        cursorImage = {'cursor': 'move'};
+        audioBlockStyle.cursor = 'move';
         break;
     }
 
     return (
-      <div className={styles.audioBlock} style={cursorImage}>
+      <div className={styles.audioBlock} style={audioBlockStyle}>
         {waveforms}
       </div>
     )

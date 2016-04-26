@@ -33,6 +33,7 @@ class Row extends Component{
         	setSeeker={this.props.setSeeker}
           setSpeed={this.props.setSpeed}
           setWorkspaceWidth={this.props.setWorkspaceWidth}
+          width={this.props.width}
         />
       </div>
     )
