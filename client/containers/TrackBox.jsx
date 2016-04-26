@@ -145,6 +145,7 @@ class TrackBox extends Component{
             setSeeker={this.props.setSeeker}
             setSpeed={this.props.setSpeed}
             emitSplitBlock={this.emitSplitBlock}
+            setWorkspaceWidth={this.props.setWorkspaceWidth}
           />
         );
 	  	});
@@ -155,7 +156,7 @@ class TrackBox extends Component{
     }
 
     return (
-      <div>
+      <div className={styles.trackbox}>
         <TimeRuler workspace={this.props.workspace}/>
         <Seeker styling={{left: this.props.workspace.timing.seeker, numRows: this.props.workspace.rows.length}}/>
         <Cursor styling={{left: this.props.workspace.timing.cursor, numRows: this.props.workspace.rows.length}}/>

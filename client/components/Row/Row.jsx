@@ -31,7 +31,9 @@ class Row extends Component{
         	currentZoom={this.props.currentZoom}
         	setCursor={this.props.setCursor}
         	setSeeker={this.props.setSeeker}
-          setSpeed={this.props.setSpeed}/>
+          setSpeed={this.props.setSpeed}
+          setWorkspaceWidth={this.props.setWorkspaceWidth}
+        />
       </div>
     )
   }

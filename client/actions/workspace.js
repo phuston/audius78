@@ -97,6 +97,10 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, au
   });
 });
 
+export const setWorkspaceWidth = createAction(types.SET_WORKSPACE_WIDTH, (width) => {
+  return width;
+});
+
 export const setPlayingMode = createAction(types.SET_PLAYING_MODE, (mode) => {
   return mode;
 });

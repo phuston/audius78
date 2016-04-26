@@ -27,6 +27,7 @@ store.dispatch(workspaceActions.setToolMode(toolMode.CURSOR));
 store.dispatch(workspaceActions.setSeeker(0));
 store.dispatch(workspaceActions.setZoom(1));
 store.dispatch(workspaceActions.setCursor(0));
+store.dispatch(workspaceActions.setWorkspaceWidth('100vw'));
 
 reduxRouter.listenForReplays(store);
 
