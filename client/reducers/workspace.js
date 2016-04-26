@@ -11,6 +11,10 @@ export default handleActions({
     return {...state, playing: action.payload};
   },
 
+  SET_WORKSPACE_WIDTH: (state, action) => {
+    return {...state, width: action.payload};
+  },
+
   SET_TOOL_MODE: (state, action) => {
     return {...state, toolMode: action.payload};
   },

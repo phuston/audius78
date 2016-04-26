@@ -2,9 +2,11 @@
 
 
 .navbar {
-
+  position: fixed;
+  top: 0;
   background-color: $dark;
-  width: 98vw;
+  height: 70px;
+  width: 100vw;
   display: flex;
   flex-flow: row;
 }

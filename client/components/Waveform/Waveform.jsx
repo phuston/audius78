@@ -37,6 +37,8 @@ class Waveform extends Component {
   	this.peaks = extractPeaks(this.props.rawAudio, 2000*zoom, true);
   	this.firstPeak = Math.floor(block.file_offset / zoom);
   	this.lastPeak = Math.ceil((block.file_end / zoom) || (this.peaks.data[0].length - 1));
+  	this.width = this.peaks.data[0].slice(this.firstPeak, this.lastPeak).length/2 - 2;
+  	this.props.setWorkspaceWidth(this.width + block.row_offset);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -71,7 +73,7 @@ class Waveform extends Component {
       }
     } else if (this.props.toolMode === toolMode.SPLIT) {
     	// e.pageX - 83 so that it is exactly where the dashed line on the cursor is
-      let splitElement = Math.ceil(((e.pageX-83) * 2) * this.props.currentZoom);
+      let splitElement = Math.ceil(((e.pageX-85) * 2) * this.props.currentZoom);
 
       // Only accept splitting if it's +/- 5px from left or right border
       let start = this.firstPeak * this.props.currentZoom + 10;
@@ -119,9 +121,8 @@ class Waveform extends Component {
   }
 
   render() {
-    let width = this.peaks.data[0].slice(this.firstPeak, this.lastPeak).length/2 - 2;
     return (
-      <canvas width={width} height={100}
+      <canvas width={this.width} height={100}
         style={{'border': '1px solid black'}}
         onClick={this.handleCanvasClick}
       />

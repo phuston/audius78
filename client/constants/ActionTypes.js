@@ -5,6 +5,7 @@ export const REMOVE_USER = 'REMOVE_USER';
 // Workspace actions
 export const NEW_WORKSPACE = 'NEW_WORKSPACE';
 export const LOAD_WORKSPACE = 'LOAD_WORKSPACE';
+export const SET_WORKSPACE_WIDTH = 'SET_WORKSPACE_WIDTH';
 export const CONN_SOCKET = 'CONN_SOCKET';
 export const SET_PLAYING_MODE = 'SET_PLAYING_MODE';
 export const SET_TOOL_MODE = 'SET_TOOL_MODE';

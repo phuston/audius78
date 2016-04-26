@@ -1,8 +1,13 @@
 @import '../../containers/Containers.scss';
 
 .rowtool {
+  position: fixed;
   display: flex;
   flex-flow: column;
+  background: $accent;
+  opacity: 30%;
+  width: 60px;
+  height: 100px;
 }
 
 .rowtool > input {

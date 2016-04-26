@@ -45,6 +45,11 @@ class Workspace extends Component {
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
+    this.setWorkspaceWidth = (width) => {
+      if (width > document.documentElement.clientWidth) {
+        dispatch(workspaceActions.setWorkspaceWidth(width + 90));
+      }
+    }
   }
 
   setZoom(newZoom) {
@@ -171,9 +176,9 @@ class Workspace extends Component {
       <div className={styles.page} >
         <Navbar className={styles.navbar} />
 
-        <div><h1>{this.props.workspace.id}</h1></div>
+        <div style={{'top': '70px', 'position': 'fixed', 'height': '70px'}}><h1>{this.props.workspace.id}</h1></div>
 
-        <div className={styles.workspace} >
+        <div className={styles.workspace} style={{'width': this.props.workspace.width}}>
 
           <Toolbar className={styles.toolbar} 
             setPlayingMode={this.setPlayingMode} 
@@ -195,6 +200,7 @@ class Workspace extends Component {
               setSeeker={this.setSeeker}
               seekTime={this.seekTime}
               setSpeed={this.setSpeed}
+              setWorkspaceWidth={this.setWorkspaceWidth}
             />
           </div>
 
