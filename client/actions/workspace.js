@@ -155,6 +155,10 @@ export const removeRow = createAction(types.REMOVE_ROW, (rowId) => {
   return rowId;
 });
 
+export const clearRows = createAction(types.CLEAR_ROWS, () => {
+  return;
+});
+
 export const flagBlock = createAction(types.FLAG_TRACK, (newFlags) => {
   return newFlags;
 });

@@ -16,6 +16,7 @@ export const SET_CURSOR = 'SET_CURSOR';
 export const SET_SPEED = 'SET_SPEED';
 export const ADD_ROW = 'ADD_ROW';
 export const REMOVE_ROW = 'REMOVE_ROW';
+export const CLEAR_ROWS = 'CLEAR_ROWS';
 export const FLAG_BLOCK = 'FLAG_BLOCK';
 export const SPLIT_BLOCK = 'SPLIT_BLOCK';
 export const MOVE_BLOCK = 'MOVE_BLOCK';

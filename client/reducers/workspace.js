@@ -54,6 +54,10 @@ export default handleActions({
     return {...state, rows: newRows};
   },
 
+  CLEAR_ROWS: (state, action) => {
+    return {...state, rows: undefined}
+  },
+
   // TODO: Fix this (maybe) - not sure if actually broken
   FLAG_BLOCK: (state, action) => {
     var block = {...state.rows[action.rowId][action.blockId], flags: action.newFlags};

@@ -6,11 +6,17 @@ import styles from './Navbar.scss';
 
 class Navbar extends Component{
 
+  constructor(props) {
+    super(props);
+
+    this.onLogout = () => this.props.onLogout();
+  }
+
   render() {
     return (
       <div className = {styles.navbar} >
         <h2> Audius78 Workspace</h2>
-        <Link to='/'><input className={styles.button} type='button' value='Logout' /></Link>
+        <input className={styles.button} type='button' value='Logout' onClick={this.onLogout} />
       </div>
     )
   }

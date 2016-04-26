@@ -6,7 +6,7 @@ import { playingMode, zoomLimits } from '../../utils.js';
 
 //Containers
 import TrackBox from './TrackBox.jsx';
-import Navbar from './NavbarBox.jsx';
+import NavbarBox from './NavbarBox.jsx';
 import Toolbar from './Toolbar.jsx';
 
 // Outside
@@ -174,7 +174,9 @@ class Workspace extends Component {
   render() {
     return (
       <div className={styles.page} >
-        <Navbar className={styles.navbar} />
+        <NavbarBox
+         className={styles.navbar}
+        />
 
         <div style={{'top': '70px', 'position': 'fixed', 'height': '70px'}}><h1>{this.props.workspace.id}</h1></div>
 
