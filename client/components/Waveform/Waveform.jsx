@@ -38,7 +38,7 @@ class Waveform extends Component {
   	this.firstPeak = Math.floor(block.file_offset / zoom);
   	this.lastPeak = Math.ceil((block.file_end / zoom) || (this.peaks.data[0].length - 1));
   	this.width = this.peaks.data[0].slice(this.firstPeak, this.lastPeak).length/2 - 2;
-  	this.props.setWorkspaceWidth(this.width + block.row_offset);
+  	this.props.setWorkspaceWidth(this.peaks.data[0].length / 2 + block.row_offset);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -123,7 +123,7 @@ class Waveform extends Component {
   render() {
     return (
       <canvas width={this.width} height={100}
-        style={{'border': '1px solid black'}}
+        style={{'border': '1px solid red'}}
         onClick={this.handleCanvasClick}
       />
     );

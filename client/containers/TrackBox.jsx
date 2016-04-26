@@ -146,6 +146,7 @@ class TrackBox extends Component{
             setSpeed={this.props.setSpeed}
             emitSplitBlock={this.emitSplitBlock}
             setWorkspaceWidth={this.props.setWorkspaceWidth}
+            width={this.props.workspace.width}
           />
         );
 	  	});
