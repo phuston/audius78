@@ -95,24 +95,33 @@ class Workspace extends Component {
       switch (this.props.workspace.playing) {
         case (playingMode.PLAYING):
           if (this.audioCtx === undefined) {
+            // No play object, have to start new
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             this.playMusic();
           } else {
+            // This means we were previously paused
             this.audioCtx.resume();
           }
           break;
 
         case (playingMode.PAUSE):
           this.audioCtx.suspend();
+          // Have to reset the seeker to handle a bug when repeatedly hitting pause/play
           this.setSeeker((this.time+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
           break;
 
         case (playingMode.STOP):
+          // Close and remove audo context
           this.audioCtx.close();
           this.audioCtx = undefined;
+
+          // Have to reset the seeker to handle a bug when repeatedly hitting stop/play
           this.time = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
           break;
       }
+    } else if ( this.props.workspace.playing === playingMode.STOP ){
+      // This handles the case when seeking while play is stopped.
+      this.time = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
     }
   }
 
@@ -146,6 +155,7 @@ class Workspace extends Component {
   }
 
   playMusic(){
+    console.log(this.time);
     let workspace = this.props.workspace;
     this.sourceBuffers = Array.prototype.map.call(workspace.rows, (elem) => {
       let source = this.audioCtx.createBufferSource();
