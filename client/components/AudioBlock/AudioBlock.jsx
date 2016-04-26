@@ -29,7 +29,7 @@ class AudioBlock extends Component {
         <Draggable
           key={i}
           axis='x'
-          defaultPosition={{x: 0, y: 273}}
+          defaultPosition={{x: 0, y: 0}}
           disabled={dragDisabled}
           bounds={{left: 0}}
           onDrag={this.handleDrag}
