@@ -21,7 +21,7 @@ class Cursor extends Component {
       'top': '272px', 
       'left': this.props.styling.left + UIConstants.LEFT, 
       'width': '3px', 
-      'background': 'rgba(0,200,0,0.5)', 
+      'background': 'rgba(182,184,1,0.5)', 
       'zIndex': '5', 
       'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT
     };
@@ -40,7 +40,7 @@ class Seeker extends Component {
       'top': '272px', 
       'left': this.props.styling.left + UIConstants.LEFT, 
       'width': '3px', 
-      'background': 'rgba(30,30,30,0.7)', 
+      'background': 'rgba(255,255,255,0.7)', 
       'zIndex': '5', 
       'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT
     };
@@ -61,7 +61,6 @@ class TrackBox extends Component{
 	}
 
   emitSplitBlock(rowId, blockId, splitElement) {
-    console.log("Emitting split operation");
     let splitOperation = {
       rowId: rowId,
       blockId: blockId,
@@ -87,7 +86,6 @@ class TrackBox extends Component{
   }
 
   emitMoveBlock(rowId, blockId, moveShift) {
-    console.log("Emitting move operation");
     let moveOperation = {
       rowId: rowId,
       blockId: blockId,

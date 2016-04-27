@@ -24,29 +24,39 @@ class AudioBlock extends Component {
     this.numBlocks = this.props.data.audioBlocks.length;
 
     // moveShift is the amount moved from original position for each block
-    this.moveShift = Array(this.numBlocks).fill(0);
+    this.moveShift = {};
+    this.initialOffset = {};
 
     // Intial positions of each block. Used to calculate relative shifting.
-    this.initialOffset = this.props.data.audioBlocks.map((block) => block.row_offset);
+    this.props.data.audioBlocks.map((block) => {
+      this.moveShift[block._id] = 0;
+      this.initialOffset[block._id] = block.row_offset;
+    });
 	}
 
   componentWillUpdate(nextProps, nextState) {
     if (nextProps.data.audioBlocks.length !== this.numBlocks) {
-      this.initialOffset = nextProps.data.audioBlocks.map((block) => block.row_offset);
+      let newMoveShift = {};
+      let newInitialOffset = {};
+      nextProps.data.audioBlocks.map((block) => {
+        newMoveShift[block._id] = this.moveShift[block._id] || 0;
+        newInitialOffset[block._id] = this.initialOffset[block._id] || block.row_offset;
+      });
+      this.moveShift = newMoveShift;
+      this.initialOffset = newInitialOffset;
       this.numBlocks = nextProps.data.audioBlocks.length;
-      this.moveShift = Array(this.numBlocks).fill(0);
     }  
   }
 
   handleStopDrag(blockId, index, e) {
     // When user is done dragging, socket emits the event to update the server.
-    let normalizedShift = this.moveShift[index] * this.props.currentZoom + this.initialOffset[index]
+    let normalizedShift = this.moveShift[blockId] * this.props.currentZoom + this.initialOffset[blockId];
     this.props.emitMoveBlock(blockId, normalizedShift);
   }
 
-  handleDrag(index, event, ui) {
+  handleDrag(blockId, event, ui) {
     // Updates the shift amount by the dragged amount
-    this.moveShift[index] += ui.deltaX;
+    this.moveShift[blockId] += ui.deltaX;
   }
 
   render() {
@@ -54,29 +64,32 @@ class AudioBlock extends Component {
     let dragDisabled = this.props.toolMode !== toolMode.DRAG;
 
   	let waveforms = data.audioBlocks.map((block, i) => {
-      let background;
+      let background = '#16783C';
       if (block.selected) background = selectColor;
       let style = {
+        'id': block._id,
         'backgroundColor': background,
         'border': 'none',
         'display': 'inline-block',
         'position': 'absolute',
         'height': '100px',
         'top': UIConstants.TOP + data.rowId * (UIConstants.ROW_HEIGHT+4),
-        'left': (block.row_offset) / this.props.currentZoom + UIConstants.LEFT - this.moveShift[i],
+        'left': (block.row_offset) / this.props.currentZoom + UIConstants.LEFT - this.moveShift[block._id],
       };
+      // console.log('block', i, 'state offset', block.row_offset, '- moveshift', this.moveShift[block._id]);
 
   		return (
         <Draggable
           key={i}
           axis='x'
           disabled={dragDisabled}
-          bounds={{left: -this.initialOffset[i] / this.props.currentZoom}}
-          onDrag={this.handleDrag.bind(this, i)}
+          bounds={{left: -this.initialOffset[block._id] / this.props.currentZoom}}
+          onDrag={this.handleDrag.bind(this, block._id)}
           onStop={this.handleStopDrag.bind(this, block._id, i)}
           >
     			<div style={style}>
     				<Waveform block={block} 
+              moveShift={this.moveShift[block._id]}
               highlightBlock={this.props.highlightBlock.bind(null, i)}
               emitSplitBlock={this.props.emitSplitBlock}
               playing={this.props.playing}

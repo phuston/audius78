@@ -105,7 +105,10 @@ var socketObject = {
             // Add left and right blocks back. Must maintain order or else front-end
             // waveform generation will not work
             newBlocks.splice(index, 0, leftBlock);
-            newBlocks.splice(index+1, 0, rightBlock);
+            newBlocks.push(rightBlock);
+
+            console.log('leftBlock', leftBlock);
+            console.log('rightBlock', rightBlock);
 
             updateRow.audioBlocks = newBlocks;
             newRows[updateRow.rowId] = updateRow;
@@ -119,6 +122,8 @@ var socketObject = {
                 if (err) {
                   console.error(err);
                 }
+
+                console.log(newWorkspace.rows[updateRow.rowId].audioBlocks);
 
                 // Emit socket event to notify all clients to update state
                 io.sockets.in(socket.workspaceId).emit('applySplitBlock', {
@@ -200,14 +205,13 @@ var socketObject = {
 
             // Apply delta to block
             movedBlock.row_offset = moveOperation.operation.moveShift;
+            console.log('movedBlock', movedBlock);
             // Put block back in place
             newBlocks.splice(index, 0, movedBlock);
             // Set updated audio blocks
             updateRow.audioBlocks = newBlocks;
             // Set that row
             newRows[updateRow.rowId] = updateRow;
-
-            console.log(newRows[0].audioBlocks[0]);
 
             Workspace.findByIdAndUpdate(
               workspace._id,
