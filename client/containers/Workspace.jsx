@@ -1,12 +1,14 @@
 // Outside
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
+import { routeActions } from 'redux-simple-router';
 import Dropzone from 'react-dropzone';
-import { playingMode, zoomLimits } from '../../utils.js';
+import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 
 //Containers
 import TrackBox from './TrackBox.jsx';
-import NavbarBox from './NavbarBox.jsx';
+import Navbar from '../components/Navbar/Navbar.jsx'
 import Toolbar from './Toolbar.jsx';
 
 // Outside
@@ -29,6 +31,7 @@ class Workspace extends Component {
     this.playMusic = this.playMusic.bind(this);
     this.seekTime = this.seekTime.bind(this);
     this.setZoom = this.setZoom.bind(this);
+    this.logout = this.logout.bind(this);
 
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
     this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
@@ -50,6 +53,27 @@ class Workspace extends Component {
         dispatch(workspaceActions.setWorkspaceWidth(width + 90));
       }
     }
+
+    this.reroute = () => dispatch(routeActions.push('/'));
+    this.clearRows = () => dispatch(workspaceActions.clearRows());
+    this.resetPlayingMode = () => dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
+    this.resetToolMode = () => dispatch(workspaceActions.setToolMode(toolMode.CURSOR));
+    this.resetSeeker = () => dispatch(workspaceActions.setSeeker(0));
+    this.resetZoom = () => dispatch(workspaceActions.setZoom(1));
+    this.resetCursor = () => dispatch(workspaceActions.setCursor(0));
+    this.resetWorkspaceWidth = () => dispatch(workspaceActions.setWorkspaceWidth('100vw'));
+  }
+
+  logout () {
+    this.audioCtx = undefined;
+    this.clearRows();
+    this.resetPlayingMode();
+    this.resetToolMode();
+    this.resetSeeker();
+    this.resetZoom();
+    this.resetCursor();
+    this.resetWorkspaceWidth();
+    this.reroute();
   }
 
   setZoom(newZoom) {
@@ -174,9 +198,10 @@ class Workspace extends Component {
   render() {
     return (
       <div className={styles.page} >
-        <NavbarBox
-         className={styles.navbar}
-        />
+        <div className = {styles.navbar} >
+          <Navbar onLogout={this.logout} />
+        </div>
+
 
         <div style={{'top': '70px', 'position': 'fixed', 'height': '70px'}}><h1>{this.props.workspace.id}</h1></div>
 
