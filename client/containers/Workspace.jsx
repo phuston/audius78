@@ -162,9 +162,9 @@ class Workspace extends Component {
 
         // Offsets are an array element into audio file and not time;
         // this converts them to time offsets
-        block.file_offset = (audioBlock.file_offset*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration;
+        block.file_offset = ((audioBlock.file_offset*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration)/2;
         block.file_end = ((audioBlock.file_end*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration)/2;
-        block.row_offset = audioBlock.row_offset;
+        block.row_offset = ((audioBlock.row_offset*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration);
         return block
       });
 
