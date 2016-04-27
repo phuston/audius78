@@ -14,18 +14,24 @@ class Row extends Component{
     super(props);
 
     this.emitSplitBlock = this.emitSplitBlock.bind(this);
+    this.emitMoveBlock = this.emitMoveBlock.bind(this);
   }
 
   emitSplitBlock(blockId, splitElement) {
     this.props.emitSplitBlock(this.props.rowData._id, blockId, splitElement);
   }
 
+  emitMoveBlock(blockId, moveShift) {
+    this.props.emitMoveBlock(this.props.rowData._id, blockId, moveShift);
+  }
+
   render(){
     return (
       <div className={styles.row} >
-        <RowTool />
+        <RowTool top={this.props.rowData.rowId * 104 + 272}/>
         <AudioBlock data={this.props.rowData} 
           emitSplitBlock={this.emitSplitBlock}
+          emitMoveBlock={this.emitMoveBlock}
           toolMode={this.props.toolMode}
           playing={this.props.playing}
         	currentZoom={this.props.currentZoom}
