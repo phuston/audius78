@@ -69,10 +69,13 @@ export default handleActions({
   },
 
   MOVE_BLOCK: (state, action) => {
-    let newBlocks = {...state.rows[action.payload.rowId].audioBlocks, [action.payload.blockId]: action.payload.newBlock}
     let rowToUpdate = state.rows[action.payload.rowId];
-    rowToUpdate.audioBlocks = newBlocks;
-    return {...state, rows: {...state.rows, [action.payload.rowId]:rowToUpdate}};
+    rowToUpdate.audioBlocks = action.payload.newBlocks;
+    return {...state, rows: {...state.rows, [action.payload.rowId]: rowToUpdate}};
+    // let newBlocks = {...state.rows[action.payload.rowId].audioBlocks, [action.payload.blockId]: action.payload.newBlock}
+    // let rowToUpdate = state.rows[action.payload.rowId];
+    // rowToUpdate.audioBlocks = newBlocks;
+    // return {...state, rows: {...state.rows, [action.payload.rowId]:rowToUpdate}};
   }
 }, {});
 

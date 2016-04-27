@@ -27,7 +27,7 @@ var socketObject = {
             var newRows = workspace.rows;
 
             // Find correct row to update
-            var row = workspace.rows.filter(function (row){ 
+            var updateRow = workspace.rows.filter(function (row){ 
               return row._id == splitOperation.rowId 
             })[0];
 
@@ -35,9 +35,9 @@ var socketObject = {
             var splitAt = splitOperation.operation.splitElement;
 
             // Store unaltered blocks in a new array so later can use $set instead of nested $push
-            newBlocks = row.audioBlocks.filter(function(block, i) {
+            newBlocks = updateRow.audioBlocks.filter(function(block, i) {
               if (block._id == splitOperation.blockId) {
-                leftBlock = row.audioBlocks[i];
+                leftBlock = block;
                 index = i;
                 return false;
               }
@@ -62,8 +62,8 @@ var socketObject = {
             newBlocks.splice(index, 0, leftBlock);
             newBlocks.splice(index+1, 0, rightBlock);
 
-            row.audioBlocks = newBlocks;
-            newRows[row.rowId] = row;
+            updateRow.audioBlocks = newBlocks;
+            newRows[updateRow.rowId] = updateRow;
 
             // Updates DB state document
             Workspace.findByIdAndUpdate(
@@ -77,8 +77,8 @@ var socketObject = {
 
                 // Emit socket event to notify all clients to update state
                 io.sockets.in(socket.workspaceId).emit('applySplitBlock', {
-                  rowId: row.rowId,
-                  newBlocks: newWorkspace.rows[row.rowId].audioBlocks
+                  rowId: updateRow.rowId,
+                  newBlocks: newWorkspace.rows[updateRow.rowId].audioBlocks
                 });
               }
             );
@@ -95,12 +95,12 @@ var socketObject = {
 
             // Find correct row to update
             var updateRow = workspace.rows.filter(function (row){ 
-              return row._id == splitOperation.rowId; 
+              return row._id == flagOperation.rowId; 
             })[0];
 
             // Find correct audioBlock to update
             var audioBlock = updateRow.audioBlocks.filter(function (block){
-              return block._id == splitOperation.blockId;
+              return block._id == flagOperation.blockId;
             });
 
             // Add the flag
@@ -114,14 +114,14 @@ var socketObject = {
               {$safe: true, upsert: false, new: true},
               function(err, newWorkspace) {
                 if (err) {
-                  res.status(500).json({error: err});
+                  console.error(err);
                 }
 
                 // Emit socket event to notify all clients to update state
                 io.sockets.in(socket.workspaceId).emit('applyFlagBlock', {
                   rowId: updateRow.rowId,
                   blockId: audioBlock.blockId,
-                  newFlags: newWorkspace.rows[row.rowId].audioBlocks[audioBlock.blockId].flags
+                  newFlags: newWorkspace.rows[updateRow.rowId].audioBlocks[audioBlock.blockId].flags
                 })
               }
             )
@@ -141,15 +141,28 @@ var socketObject = {
               return row._id == moveOperation.rowId;
             })[0];
 
+            var movedBlock, newBlocks, index;
+
             // Find correct audioBlock to update
-            var audioBlock = updateRow.audioBlocks.filter(function (block){
-              return block._id == splitOperation.blockId;
-            })[0];
+            var newBlocks = updateRow.audioBlocks.filter(function (block, i) {
+              if (block._id == moveOperation.blockId) {
+                movedBlock = block;
+                index = i;
+                return false;
+              }
+              return true;
+            });
 
             // Apply delta to block
-            audioBlock.file_offset += moveOperation.timeDelta;
-
+            movedBlock.row_offset = moveOperation.operation.moveShift;
+            // Put block back in place
+            newBlocks.splice(index, 0, movedBlock);
+            // Set updated audio blocks
+            updateRow.audioBlocks = newBlocks;
+            // Set that row
             newRows[updateRow.rowId] = updateRow;
+
+            console.log(newRows[0].audioBlocks[0]);
 
             Workspace.findByIdAndUpdate(
               workspace._id,
@@ -157,17 +170,16 @@ var socketObject = {
               {$safe: true, upsert: false, new: true},
               function(err, newWorkspace) {
                 if (err) {
-                  res.status(500).json({error: err});
+                  console.error(err);
                 }
 
                 // Emit socket event to notify all clients to update state
                 io.sockets.in(socket.workspaceId).emit('applyMoveBlock', {
                   rowId: updateRow.rowId,
-                  blockId: audioBlock.blockId,
-                  newBlock: newWorkspace.rows[row.rowId].audioBlocks[audioBlock.blockId]
-                })
+                  newBlocks: newWorkspace.rows[updateRow.rowId].audioBlocks
+                });
               }
-            )
+            );
           }
         })
       });

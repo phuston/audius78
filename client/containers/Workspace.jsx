@@ -45,11 +45,7 @@ class Workspace extends Component {
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
-    this.setWorkspaceWidth = (width) => {
-      if (width > document.documentElement.clientWidth) {
-        dispatch(workspaceActions.setWorkspaceWidth(width + 90));
-      }
-    }
+    this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width + 90, document.documentElement.clientWidth) ));
   }
 
   setZoom(newZoom) {
