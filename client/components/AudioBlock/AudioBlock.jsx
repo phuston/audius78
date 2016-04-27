@@ -38,9 +38,9 @@ class AudioBlock extends Component {
     if (nextProps.data.audioBlocks.length !== this.numBlocks) {
       let newMoveShift = {};
       let newInitialOffset = {};
-      nextProps.data.audioBlocks.map((block) => {
-        newMoveShift[block._id] = this.moveShift[block._id] || 0;
-        newInitialOffset[block._id] = this.initialOffset[block._id] || block.row_offset;
+      nextProps.data.audioBlocks.map((block, i) => {
+        newMoveShift[block._id] = this.moveShift[block._id] === undefined ? 0 : this.moveShift[block._id];
+        newInitialOffset[block._id] = this.initialOffset[block._id] === undefined ? block.row_offset : this.initialOffset[block._id];
       });
       this.moveShift = newMoveShift;
       this.initialOffset = newInitialOffset;

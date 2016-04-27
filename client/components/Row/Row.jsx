@@ -38,7 +38,7 @@ class Row extends Component{
     return (
       <div className={styles.row} >
         <RowTool 
-          top={this.props.rowData.rowId * (UIConstants.LEFT+4) + UIConstants.TOP}
+          top={this.props.rowData.rowId * (UIConstants.ROW_HEIGHT+4) + UIConstants.TOP}
           rowData={this.props.rowData}
         />
         <AudioBlock data={this.props.rowData} 

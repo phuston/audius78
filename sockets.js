@@ -107,9 +107,6 @@ var socketObject = {
             newBlocks.splice(index, 0, leftBlock);
             newBlocks.push(rightBlock);
 
-            console.log('leftBlock', leftBlock);
-            console.log('rightBlock', rightBlock);
-
             updateRow.audioBlocks = newBlocks;
             newRows[updateRow.rowId] = updateRow;
 
@@ -122,8 +119,6 @@ var socketObject = {
                 if (err) {
                   console.error(err);
                 }
-
-                console.log(newWorkspace.rows[updateRow.rowId].audioBlocks);
 
                 // Emit socket event to notify all clients to update state
                 io.sockets.in(socket.workspaceId).emit('applySplitBlock', {
@@ -205,7 +200,6 @@ var socketObject = {
 
             // Apply delta to block
             movedBlock.row_offset = moveOperation.operation.moveShift;
-            console.log('movedBlock', movedBlock);
             // Put block back in place
             newBlocks.splice(index, 0, movedBlock);
             // Set updated audio blocks

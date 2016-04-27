@@ -27,7 +27,8 @@ class Waveform extends Component {
   	// New properties only need to be computed if a zoom event fires or a block changes.
   	return (
   		(oldProps.currentZoom !== newProps.currentZoom) ||
-  		(oldProps.block.file_end !== newProps.block.file_end)
+  		(oldProps.block.file_end !== newProps.block.file_end) ||
+      (oldProps.block.row_offset !== newProps.block.row_offset)
 		);
   }
 
@@ -37,7 +38,7 @@ class Waveform extends Component {
   	this.firstPeak = Math.floor(block.file_offset / zoom);
   	this.lastPeak = Math.ceil((block.file_end / zoom) || (this.peaks.data[0].length - 1));
   	this.width = this.peaks.data[0].slice(this.firstPeak, this.lastPeak).length/2 - 2;
-  	this.props.setWorkspaceWidth(this.peaks.data[0].length / 2 + block.row_offset);
+  	// this.props.setWorkspaceWidth(this.peaks.data[0].length / 2 + block.row_offset);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -53,6 +54,8 @@ class Waveform extends Component {
     	let ctx = ReactDOM.findDOMNode(this).getContext('2d');
       let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
       this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0) - this.props.moveShift;
+      console.log('setting width');
+      this.props.setWorkspaceWidth(this.left + this.width);
       this.draw(ctx);
       this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
     }
@@ -61,7 +64,8 @@ class Waveform extends Component {
   componentDidMount() {
     let ctx = ReactDOM.findDOMNode(this).getContext('2d');
     let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
-    this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
+    this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0) - this.props.moveShift;
+    this.props.setWorkspaceWidth(this.left + this.width);
     this.draw(ctx);
   }
 
@@ -75,12 +79,10 @@ class Waveform extends Component {
       }
     } else if (this.props.toolMode === toolMode.SPLIT) {
       let distanceInWaveform = e.pageX - this.left - this.props.moveShift + 5;
-      console.log('waveform distance', e.pageX, this.left, this.props.moveShift);
       let start = this.firstPeak * this.props.currentZoom;
       let end = this.lastPeak * this.props.currentZoom;
 
       let splitElement = Math.ceil((end - start) * (distanceInWaveform/this.width)) + start;
-      console.log('start', start, 'end', end, 'at', splitElement);
       if (splitElement > start+10 && splitElement < end-10) {
 	      this.props.emitSplitBlock(this.props.block._id, splitElement);
       }
