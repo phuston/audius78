@@ -69,7 +69,7 @@ class TrackBox extends Component{
       operation: {
         splitElement: splitElement
       }
-    }
+    };
     this.props.socket.emit('splitBlock', splitOperation)
   }
 
@@ -83,7 +83,7 @@ class TrackBox extends Component{
         startTime: startTime,
         duration: duration
       }
-    }
+    };
     this.props.socket.emit('flagBlock', flagOperation)
   }
 
@@ -95,7 +95,7 @@ class TrackBox extends Component{
       operation: {
         moveShift: moveShift
       }
-    }
+    };
     this.props.socket.emit('moveBlock', moveOperation)
   }
 
@@ -145,6 +145,7 @@ class TrackBox extends Component{
             setSeeker={this.props.setSeeker}
             setSpeed={this.props.setSpeed}
             emitSplitBlock={this.emitSplitBlock}
+            emitMoveBlock={this.emitMoveBlock}
             setWorkspaceWidth={this.props.setWorkspaceWidth}
             width={this.props.workspace.width}
           />
@@ -156,8 +157,10 @@ class TrackBox extends Component{
       this.drawTimescale(this.props.workspace.timing.seeker);
     }
 
+    let trackboxStyle = {'height': this.props.workspace.rows.length * 104 + 70};
+
     return (
-      <div className={styles.trackbox}>
+      <div className={styles.trackbox} style={trackboxStyle}>
         <TimeRuler workspace={this.props.workspace}/>
         <Seeker styling={{left: this.props.workspace.timing.seeker, numRows: this.props.workspace.rows.length}}/>
         <Cursor styling={{left: this.props.workspace.timing.cursor, numRows: this.props.workspace.rows.length}}/>

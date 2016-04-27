@@ -44,18 +44,14 @@ class Workspace extends Component {
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
-    this.setWorkspaceWidth = (width) => {
-      if (width > document.documentElement.clientWidth) {
-        dispatch(workspaceActions.setWorkspaceWidth(width + 90));
-      }
-    }
+    this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width + 90, document.documentElement.clientWidth) ));
   }
 
   setZoom(newZoom) {
     let zoomRatio = this.props.workspace.zoomLevel/newZoom;
     this.props.dispatch(workspaceActions.setZoom(newZoom));
-    let newSeeker = ((this.props.workspace.timing.seeker) * zoomRatio);
-    let newCursor = ((this.props.workspace.timing.cursor) * zoomRatio);
+    let newSeeker = this.props.workspace.timing.seeker * zoomRatio;
+    let newCursor = this.props.workspace.timing.cursor * zoomRatio;
     if (newZoom <= zoomLimits.UPPER && newZoom >= zoomLimits.LOWER) {
       this.setSeeker(newSeeker);
       this.setCursor(newCursor);
@@ -76,18 +72,16 @@ class Workspace extends Component {
       this.removeRow(rowId);
     });
 
-    this.socket.on('applyFlagBlock', newFlags => {
-      // TODO: Figure out where the row and block Ids will be coming from for this
-      this.flagBlock(newFlags);
+    this.socket.on('applyFlagBlock', flagOperation => {
+      this.flagBlock(flagOperation);
     });
 
     this.socket.on('applySplitBlock', splitOperation => {
       this.splitBlock(splitOperation);
     });
 
-    this.socket.on('applyMoveBlock', newBlocks => {
-      // TODO: Again, where does the rowId come from? This should be returned as an operation
-      this.moveBlock(newBlocks);
+    this.socket.on('applyMoveBlock', moveOperation => {
+      this.moveBlock(moveOperation);
     });
   }
 
