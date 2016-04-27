@@ -7,7 +7,7 @@ import Draggable from 'react-draggable';
 import styles from './AudioBlock.scss'
 
 // Others
-import { playingMode, toolMode } from '../../../utils.js';
+import { playingMode, toolMode, UIConstants, selectColor } from '../../../utils.js';
 
 // Audio Processing
 import extractPeaks from 'webaudio-peaks';
@@ -49,17 +49,21 @@ class AudioBlock extends Component {
     this.moveShift[index] += ui.deltaX;
   }
 
-  render(){
+  render() {
   	let data = this.props.data;
     let dragDisabled = this.props.toolMode !== toolMode.DRAG;
 
   	let waveforms = data.audioBlocks.map((block, i) => {
+      let background;
+      if (block.selected) background = selectColor;
       let style = {
+        'backgroundColor': background,
         'border': 'none',
         'display': 'inline-block',
         'position': 'absolute',
-        'top': 272 + data.rowId * 104,
-        'left': (block.row_offset) / this.props.currentZoom + 88 - this.moveShift[i],
+        'height': '100px',
+        'top': UIConstants.TOP + data.rowId * (UIConstants.ROW_HEIGHT+4),
+        'left': (block.row_offset) / this.props.currentZoom + UIConstants.LEFT - this.moveShift[i],
       };
 
   		return (
@@ -71,8 +75,9 @@ class AudioBlock extends Component {
           onDrag={this.handleDrag.bind(this, i)}
           onStop={this.handleStopDrag.bind(this, block._id, i)}
           >
-    			<div height={100} style={style}>
+    			<div style={style}>
     				<Waveform block={block} 
+              highlightBlock={this.props.highlightBlock.bind(null, i)}
               emitSplitBlock={this.props.emitSplitBlock}
               playing={this.props.playing}
               toolMode={this.props.toolMode}
@@ -97,6 +102,10 @@ class AudioBlock extends Component {
 
       case (toolMode.DRAG):
         audioBlockStyle.cursor = 'move';
+        break;
+
+      case (toolMode.SELECT):
+        audioBlockStyle.cursor = 'pointer';
         break;
     }
 

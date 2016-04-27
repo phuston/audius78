@@ -19,10 +19,55 @@ var socketObject = {
         // TODO: What do we need to emit to let the other users know to add a new user?
       });
 
-      socket.on('splitBlock', function(splitOperation){
+      socket.on('removeBlocks', function(operation) {
+        Workspace.findOne({id: socket.workspaceId}, function(err, workspace) {
+          if (err) {
+            return console.error(err);
+          }
+
+          var newRows = workspace.rows;
+          var thisRow, thisBlock;
+          var newBlocks;
+
+          for (var i=0; i<newRows.length; i++) {
+            thisRow = newRows[i];
+            newBlocks = [];
+            for (var j=0; j<thisRow.audioBlocks.length; j++) {
+              thisBlock = thisRow.audioBlocks[j];
+              if (operation[thisRow._id.toString()].indexOf(thisBlock._id.toString()) === -1) {
+                newBlocks.push(thisBlock);
+              }
+            }
+            newRows[i].audioBlocks = newBlocks;
+          }
+
+          Workspace.findByIdAndUpdate(
+            workspace._id,
+            {$set: {rows: newRows}},
+            {$safe: true, upsert: false, new: true},
+            function(err, newWorkspace) {
+              if (err) {
+                console.error(err);
+              }
+
+              var response = {}
+              newWorkspace.rows.map(function(row) {
+                response[row.rowId] = row.audioBlocks;
+              });
+
+              // Emit socket event to notify all clients to update state
+              io.sockets.in(socket.workspaceId).emit('applyRemoveBlocks', {
+                response: response
+              });
+            }
+          );
+        })
+      });
+
+      socket.on('splitBlock', function(splitOperation) {
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
           if (err) {
-            console.error(err);
+            return console.error(err);
           } else {
             var newRows = workspace.rows;
 
@@ -89,7 +134,7 @@ var socketObject = {
       socket.on('flagBlock', function(flagOperation){
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
           if (err) {
-            console.log(err);
+            return console.log(err);
           } else {
             var newRows = workspace.rows;
 
@@ -132,7 +177,7 @@ var socketObject = {
       socket.on('moveBlock', function(moveOperation){
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
           if (err) {
-            console.log(err);
+            return console.log(err);
           } else {
             var newRows = workspace.rows;
 
@@ -186,6 +231,10 @@ var socketObject = {
 
       socket.on('addRow', function(addOperation){
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
+          if (err) {
+            return console.error(err);
+          }
+
           var newRow;
 
           for (var i = 0; i < workspace.rows.length; i++) {

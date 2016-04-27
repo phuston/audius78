@@ -1,7 +1,7 @@
 // Outside
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { playingMode, toolMode } from '../../utils.js';
+import { playingMode, toolMode, UIConstants } from '../../utils.js';
 
 // Styling 
 import styles from './Containers.scss';
@@ -18,12 +18,12 @@ class Cursor extends Component {
   render() {
     let cursorStyle = {
       'position': 'absolute', 
-      'top': '273px', 
-      'left': this.props.styling.left + 88, 
-      'width': '1px', 
-      'background': 'red', 
+      'top': '272px', 
+      'left': this.props.styling.left + UIConstants.LEFT, 
+      'width': '3px', 
+      'background': 'rgba(0,200,0,0.5)', 
       'zIndex': '5', 
-      'height': this.props.styling.numRows * 110
+      'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT
     };
     return <div id='cursor' style={cursorStyle}/>;
   }
@@ -37,13 +37,12 @@ class Seeker extends Component {
   render() {
     let seekerStyle = {
       'position': 'absolute', 
-      'top': '273px', 
-      'left': this.props.styling.left + 88, 
-      'width': '4px', 
-      'border': '1px solid white', 
-      'background': 'rgba(0,0,0,0.3)', 
+      'top': '272px', 
+      'left': this.props.styling.left + UIConstants.LEFT, 
+      'width': '3px', 
+      'background': 'rgba(30,30,30,0.7)', 
       'zIndex': '5', 
-      'height': this.props.styling.numRows * 110
+      'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT
     };
     return <div id='seeker' style={seekerStyle}/>;
   }
@@ -70,7 +69,7 @@ class TrackBox extends Component{
         splitElement: splitElement
       }
     };
-    this.props.socket.emit('splitBlock', splitOperation)
+    this.props.socket.emit('splitBlock', splitOperation);
   }
 
   emitFlagBlock(rowId, blockId, flagType, startTime, duration) {
@@ -84,7 +83,7 @@ class TrackBox extends Component{
         duration: duration
       }
     };
-    this.props.socket.emit('flagBlock', flagOperation)
+    this.props.socket.emit('flagBlock', flagOperation);
   }
 
   emitMoveBlock(rowId, blockId, moveShift) {
@@ -96,7 +95,7 @@ class TrackBox extends Component{
         moveShift: moveShift
       }
     };
-    this.props.socket.emit('moveBlock', moveOperation)
+    this.props.socket.emit('moveBlock', moveOperation);
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -137,6 +136,7 @@ class TrackBox extends Component{
 			var rows = Array.prototype.map.call(this.props.workspace.rows, (row) => {
 	  		return (
           <Row key={row.rowId} 
+            highlightBlock={this.props.highlightBlock}
             rowData={row} 
             currentZoom={this.props.workspace.zoomLevel}
             toolMode={this.props.workspace.toolMode}
@@ -157,7 +157,7 @@ class TrackBox extends Component{
       this.drawTimescale(this.props.workspace.timing.seeker);
     }
 
-    let trackboxStyle = {'height': this.props.workspace.rows.length * 104 + 70};
+    let trackboxStyle = {'height': this.props.workspace.rows.length * UIConstants.ROW_HEIGHT + 74};
 
     return (
       <div className={styles.trackbox} style={trackboxStyle}>

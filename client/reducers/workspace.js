@@ -15,6 +15,21 @@ export default handleActions({
     return {...state, width: action.payload};
   },
 
+  HIGHLIGHT_BLOCK: (state, action) => {
+    let blocks = state.rows[action.payload.rowIndex].audioBlocks;
+    blocks[action.payload.blockIndex].selected = !blocks[action.payload.blockIndex].selected;
+    return {
+      ...state, 
+      rows: {
+        ...state.rows, 
+        [action.payload.rowIndex]: {
+          ...state.rows[action.payload.rowIndex],
+          audioBlocks: blocks,
+        }
+      }
+    };
+  },
+
   SET_TOOL_MODE: (state, action) => {
     return {...state, toolMode: action.payload};
   },
@@ -51,6 +66,16 @@ export default handleActions({
     let query = '!' + action.payload;
     let newRows = filter(state.rows, query);
     newRows.length -= 1;
+    return {...state, rows: newRows};
+  },
+
+  REMOVE_BLOCKS: (state, action) => {
+    let newRows = state.rows;
+    Array.prototype.forEach.call(newRows, (row, i) => {
+      if (action.payload.response[row.rowId] !== undefined) {
+        newRows[row.rowId].audioBlocks = action.payload.response[row.rowId];
+      }
+    });
     return {...state, rows: newRows};
   },
 

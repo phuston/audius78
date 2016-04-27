@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 // import styles from './Waveform.scss'
 
 // Others
-import { playingMode, toolMode } from '../../../utils.js';
+import { playingMode, toolMode, UIConstants } from '../../../utils.js';
 
 // Audio Processing
 import extractPeaks from 'webaudio-peaks';
@@ -24,8 +24,7 @@ class Waveform extends Component {
   }
 
   needsToUpdate(oldProps, newProps) {
-  	// New properties only need to be computed if a zoom event fires 
-  	// or a block changes.
+  	// New properties only need to be computed if a zoom event fires or a block changes.
   	return (
   		(oldProps.currentZoom !== newProps.currentZoom) ||
   		(oldProps.block.file_end !== newProps.block.file_end)
@@ -66,13 +65,13 @@ class Waveform extends Component {
   	// Figure out which tool mode the workspace is in to apply the correct operation
     if (this.props.toolMode === toolMode.CURSOR) {
       if (this.props.playing === playingMode.PLAYING) {
-        this.props.setSeeker(e.pageX-90);
+        this.props.setSeeker(e.pageX - UIConstants.LEFT - 2);
       } else {
-        this.props.setCursor(e.pageX-90);
+        this.props.setCursor(e.pageX - UIConstants.LEFT - 2);
       }
     } else if (this.props.toolMode === toolMode.SPLIT) {
     	// e.pageX - 83 so that it is exactly where the dashed line on the cursor is
-      let splitElement = Math.ceil(((e.pageX-85) * 2) * this.props.currentZoom);
+      let splitElement = Math.ceil(((e.pageX - UIConstants.LEFT + 5) * 2) * this.props.currentZoom);
 
       // Only accept splitting if it's +/- 5px from left or right border
       let start = this.firstPeak * this.props.currentZoom + 10;
@@ -83,6 +82,8 @@ class Waveform extends Component {
       
     } else if (this.props.toolMode === toolMode.DRAG) {
     	// Do something here. Probably nothing.
+    } else if (this.props.toolMode === toolMode.SELECT) {
+      this.props.highlightBlock();
     }
   }
 
@@ -92,7 +93,7 @@ class Waveform extends Component {
     let bits = this.peaks.bits;
 
     let i;
-    let h2 = 50; // canvas.height / 2;
+    let h2 = UIConstants.ROW_HEIGHT / 2;
 
     let minPeak, min;
     let maxPeak, max;
@@ -103,7 +104,7 @@ class Waveform extends Component {
     ctx.fillStyle = '#fff';
 
     // Every two peaks fit into one pixel width: one from top and one from bottom border
-    for (i=this.firstPeak+1; i < this.lastPeak-1; i+=2) {
+    for (i=this.firstPeak+2; i < this.lastPeak-1; i+=2) {
       minPeak = peaks[i] / maxValue;
       maxPeak = peaks[i+1] / maxValue;
 
@@ -121,8 +122,8 @@ class Waveform extends Component {
 
   render() {
     return (
-      <canvas width={this.width} height={100}
-        style={{'border': '1px solid red'}}
+      <canvas width={this.width} height={UIConstants.ROW_HEIGHT}
+        style={{'borderLeft': '1.5px solid red', 'borderRight': '1.5px solid red'}}
         onClick={this.handleCanvasClick}
       />
     );
