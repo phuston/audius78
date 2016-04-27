@@ -96,7 +96,6 @@ class TrackBox extends Component{
         moveShift: moveShift
       }
     };
-    // console.log('moveOperation at trackbox', moveOperation);
     this.props.socket.emit('moveBlock', moveOperation)
   }
 

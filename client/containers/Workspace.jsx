@@ -51,8 +51,8 @@ class Workspace extends Component {
   setZoom(newZoom) {
     let zoomRatio = this.props.workspace.zoomLevel/newZoom;
     this.props.dispatch(workspaceActions.setZoom(newZoom));
-    let newSeeker = ((this.props.workspace.timing.seeker) * zoomRatio);
-    let newCursor = ((this.props.workspace.timing.cursor) * zoomRatio);
+    let newSeeker = this.props.workspace.timing.seeker * zoomRatio;
+    let newCursor = this.props.workspace.timing.cursor * zoomRatio;
     if (newZoom <= zoomLimits.UPPER && newZoom >= zoomLimits.LOWER) {
       this.setSeeker(newSeeker);
       this.setCursor(newCursor);
