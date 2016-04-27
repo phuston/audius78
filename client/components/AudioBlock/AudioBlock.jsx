@@ -21,11 +21,13 @@ class AudioBlock extends Component {
 
     this.handleStopDrag = this.handleStopDrag.bind(this);
     this.handleDrag = this.handleDrag.bind(this);
-    this.initialOffset = this.props.data.audioBlocks.map((block) => block.row_offset);
     this.numBlocks = this.props.data.audioBlocks.length;
+
+    // moveShift is the amount moved from original position for each block
     this.moveShift = Array(this.numBlocks).fill(0);
-    console.log('moveShift', this.moveShift);
-    // console.log('initialOffset', this.initialOffset);
+
+    // Intial positions of each block. Used to calculate relative shifting.
+    this.initialOffset = this.props.data.audioBlocks.map((block) => block.row_offset);
 	}
 
   componentWillUpdate(nextProps, nextState) {
@@ -33,17 +35,17 @@ class AudioBlock extends Component {
       this.initialOffset = nextProps.data.audioBlocks.map((block) => block.row_offset);
       this.numBlocks = nextProps.data.audioBlocks.length;
       this.moveShift = Array(this.numBlocks).fill(0);
-      // console.log('initialOffset', this.initialOffset);
     }  
   }
 
   handleStopDrag(blockId, index, e) {
-    // Normalize this.moveShift
-    console.log('moveShift', this.moveShift[index] * this.props.currentZoom, 'index', index);
-    this.props.emitMoveBlock(blockId, this.moveShift[index] * this.props.currentZoom + this.initialOffset[index]);
+    // When user is done dragging, socket emits the event to update the server.
+    let normalizedShift = this.moveShift[index] * this.props.currentZoom + this.initialOffset[index]
+    this.props.emitMoveBlock(blockId, normalizedShift);
   }
 
   handleDrag(index, event, ui) {
+    // Updates the shift amount by the dragged amount
     this.moveShift[index] += ui.deltaX;
   }
 
@@ -59,8 +61,6 @@ class AudioBlock extends Component {
         'top': 272 + data.rowId * 104,
         'left': (block.row_offset) / this.props.currentZoom + 88 - this.moveShift[i],
       };
-      console.log('left attribute', style.left);
-      console.log('left boundary', -block.row_offset / this.props.currentZoom);
 
   		return (
         <Draggable
