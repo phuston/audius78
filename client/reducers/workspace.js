@@ -1,5 +1,4 @@
 import { handleActions } from 'redux-actions';
-import { filter } from 'filter-object';
 import { zoomLimits } from '../../utils';
 
 export default handleActions({
@@ -13,6 +12,10 @@ export default handleActions({
 
   SET_WORKSPACE_WIDTH: (state, action) => {
     return {...state, width: action.payload};
+  },
+
+  TOGGLE_ROW_DELETE: (state, action) => {
+    return {...state, allowRowDelete: action.payload};
   },
 
   HIGHLIGHT_BLOCK: (state, action) => {
@@ -62,11 +65,22 @@ export default handleActions({
   },
 
   REMOVE_ROW: (state, action) => {
-    // TODO: Tentative, might not work. Also update indices
-    let query = '!' + action.payload;
-    let newRows = filter(state.rows, query);
-    newRows.length -= 1;
-    return {...state, rows: newRows};
+    let updatedRows = {};
+    let numRow = 0;
+    let thisRow;
+    for (var key in state.rows) {
+      if (key === 'length') {
+        updatedRows.length = state.rows.length - 1;
+      } else {
+        if (state.rows[key]._id !== action.payload.deletedRowId) {
+          thisRow = state.rows[key];
+          thisRow.rowId = numRow;
+          updatedRows[Number(numRow)] = thisRow;
+          numRow++;
+        }
+      }
+    }
+    return {...state, rows: updatedRows};
   },
 
   REMOVE_BLOCKS: (state, action) => {

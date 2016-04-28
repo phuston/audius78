@@ -30,17 +30,19 @@ class Workspace extends Component {
     this.setZoom = this.setZoom.bind(this);
 
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
-    this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
+    this.removeRow = (updatedRows) => dispatch(workspaceActions.removeRow(updatedRows));
     this.flagBlock = (newFlags) => dispatch(workspaceActions.flagBlock(newFlags));
     this.splitBlock = (newBlocks) => dispatch(workspaceActions.splitBlock(newBlocks));
     this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
     this.removeBlocks = (newBlocksPerRow) => dispatch(workspaceActions.removeBlocks(newBlocksPerRow));
     this.emitRemoveBlocks = this.emitRemoveBlocks.bind(this);
+    this.emitRemoveRow = this.emitRemoveRow.bind(this);
 
     // BindActions
     let dispatch = this.props.dispatch;
     this.setToolMode = (mode) => dispatch(workspaceActions.setToolMode(mode));
     this.setSpeed = (speed) => dispatch(workspaceActions.setSpeed(speed));
+    this.toggleRowDelete = (status) => dispatch(workspaceActions.toggleRowDelete(status));
     this.setPlayingMode = (playing) => dispatch(workspaceActions.setPlayingMode(playing));
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
@@ -48,6 +50,11 @@ class Workspace extends Component {
     this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
     this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
     this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+90, document.documentElement.clientWidth) ));
+  }
+
+  emitRemoveRow(rowId) {
+    if (this.props.workspace.allowRowDelete === true)
+      this.socket.emit('removeRow', {rowId: rowId});
   }
 
   emitRemoveBlocks() {
@@ -83,8 +90,8 @@ class Workspace extends Component {
       this.addRow(applyOperation, audioCtx);
     });
 
-    this.socket.on('applyRemoveRow', rowId => {
-      this.removeRow(rowId);
+    this.socket.on('applyRemoveRow', updatedRows => {
+      this.removeRow(updatedRows);
     });
 
     this.socket.on('applyRemoveBlocks', newBlocksPerRow => {
@@ -105,16 +112,20 @@ class Workspace extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // If row added or deleted, allow row delete
+    if (this.props.workspace.rows.length !== prevProps.workspace.rows.length) {
+      this.toggleRowDelete(true);
+    }
     if (this.props.workspace.playing !== prevProps.workspace.playing) {
       switch (this.props.workspace.playing) {
         case (playingMode.PLAYING):
-          this.setSeeker(this.props.workspace.timing.cursor);
           if (this.audioCtx === undefined) {
-            // No play object, have to start new
+            // This means last state was STOP
+            this.setSeeker(this.props.workspace.timing.cursor);
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             this.playMusic();
           } else {
-            // This means we were previously paused
+            // This means last state was PAUSE
             this.audioCtx.resume();
           }
           break;
@@ -130,7 +141,7 @@ class Workspace extends Component {
           this.audioCtx.close();
           this.audioCtx = undefined;
 
-          // Have to reset the seeker to handle a bug when repeatedly hitting stop/play
+          // Have to reset the cursor to handle a bug when repeatedly hitting stop/play
           this.time = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
           break;
       }
@@ -146,6 +157,9 @@ class Workspace extends Component {
     data.append('name', 'song');
     data.append('workspaceId', this.props.workspace.id);
     data.append('rowIndex', this.props.workspace.rows.length);
+
+    // Disable row delete to allow indices of workspace.rows to sync properly
+    this.toggleRowDelete(false);
 
     fetch('/api/upload', {
       method: 'POST',
@@ -170,7 +184,6 @@ class Workspace extends Component {
   }
 
   playMusic(){
-    console.log(this.time);
     let workspace = this.props.workspace;
     let sourceBuffers = Array.prototype.map.call(workspace.rows, (elem) => {
       let blocks = Array.prototype.map.call(elem.audioBlocks, (audioBlock)=>{
@@ -190,8 +203,6 @@ class Workspace extends Component {
 
       return blocks;
     });
-
-    console.log(sourceBuffers);
 
     sourceBuffers.map( (row) => {
       row.map( (block) => {
@@ -241,6 +252,7 @@ class Workspace extends Component {
               socket={this.socket}
               workspace={this.props.workspace} 
               highlightBlock={this.highlightBlock}
+              emitRemoveRow={this.emitRemoveRow}
               setCursor={this.setCursor}
               setSeeker={this.setSeeker}
               seekTime={this.seekTime}

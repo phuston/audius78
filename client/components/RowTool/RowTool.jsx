@@ -10,7 +10,7 @@ class RowTool extends Component{
 	}
 
 	handleDeleteRow() {
-		console.log('delete', this.props.rowData.rowId);
+		this.props.emitRemoveRow(this.props.rowData._id);
 	}
 
   render() {
