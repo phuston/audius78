@@ -126,6 +126,14 @@ export const removeRow = createAction(types.REMOVE_ROW, (rowId) => {
   return rowId;
 });
 
+export const removeBlocks = createAction(types.REMOVE_BLOCKS, (newBlocksPerRow) => {
+  return newBlocksPerRow;
+});
+
+export const highlightBlock = createAction(types.HIGHLIGHT_BLOCK, (blockInfo) => {
+  return blockInfo;
+});
+
 export const flagBlock = createAction(types.FLAG_TRACK, (flagOperation) => {
   return flagOperation;
 });

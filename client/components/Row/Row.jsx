@@ -1,5 +1,6 @@
 // Outside
 import React, { Component } from 'react';
+import { UIConstants } from '../../../utils';
 
 // Components
 import AudioBlock from '../AudioBlock/AudioBlock.jsx';
@@ -15,6 +16,7 @@ class Row extends Component{
 
     this.emitSplitBlock = this.emitSplitBlock.bind(this);
     this.emitMoveBlock = this.emitMoveBlock.bind(this);
+    this.highlightBlock = this.highlightBlock.bind(this);
   }
 
   emitSplitBlock(blockId, splitElement) {
@@ -25,13 +27,24 @@ class Row extends Component{
     this.props.emitMoveBlock(this.props.rowData._id, blockId, moveShift);
   }
 
+  highlightBlock(blockIndex) {
+    this.props.highlightBlock({
+      blockIndex: blockIndex,
+      rowIndex: this.props.rowData.rowId
+    });
+  }
+
   render(){
     return (
       <div className={styles.row} >
-        <RowTool top={this.props.rowData.rowId * 104 + 272}/>
+        <RowTool 
+          top={this.props.rowData.rowId * (UIConstants.ROW_HEIGHT+4) + UIConstants.TOP}
+          rowData={this.props.rowData}
+        />
         <AudioBlock data={this.props.rowData} 
           emitSplitBlock={this.emitSplitBlock}
           emitMoveBlock={this.emitMoveBlock}
+          highlightBlock={this.highlightBlock}
           toolMode={this.props.toolMode}
           playing={this.props.playing}
         	currentZoom={this.props.currentZoom}

@@ -34,6 +34,8 @@ class Workspace extends Component {
     this.flagBlock = (newFlags) => dispatch(workspaceActions.flagBlock(newFlags));
     this.splitBlock = (newBlocks) => dispatch(workspaceActions.splitBlock(newBlocks));
     this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
+    this.removeBlocks = (newBlocksPerRow) => dispatch(workspaceActions.removeBlocks(newBlocksPerRow));
+    this.emitRemoveBlocks = this.emitRemoveBlocks.bind(this);
 
     // BindActions
     let dispatch = this.props.dispatch;
@@ -44,7 +46,20 @@ class Workspace extends Component {
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
-    this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width + 90, document.documentElement.clientWidth) ));
+    this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
+    this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+90, document.documentElement.clientWidth) ));
+  }
+
+  emitRemoveBlocks() {
+    let removeBlockOperation = {};
+    Array.prototype.map.call(this.props.workspace.rows, (row) => {
+      let blocksToDelete = [];
+      row.audioBlocks.map( (block) => {
+        if (block.selected) blocksToDelete.push(block._id);
+      });
+      removeBlockOperation[row._id] = blocksToDelete;
+    });
+    this.socket.emit('removeBlocks', removeBlockOperation);
   }
 
   setZoom(newZoom) {
@@ -72,6 +87,10 @@ class Workspace extends Component {
       this.removeRow(rowId);
     });
 
+    this.socket.on('applyRemoveBlocks', newBlocksPerRow => {
+      this.removeBlocks(newBlocksPerRow);
+    });
+
     this.socket.on('applyFlagBlock', flagOperation => {
       this.flagBlock(flagOperation);
     });
@@ -89,6 +108,7 @@ class Workspace extends Component {
     if (this.props.workspace.playing !== prevProps.workspace.playing) {
       switch (this.props.workspace.playing) {
         case (playingMode.PLAYING):
+          this.setSeeker(this.props.workspace.timing.cursor);
           if (this.audioCtx === undefined) {
             // No play object, have to start new
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -206,6 +226,7 @@ class Workspace extends Component {
           <Toolbar className={styles.toolbar} 
             setPlayingMode={this.setPlayingMode} 
             playing={this.props.workspace.playing}
+            deleteSelected={this.emitRemoveBlocks}
             toolMode={this.props.workspace.toolMode}
             setZoom={this.setZoom}
             currentZoom={this.props.workspace.zoomLevel}
@@ -219,6 +240,7 @@ class Workspace extends Component {
             <TrackBox className={styles.trackbox} 
               socket={this.socket}
               workspace={this.props.workspace} 
+              highlightBlock={this.highlightBlock}
               setCursor={this.setCursor}
               setSeeker={this.setSeeker}
               seekTime={this.seekTime}
