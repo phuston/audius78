@@ -109,6 +109,7 @@ class Workspace extends Component {
     if (this.props.workspace.playing !== prevProps.workspace.playing) {
       switch (this.props.workspace.playing) {
         case (playingMode.PLAYING):
+          this.setSeeker(this.props.workspace.timing.cursor);
           if (this.audioCtx === undefined) {
             // No play object, have to start new
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();

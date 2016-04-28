@@ -74,9 +74,8 @@ class AudioBlock extends Component {
         'position': 'absolute',
         'height': '100px',
         'top': UIConstants.TOP + data.rowId * (UIConstants.ROW_HEIGHT+4),
-        'left': (block.row_offset) / this.props.currentZoom + UIConstants.LEFT - this.moveShift[block._id],
+        'left': (block.row_offset) + UIConstants.LEFT - this.moveShift[block._id],
       };
-      // console.log('block', i, 'state offset', block.row_offset, '- moveshift', this.moveShift[block._id]);
 
   		return (
         <Draggable
