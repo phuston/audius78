@@ -35,7 +35,7 @@ class AudioBlock extends Component {
 	}
 
   componentWillUpdate(nextProps, nextState) {
-    if (nextProps.data.audioBlocks.length !== this.numBlocks) {
+    if (nextProps.data.audioBlocks.length !== this.numBlocks || nextProps.data._id !== this.props.data._id) {
       let newMoveShift = {};
       let newInitialOffset = {};
       nextProps.data.audioBlocks.map((block, i) => {
@@ -62,7 +62,7 @@ class AudioBlock extends Component {
   render() {
   	let data = this.props.data;
     let dragDisabled = this.props.toolMode !== toolMode.DRAG;
-
+    console.log('audioblock sending', data.rawAudio);
   	let waveforms = data.audioBlocks.map((block, i) => {
       let background = '#16783C';
       if (block.selected) background = selectColor;

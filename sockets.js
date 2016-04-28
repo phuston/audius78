@@ -243,14 +243,51 @@ var socketObject = {
           }
 
           io.sockets.in(socket.workspaceId).emit('applyAddRow', {newRow: newRow});
-        })
+        });
       });
 
       socket.on('removeRow', function(removeOperation){
-        // TODO: Same pattern as above
+        Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
+          if (err) {
+            return console.error(err);
+          }
+
+          var newRowIds = {};
+          var newRows = workspace.rows.filter(function(row) {
+            return row._id.toString() !== removeOperation.rowId;
+          });
+
+          console.log(newRows);
+
+          if (newRows.length > 0) {
+            newRows = newRows.map(function(row, i) {
+              row.rowId = i;
+              newRowIds[row._id] = i;
+              return row;
+            });
+          }
+
+          Workspace.findByIdAndUpdate(
+            workspace._id,
+            {$set: {rows: newRows}},
+            {$safe: true, upsert: false, new: true},
+            function(err, newWorkspace) {
+              if (err) {
+                console.error(err);
+              }
+
+              console.log('newRowIds', newRowIds);
+
+              // Emit socket event to notify all clients to update state
+              io.sockets.in(socket.workspaceId).emit('applyRemoveRow', {
+                newRowIds: newRowIds,
+                deletedRowId: removeOperation.rowId
+              });
+            }
+          );
+        });
       })
 
-      // TODO: What other operations do we need to support? Adding a row? Does that happen here?
     });
   },
 }

@@ -122,8 +122,8 @@ export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
   });
 });
 
-export const removeRow = createAction(types.REMOVE_ROW, (rowId) => {
-  return rowId;
+export const removeRow = createAction(types.REMOVE_ROW, (updatedRows) => {
+  return updatedRows;
 });
 
 export const removeBlocks = createAction(types.REMOVE_BLOCKS, (newBlocksPerRow) => {

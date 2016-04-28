@@ -40,6 +40,7 @@ class Row extends Component{
         <RowTool 
           top={this.props.rowData.rowId * (UIConstants.ROW_HEIGHT+4) + UIConstants.TOP}
           rowData={this.props.rowData}
+          emitRemoveRow={this.props.emitRemoveRow}
         />
         <AudioBlock data={this.props.rowData} 
           emitSplitBlock={this.emitSplitBlock}
