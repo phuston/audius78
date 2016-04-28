@@ -23,7 +23,6 @@ class Workspace extends Component {
     this.audioCtx = undefined;
     this.time = 0;
     this.cursorTime = 0;
-    this.sourceBuffers = [];
     this.onDrop = this.onDrop.bind(this);
 
     this.playMusic = this.playMusic.bind(this);
@@ -173,16 +172,36 @@ class Workspace extends Component {
   playMusic(){
     console.log(this.time);
     let workspace = this.props.workspace;
-    this.sourceBuffers = Array.prototype.map.call(workspace.rows, (elem) => {
-      let source = this.audioCtx.createBufferSource();
-      source.buffer = elem.rawAudio;
-      source.connect(this.audioCtx.destination);
+    let sourceBuffers = Array.prototype.map.call(workspace.rows, (elem) => {
+      let blocks = Array.prototype.map.call(elem.audioBlocks, (audioBlock)=>{
+        let block = {};
+        // Connect the graph of audio
+        block.source = this.audioCtx.createBufferSource();
+        block.source.buffer = elem.rawAudio;
+        block.source.connect(this.audioCtx.destination);
 
-      return source;
+        // Offsets are an array element into audio file and not time;
+        // this converts them to time offsets
+        block.file_offset = ((audioBlock.file_offset*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration)/2;
+        block.file_end = ((audioBlock.file_end*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration)/2;
+        block.row_offset = ((audioBlock.row_offset*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration);
+        return block
+      });
+
+      return blocks;
     });
 
-    this.sourceBuffers.map( (elem) => {
-      elem.start(this.audioCtx.currentTime, this.time);
+    console.log(sourceBuffers);
+
+    sourceBuffers.map( (row) => {
+      row.map( (block) => {
+        // file_end is sometimes undefined which breaks things
+        if( block.file_end ){
+          block.source.start(this.audioCtx.currentTime+block.row_offset, this.time+block.file_offset, block.file_end);
+        } else {
+          block.source.start(this.audioCtx.currentTime+block.row_offset, this.time+block.file_offset);
+        }
+      });
     });
   }
 
