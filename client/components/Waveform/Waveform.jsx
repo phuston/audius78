@@ -35,7 +35,6 @@ class Waveform extends Component {
 
   processProps(props) {
   	// Set new peaks and starting and ending points of waveform block
-    console.log('received audio', props.rawAudio);
     let zoom = props.currentZoom;
   	this.peaks = extractPeaks(props.rawAudio, 2000*zoom, true);
   	this.firstPeak = Math.floor(props.block.file_offset / zoom);
@@ -46,7 +45,6 @@ class Waveform extends Component {
   componentWillReceiveProps(nextProps) {
   	// Need to pre-emptively update state so that component can render with correct width
   	if (this.needsToUpdate(this.props, nextProps)) {
-      console.log('gonna update waveform');
     	this.processProps(nextProps);
   	}
   }
@@ -57,7 +55,7 @@ class Waveform extends Component {
     	let ctx = ReactDOM.findDOMNode(this).getContext('2d');
       let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
       this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0) - this.props.moveShift;
-      this.props.setWorkspaceWidth(this.left + this.width);
+      this.props.setWorkspaceWidth(this.left + this.width + 400);
       this.draw(ctx);
       this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
     }
@@ -99,7 +97,6 @@ class Waveform extends Component {
   draw(ctx) {
   	// Draws the waveforms using peaks gotten from extractPeaks
     let peaks = this.peaks.data[0];
-    console.log('drawing waveform', peaks);
     let bits = this.peaks.bits;
 
     let i;

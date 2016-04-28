@@ -42,6 +42,7 @@ class Workspace extends Component {
     let dispatch = this.props.dispatch;
     this.setToolMode = (mode) => dispatch(workspaceActions.setToolMode(mode));
     this.setSpeed = (speed) => dispatch(workspaceActions.setSpeed(speed));
+    this.toggleRowDelete = (status) => dispatch(workspaceActions.toggleRowDelete(status));
     this.setPlayingMode = (playing) => dispatch(workspaceActions.setPlayingMode(playing));
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
@@ -52,7 +53,8 @@ class Workspace extends Component {
   }
 
   emitRemoveRow(rowId) {
-    this.socket.emit('removeRow', {rowId: rowId});
+    if (this.props.workspace.allowRowDelete === true)
+      this.socket.emit('removeRow', {rowId: rowId});
   }
 
   emitRemoveBlocks() {
@@ -110,6 +112,10 @@ class Workspace extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // If row added or deleted, allow row delete
+    if (this.props.workspace.rows.length !== prevProps.workspace.rows.length) {
+      this.toggleRowDelete(true);
+    }
     if (this.props.workspace.playing !== prevProps.workspace.playing) {
       switch (this.props.workspace.playing) {
         case (playingMode.PLAYING):
@@ -151,6 +157,9 @@ class Workspace extends Component {
     data.append('name', 'song');
     data.append('workspaceId', this.props.workspace.id);
     data.append('rowIndex', this.props.workspace.rows.length);
+
+    // Disable row delete to allow indices of workspace.rows to sync properly
+    this.toggleRowDelete(false);
 
     fetch('/api/upload', {
       method: 'POST',

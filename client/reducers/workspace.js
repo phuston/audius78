@@ -14,6 +14,10 @@ export default handleActions({
     return {...state, width: action.payload};
   },
 
+  TOGGLE_ROW_DELETE: (state, action) => {
+    return {...state, allowRowDelete: action.payload};
+  },
+
   HIGHLIGHT_BLOCK: (state, action) => {
     let blocks = state.rows[action.payload.rowIndex].audioBlocks;
     blocks[action.payload.blockIndex].selected = !blocks[action.payload.blockIndex].selected;
@@ -64,7 +68,6 @@ export default handleActions({
     let updatedRows = {};
     let numRow = 0;
     let thisRow;
-    console.log('oldrows', state.rows);
     for (var key in state.rows) {
       if (key === 'length') {
         updatedRows.length = state.rows.length - 1;
@@ -77,7 +80,6 @@ export default handleActions({
         }
       }
     }
-    console.log('newrows', updatedRows);
     return {...state, rows: updatedRows};
   },
 

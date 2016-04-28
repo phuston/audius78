@@ -122,6 +122,10 @@ export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
   });
 });
 
+export const toggleRowDelete = createAction(types.TOGGLE_ROW_DELETE, (status) => {
+  return status;
+});
+
 export const removeRow = createAction(types.REMOVE_ROW, (updatedRows) => {
   return updatedRows;
 });

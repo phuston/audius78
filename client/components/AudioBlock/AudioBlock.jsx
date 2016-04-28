@@ -62,7 +62,6 @@ class AudioBlock extends Component {
   render() {
   	let data = this.props.data;
     let dragDisabled = this.props.toolMode !== toolMode.DRAG;
-    console.log('audioblock sending', data.rawAudio);
   	let waveforms = data.audioBlocks.map((block, i) => {
       let background = '#16783C';
       if (block.selected) background = selectColor;

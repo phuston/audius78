@@ -252,17 +252,15 @@ var socketObject = {
             return console.error(err);
           }
 
-          var newRowIds = {};
+          // Filter out the deleted row
           var newRows = workspace.rows.filter(function(row) {
             return row._id.toString() !== removeOperation.rowId;
           });
 
-          console.log(newRows);
-
+          // Update their rowId attribute to the correct index for front-end rendering purposes
           if (newRows.length > 0) {
             newRows = newRows.map(function(row, i) {
               row.rowId = i;
-              newRowIds[row._id] = i;
               return row;
             });
           }
@@ -276,13 +274,8 @@ var socketObject = {
                 console.error(err);
               }
 
-              console.log('newRowIds', newRowIds);
-
               // Emit socket event to notify all clients to update state
-              io.sockets.in(socket.workspaceId).emit('applyRemoveRow', {
-                newRowIds: newRowIds,
-                deletedRowId: removeOperation.rowId
-              });
+              io.sockets.in(socket.workspaceId).emit('applyRemoveRow', {deletedRowId: removeOperation.rowId});
             }
           );
         });
