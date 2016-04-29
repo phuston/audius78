@@ -199,7 +199,7 @@ var socketObject = {
             });
 
             // Apply delta to block
-            movedBlock.row_offset = moveOperation.operation.moveShift;
+            movedBlock.row_offset = Math.max(movedBlock.row_offset + moveOperation.operation.moveShift, 0);
             // Put block back in place
             newBlocks.splice(index, 0, movedBlock);
             // Set updated audio blocks
@@ -215,7 +215,7 @@ var socketObject = {
                 if (err) {
                   console.error(err);
                 }
-
+                
                 // Emit socket event to notify all clients to update state
                 io.sockets.in(socket.workspaceId).emit('applyMoveBlock', {
                   rowId: updateRow.rowId,

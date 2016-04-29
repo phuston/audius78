@@ -2,7 +2,7 @@ module.exports = {
   id: null,
   rows: [{
     rowId: 0,
-    rawAudio: 'default.ogg',
+    rawAudio: '0a70b71571139b8e70ecf0e74e8cd135.ogg',
     audioBlocks: [
       { 
         file_end: undefined,
