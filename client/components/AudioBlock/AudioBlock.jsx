@@ -46,43 +46,43 @@ class AudioBlock extends Component {
   }
 
   onMouseDown(blockId, index, e) {
-    e.preventDefault();
-    this.zIndices[blockId] = 1;
+    if (this.allowDrag()) {
+      e.preventDefault();
+      this.zIndices[blockId] = 1;
 
-    let el = e.target;
-    let prevX = e.clientX;
+      let el = e.target;
+      let prevX = e.clientX;
 
-    let emitShift = (x) => {
-      if (this.allowDrag()) {
+      let emitShift = (x) => {
         let deltaX = x - prevX;
         prevX = x;
         this.totalMoved[blockId] += deltaX || 0;
+
+        // Sets width to what it is, so that state "changes" and everything is forced to re-render. This makes the waveform "draggable".
+        // Comment out this line to see the difference.
         this.props.setWorkspaceWidth(this.props.width-90);
-      }
-    };
+      };
 
-    //dynamically put an event on the element.
-    el.onmousemove = (e) => {
-      e.preventDefault();
-      emitShift(e.clientX);
-    };
+      // Dynamically adds onMouseMove event to element
+      el.onmousemove = (e) => {
+        e.preventDefault();
+        emitShift(e.clientX);
+      };
 
-    let complete = (e) => {
-      e.preventDefault();
-      // emitShift(e.offsetX);
-      el.onmousemove = el.onmouseup = null;
-      console.log('total moved is', this.totalMoved[blockId]);
-      this.props.emitMoveBlock(blockId, this.totalMoved[blockId]);
-      this.totalMoved[blockId] = 0;
-      this.zIndices[blockId] = 0;
-    };
+      let complete = (e) => {
+        e.preventDefault();
+        el.onmousemove = el.onmouseup = null;
+        this.props.emitMoveBlock(blockId, this.totalMoved[blockId] * this.props.currentZoom);
+        this.totalMoved[blockId] = 0;
+        this.zIndices[blockId] = 0;
+      };
 
-    el.onmouseup = complete;
+      el.onmouseup = complete;
+    }
   }
 
   render() {
   	let data = this.props.data;
-    let dragDisabled = this.props.toolMode !== toolMode.DRAG;
   	let waveforms = data.audioBlocks.map((block, i) => {
       let background = '#16783C';
       if (block.selected) background = selectColor;
@@ -93,13 +93,13 @@ class AudioBlock extends Component {
         'position': 'absolute',
         'height': '100px',
         'top': UIConstants.TOP + data.rowId * (UIConstants.ROW_HEIGHT+4),
-        'left': Math.max(this.initialOffset[block._id] + this.totalMoved[block._id], 0) + UIConstants.LEFT,
+        'left': Math.max(this.initialOffset[block._id] / this.props.currentZoom + this.totalMoved[block._id], 0) + UIConstants.LEFT,
         'zIndex': this.zIndices[block._id],
       };
 
   		return (
   			<div key={i} style={style} onMouseDown={this.onMouseDown.bind(this, block._id, i)}>
-  				<Waveform block={block} 
+  				<Waveform block={block}
             highlightBlock={this.props.highlightBlock.bind(null, i)}
             emitSplitBlock={this.props.emitSplitBlock}
             playing={this.props.playing}
