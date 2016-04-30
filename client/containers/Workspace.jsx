@@ -21,13 +21,14 @@ class Workspace extends Component {
     super(props);
     this.socket = io('http://localhost:3000');
     this.audioCtx = undefined;
-    this.time = 0;
+    this.startTime = 0;
     this.cursorTime = 0;
     this.onDrop = this.onDrop.bind(this);
 
     this.playMusic = this.playMusic.bind(this);
     this.seekTime = this.seekTime.bind(this);
     this.setZoom = this.setZoom.bind(this);
+    this.handleAudioBlockEnding = this.handleAudioBlockEnding.bind(this);
 
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
     this.removeRow = (updatedRows) => dispatch(workspaceActions.removeRow(updatedRows));
@@ -47,7 +48,6 @@ class Workspace extends Component {
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
-    this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
     this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
     this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+90, document.documentElement.clientWidth, this.props.workspace.width) ));
   }
@@ -55,6 +55,8 @@ class Workspace extends Component {
   emitRemoveRow(rowId) {
     if (this.props.workspace.allowRowDelete === true)
       this.socket.emit('removeRow', {rowId: rowId});
+
+    this.rerenderAudio = true;
   }
 
   emitRemoveBlocks() {
@@ -88,26 +90,32 @@ class Workspace extends Component {
     this.socket.on('applyAddRow', applyOperation => {
       let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       this.addRow(applyOperation, audioCtx);
+      this.rerenderAudio = true;
     });
 
     this.socket.on('applyRemoveRow', updatedRows => {
       this.removeRow(updatedRows);
+      this.rerenderAudio = true;
     });
 
     this.socket.on('applyRemoveBlocks', newBlocksPerRow => {
       this.removeBlocks(newBlocksPerRow);
+      this.rerenderAudio = true;
     });
 
     this.socket.on('applyFlagBlock', flagOperation => {
       this.flagBlock(flagOperation);
+      this.rerenderAudio = true;
     });
 
     this.socket.on('applySplitBlock', splitOperation => {
       this.splitBlock(splitOperation);
+      this.rerenderAudio = true;
     });
 
     this.socket.on('applyMoveBlock', moveOperation => {
       this.moveBlock(moveOperation);
+      this.rerenderAudio = true;
     });
   }
 
@@ -119,7 +127,7 @@ class Workspace extends Component {
     if (this.props.workspace.playing !== prevProps.workspace.playing) {
       switch (this.props.workspace.playing) {
         case (playingMode.PLAYING):
-          if (this.audioCtx === undefined) {
+          if (this.audioCtx === undefined || this.rerenderAudio) {
             // This means last state was STOP
             this.setSeeker(this.props.workspace.timing.cursor);
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -133,7 +141,7 @@ class Workspace extends Component {
         case (playingMode.PAUSE):
           this.audioCtx.suspend();
           // Have to reset the seeker to handle a bug when repeatedly hitting pause/play
-          this.setSeeker((this.time+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
+          this.setSeeker((this.startTime+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
           break;
 
         case (playingMode.STOP):
@@ -142,12 +150,12 @@ class Workspace extends Component {
           this.audioCtx = undefined;
 
           // Have to reset the cursor to handle a bug when repeatedly hitting stop/play
-          this.time = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
+          this.startTime = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
           break;
       }
     } else if ( this.props.workspace.playing === playingMode.STOP ){
       // This handles the case when seeking while play is stopped.
-      this.time = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
+      this.startTime = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
     }
   }
 
@@ -183,41 +191,64 @@ class Workspace extends Component {
     });
   }
 
+  handleAudioBlockEnding(index) {
+    if (index === this.numBlocks-1) {
+      this.setPlayingMode(playingMode.STOP);
+      this.setSeeker(this.props.workspace.timing.cursor);
+    }
+  }
+
   playMusic(){
+    console.log('remapping audio sources');
+    this.rerenderAudio = false;
+    this.numBlocks = 0;
+
     let workspace = this.props.workspace;
+    const samplesPerPeak = workspace.zoomLevel * 2000;
+    const peaksPerPixel = 2;
+    const samplesPerSec = 44100;
+    const pixelsPerSec = this.props.workspace.timing.speed;
+
     let sourceBuffers = Array.prototype.map.call(workspace.rows, (elem) => {
-      let blocks = Array.prototype.map.call(elem.audioBlocks, (audioBlock)=>{
+      let blocks = Array.prototype.map.call(elem.audioBlocks, (audioBlock, i)=>{
         let block = {};
         // Connect the graph of audio
         block.source = this.audioCtx.createBufferSource();
         block.source.buffer = elem.rawAudio;
         block.source.connect(this.audioCtx.destination);
+        let rawAudioLength = block.source.buffer.length;
+        let duration = block.source.buffer.duration;
 
         // Offsets are an array element into audio file and not time;
         // this converts them to time offsets
-        block.file_offset = ((audioBlock.file_offset*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration)/2;
-        block.file_end = ((audioBlock.file_end*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration)/2;
-        block.row_offset = ((audioBlock.row_offset*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration);
-        return block
+        let audioEnd = ((audioBlock.file_end * samplesPerPeak)/rawAudioLength * duration)/2;
+
+        block.audioOffset = ((audioBlock.file_offset * samplesPerPeak)/rawAudioLength * duration)/2;
+        block.duration = (audioEnd || duration) - block.audioOffset;
+        block.delayTime = audioBlock.row_offset/pixelsPerSec;
+        block.blockIndex = this.numBlocks;
+        this.numBlocks++;
+        return block;
       });
 
       return blocks;
     });
 
     sourceBuffers.map( (row) => {
-      row.map( (block) => {
-        // file_end is sometimes undefined which breaks things
-        if( block.file_end ){
-          block.source.start(this.audioCtx.currentTime+block.row_offset, this.time+block.file_offset, block.file_end);
-        } else {
-          block.source.start(this.audioCtx.currentTime+block.row_offset, this.time+block.file_offset);
+      row.map( (block, i) => {
+        let delay = block.delayTime - this.startTime;
+        if (delay >= 0) {
+          block.source.start(delay, block.audioOffset, block.duration);
+        } else if (-delay < block.duration) {
+          block.source.start(0, block.audioOffset-delay, block.duration+delay);
         }
+        block.source.onended = () => this.handleAudioBlockEnding(block.blockIndex);
       });
     });
   }
 
   seekTime(time) {
-    this.time = time;
+    this.startTime = time;
     if( this.props.workspace.playing === playingMode.PLAYING ){
       this.audioCtx.close();
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -226,6 +257,31 @@ class Workspace extends Component {
   }
 
   render() {
+    let workspace;
+    if (this.props.workspace.rows.length > 0) {
+      workspace = (
+        <div className={styles.songs}>
+          <TrackBox className={styles.trackbox} 
+            socket={this.socket}
+            workspace={this.props.workspace} 
+            highlightBlock={this.highlightBlock}
+            emitRemoveRow={this.emitRemoveRow}
+            setCursor={this.setCursor}
+            setSeeker={this.setSeeker}
+            seekTime={this.seekTime}
+            setSpeed={this.setSpeed}
+            setWorkspaceWidth={this.setWorkspaceWidth}
+          />
+        </div>
+      );
+    } else {
+      workspace = (
+        <div style={{'marginTop': '212px', 'position': 'fixed', 'height': '70px'}}>
+          <h1>Upload a file to start using the Audius78!</h1>
+        </div>
+      );
+    }
+
     return (
       <div className={styles.page} >
         <Navbar className={styles.navbar} />
@@ -247,21 +303,11 @@ class Workspace extends Component {
             cursor={this.props.workspace.timing.cursor}
             />
 
-          <div className={styles.songs}>
-            <TrackBox className={styles.trackbox} 
-              socket={this.socket}
-              workspace={this.props.workspace} 
-              highlightBlock={this.highlightBlock}
-              emitRemoveRow={this.emitRemoveRow}
-              setCursor={this.setCursor}
-              setSeeker={this.setSeeker}
-              seekTime={this.seekTime}
-              setSpeed={this.setSpeed}
-              setWorkspaceWidth={this.setWorkspaceWidth}
-            />
-          </div>
+          {workspace}
 
-          <Dropzone onDrop={this.onDrop} />
+          <div style={{'position': 'absolute', 'bottom': '0', 'width': '100px', 'height': '100px'}}>
+            <Dropzone onDrop={this.onDrop} />
+          </div>
         </div>
       </div>
     )

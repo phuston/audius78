@@ -21,6 +21,7 @@ class AudioBlock extends Component {
 
     this.onMouseDown = this.onMouseDown.bind(this);
     this.allowDrag = this.allowDrag.bind(this);
+    this.seekAudio = this.seekAudio.bind(this);
     this.totalMoved = 0;
     this.zIndices = {};
     this.totalMoved = {};
@@ -81,6 +82,16 @@ class AudioBlock extends Component {
     }
   }
 
+  seekAudio(e) {
+    if (this.props.toolMode === toolMode.CURSOR) {
+      if (this.props.playing === playingMode.PLAYING) {
+        this.props.setSeeker(e.pageX - UIConstants.LEFT - 2);
+      } else {
+        this.props.setCursor(e.pageX - UIConstants.LEFT - 2);
+      }
+    }
+  }  
+
   render() {
   	let data = this.props.data;
   	let waveforms = data.audioBlocks.map((block, i) => {
@@ -116,7 +127,7 @@ class AudioBlock extends Component {
   	});
 
     // Sets cursor image depending on tool mode
-    let audioBlockStyle = {'cursor': 'auto', 'width': this.props.width};
+    let audioBlockStyle = {'cursor': 'auto', 'width': this.props.width, 'background': '#282928', 'height': UIConstants.ROW_HEIGHT+4};
     switch (this.props.toolMode) {
       case (toolMode.SPLIT):
         audioBlockStyle.cursor = 'url("http://localhost:3000/icons/cut.png"),auto';
@@ -132,7 +143,7 @@ class AudioBlock extends Component {
     }
 
     return (
-      <div className={styles.audioBlock} style={audioBlockStyle}>
+      <div className={styles.audioBlock} style={audioBlockStyle} onClick={this.seekAudio}>
         {waveforms}
       </div>
     )
