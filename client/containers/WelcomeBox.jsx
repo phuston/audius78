@@ -15,7 +15,7 @@ class WelcomeBox extends Component {
 
   constructor(props) {
     super(props);
-    var dispatch = this.props.dispatch;
+    let dispatch = this.props.dispatch;
 
     //Bind Actions
     this.newWorkspace = (audioCtx) => dispatch(workspaceActions.newWorkspace(audioCtx)).then(() => {
