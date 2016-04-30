@@ -25,6 +25,7 @@ class Workspace extends Component {
     this.audioCtx = undefined;
     this.startTime = 0;
     this.cursorTime = 0;
+    this.countingBlocks = 0;
     this.userLoggingOut = false;
     this.sourceBuffers = [];
     this.onDrop = this.onDrop.bind(this);
@@ -70,14 +71,18 @@ class Workspace extends Component {
 
   emitRemoveBlocks() {
     let removeBlockOperation = {};
+    let isEmpty = true;
     Array.prototype.map.call(this.props.workspace.rows, (row) => {
       let blocksToDelete = [];
       row.audioBlocks.map( (block) => {
+        isEmpty = isEmpty && (!block.selected);
         if (block.selected) blocksToDelete.push(block._id);
       });
+
       removeBlockOperation[row._id] = blocksToDelete;
     });
-    this.socket.emit('removeBlocks', removeBlockOperation);
+
+    if (!isEmpty) this.socket.emit('removeBlocks', removeBlockOperation);
   }
 
   setZoom(newZoom) {
@@ -208,10 +213,13 @@ class Workspace extends Component {
     });
   }
 
-  handleAudioBlockEnding(index) {
-    if (index === this.numBlocks-1) {
+  handleAudioBlockEnding() {
+    this.countingBlocks++;
+    console.log(this.countingBlocks, this.numBlocks);
+    if (this.countingBlocks === this.numBlocks) {
       this.setPlayingMode(playingMode.STOP);
       this.setSeeker(this.props.workspace.timing.cursor);
+      this.countingBlocks = 0;
     }
   }
 
@@ -242,7 +250,6 @@ class Workspace extends Component {
         block.audioOffset = ((audioBlock.file_offset * samplesPerPeak)/rawAudioLength * duration)/2;
         block.duration = (audioEnd || duration) - block.audioOffset;
         block.delayTime = audioBlock.row_offset/pixelsPerSec;
-        block.blockIndex = this.numBlocks;
         this.numBlocks++;
         return block;
       });
@@ -257,8 +264,10 @@ class Workspace extends Component {
           block.source.start(delay, block.audioOffset, block.duration);
         } else if (-delay < block.duration) {
           block.source.start(0, block.audioOffset-delay, block.duration+delay);
+        } else {
+          this.countingBlocks++;
         }
-        block.source.onended = () => this.handleAudioBlockEnding(block.blockIndex);
+        block.source.onended = () => this.handleAudioBlockEnding();
       });
     });
   }
@@ -268,6 +277,7 @@ class Workspace extends Component {
     if( this.props.workspace.playing === playingMode.PLAYING ){
       this.audioCtx.close();
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      this.countingBlocks = 0;
       this.playMusic();
     }
   }
