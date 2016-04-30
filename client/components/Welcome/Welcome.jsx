@@ -22,7 +22,7 @@ class Welcome extends Component{
         <input 
           className={styles.workspaceButton}
           type='button' 
-          value='New Workspace' 
+          value='Create Workspace' 
           onClick={this.createWorkspace}
         />
 
