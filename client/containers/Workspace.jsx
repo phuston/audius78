@@ -25,14 +25,14 @@ class Workspace extends Component {
     this.audioCtx = undefined;
     this.time = 0;
     this.cursorTime = 0;
+    this.userLoggingOut = false;
     this.sourceBuffers = [];
     this.onDrop = this.onDrop.bind(this);
 
     this.playMusic = this.playMusic.bind(this);
     this.seekTime = this.seekTime.bind(this);
     this.setZoom = this.setZoom.bind(this);
-    this.logout = this.logout.bind(this);
-
+    
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
     this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
     this.flagBlock = (newFlags) => dispatch(workspaceActions.flagBlock(newFlags));
@@ -54,27 +54,35 @@ class Workspace extends Component {
       }
     }
 
-    this.reroute = () => dispatch(routeActions.push('/'));
-    this.clearRows = () => dispatch(workspaceActions.clearRows());
-    this.resetPlayingMode = () => dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
-    this.resetToolMode = () => dispatch(workspaceActions.setToolMode(toolMode.CURSOR));
-    this.resetSeeker = () => dispatch(workspaceActions.setSeeker(0));
-    this.resetZoom = () => dispatch(workspaceActions.setZoom(1));
-    this.resetCursor = () => dispatch(workspaceActions.setCursor(0));
-    this.resetWorkspaceWidth = () => dispatch(workspaceActions.setWorkspaceWidth('100vw'));
+    this.logout = () => {
+      // this.audioCtx.close();
+      // this.audioCtx = undefined;
+      dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
+      this.userLoggingOut = true;
+    };
+
+    // this.reroute = () => dispatch(routeActions.push('/'));
+    // this.clearRows = () => dispatch(workspaceActions.clearRows());
+    // this.resetPlayingMode = () => dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
+    // this.resetToolMode = () => dispatch(workspaceActions.setToolMode(toolMode.CURSOR));
+    // this.resetSeeker = () => dispatch(workspaceActions.setSeeker(0));
+    // this.resetZoom = () => dispatch(workspaceActions.setZoom(1));
+    // this.resetCursor = () => dispatch(workspaceActions.setCursor(0));
+    // this.resetWorkspaceWidth = () => dispatch(workspaceActions.setWorkspaceWidth('100vw'));
   }
 
-  logout () {
-    this.audioCtx = undefined;
-    this.clearRows();
-    this.resetPlayingMode();
-    this.resetToolMode();
-    this.resetSeeker();
-    this.resetZoom();
-    this.resetCursor();
-    this.resetWorkspaceWidth();
-    this.reroute();
-  }
+  // logout () {
+  //   this.audioCtx.close();
+  //   this.audioCtx = undefined;
+  //   this.resetPlayingMode();
+  //   this.resetToolMode();
+  //   this.resetSeeker();
+  //   this.resetZoom();
+  //   this.resetCursor();
+  //   this.resetWorkspaceWidth();
+  //   this.clearRows();
+  //   this.reroute();
+  // }
 
   setZoom(newZoom) {
     let zoomRatio = this.props.workspace.zoomLevel/newZoom;
@@ -117,6 +125,15 @@ class Workspace extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    let dispatch = this.props.dispatch;
+    if (this.userLoggingOut) {
+      dispatch(routeActions.push('/'));
+      dispatch(workspaceActions.setSeeker(0));
+      dispatch(workspaceActions.setZoom(1));
+      dispatch(workspaceActions.setCursor(0));
+      dispatch(workspaceActions.setWorkspaceWidth('100vw'));
+    }
+
     if (this.props.workspace.playing !== prevProps.workspace.playing) {
       switch (this.props.workspace.playing) {
         case (playingMode.PLAYING):

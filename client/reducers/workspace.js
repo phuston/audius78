@@ -55,7 +55,7 @@ export default handleActions({
   },
 
   CLEAR_ROWS: (state, action) => {
-    return {...state, rows: undefined}
+    return {...state, rows: {length: 0}}
   },
 
   // TODO: Fix this (maybe) - not sure if actually broken
