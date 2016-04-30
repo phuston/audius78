@@ -1,12 +1,14 @@
 // Outside
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
+import { routeActions } from 'redux-simple-router';
 import Dropzone from 'react-dropzone';
-import { playingMode, zoomLimits } from '../../utils.js';
+import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 
 //Containers
 import TrackBox from './TrackBox.jsx';
-import Navbar from './NavbarBox.jsx';
+import Navbar from '../components/Navbar/Navbar.jsx'
 import Toolbar from './Toolbar.jsx';
 
 // Outside
@@ -23,6 +25,8 @@ class Workspace extends Component {
     this.audioCtx = undefined;
     this.startTime = 0;
     this.cursorTime = 0;
+    this.userLoggingOut = false;
+    this.sourceBuffers = [];
     this.onDrop = this.onDrop.bind(this);
 
     this.playMusic = this.playMusic.bind(this);
@@ -39,7 +43,7 @@ class Workspace extends Component {
     this.emitRemoveBlocks = this.emitRemoveBlocks.bind(this);
     this.emitRemoveRow = this.emitRemoveRow.bind(this);
 
-    // BindActions
+    // Bind Actions
     let dispatch = this.props.dispatch;
     this.setToolMode = (mode) => dispatch(workspaceActions.setToolMode(mode));
     this.setSpeed = (speed) => dispatch(workspaceActions.setSpeed(speed));
@@ -48,6 +52,11 @@ class Workspace extends Component {
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
+    this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
+    this.logout = () => {
+      dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
+      this.userLoggingOut = true;
+    };
     this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
     this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+90, document.documentElement.clientWidth, this.props.workspace.width) ));
   }
@@ -120,6 +129,14 @@ class Workspace extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    let dispatch = this.props.dispatch;
+    if (this.userLoggingOut) {
+      dispatch(routeActions.push('/'));
+      dispatch(workspaceActions.setSeeker(0));
+      dispatch(workspaceActions.setZoom(1));
+      dispatch(workspaceActions.setCursor(0));
+      dispatch(workspaceActions.setWorkspaceWidth('100vw'));
+    }
     // If row added or deleted, allow row delete
     if (this.props.workspace.rows.length !== prevProps.workspace.rows.length) {
       this.toggleRowDelete(true);
@@ -199,7 +216,6 @@ class Workspace extends Component {
   }
 
   playMusic(){
-    console.log('remapping audio sources');
     this.rerenderAudio = false;
     this.numBlocks = 0;
 
@@ -284,7 +300,10 @@ class Workspace extends Component {
 
     return (
       <div className={styles.page} >
-        <Navbar className={styles.navbar} />
+        <div className = {styles.navbar} >
+          <Navbar onLogout={this.logout} />
+        </div>
+
 
         <div style={{'top': '70px', 'position': 'fixed', 'height': '70px'}}><h1>{this.props.workspace.id}</h1></div>
 
