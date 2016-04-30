@@ -34,61 +34,56 @@ class Workspace extends Component {
     this.setZoom = this.setZoom.bind(this);
     
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
-    this.removeRow = (rowId) => dispatch(workspaceActions.removeRow(rowId));
+    this.removeRow = (updatedRows) => dispatch(workspaceActions.removeRow(updatedRows));
     this.flagBlock = (newFlags) => dispatch(workspaceActions.flagBlock(newFlags));
     this.splitBlock = (newBlocks) => dispatch(workspaceActions.splitBlock(newBlocks));
     this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
+    this.removeBlocks = (newBlocksPerRow) => dispatch(workspaceActions.removeBlocks(newBlocksPerRow));
+    this.emitRemoveBlocks = this.emitRemoveBlocks.bind(this);
+    this.emitRemoveRow = this.emitRemoveRow.bind(this);
 
     // BindActions
     let dispatch = this.props.dispatch;
     this.setToolMode = (mode) => dispatch(workspaceActions.setToolMode(mode));
     this.setSpeed = (speed) => dispatch(workspaceActions.setSpeed(speed));
+    this.toggleRowDelete = (status) => dispatch(workspaceActions.toggleRowDelete(status));
     this.setPlayingMode = (playing) => dispatch(workspaceActions.setPlayingMode(playing));
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
-    this.setWorkspaceWidth = (width) => {
-      if (width > document.documentElement.clientWidth) {
-        dispatch(workspaceActions.setWorkspaceWidth(width + 90));
-      }
-    }
 
     this.logout = () => {
-      // this.audioCtx.close();
-      // this.audioCtx = undefined;
       dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
       this.userLoggingOut = true;
     };
 
-    // this.reroute = () => dispatch(routeActions.push('/'));
-    // this.clearRows = () => dispatch(workspaceActions.clearRows());
-    // this.resetPlayingMode = () => dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
-    // this.resetToolMode = () => dispatch(workspaceActions.setToolMode(toolMode.CURSOR));
-    // this.resetSeeker = () => dispatch(workspaceActions.setSeeker(0));
-    // this.resetZoom = () => dispatch(workspaceActions.setZoom(1));
-    // this.resetCursor = () => dispatch(workspaceActions.setCursor(0));
-    // this.resetWorkspaceWidth = () => dispatch(workspaceActions.setWorkspaceWidth('100vw'));
+    this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
+    this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+90, document.documentElement.clientWidth, this.props.workspace.width) ));
   }
 
-  // logout () {
-  //   this.audioCtx.close();
-  //   this.audioCtx = undefined;
-  //   this.resetPlayingMode();
-  //   this.resetToolMode();
-  //   this.resetSeeker();
-  //   this.resetZoom();
-  //   this.resetCursor();
-  //   this.resetWorkspaceWidth();
-  //   this.clearRows();
-  //   this.reroute();
-  // }
+  emitRemoveRow(rowId) {
+    if (this.props.workspace.allowRowDelete === true)
+      this.socket.emit('removeRow', {rowId: rowId});
+  }
+
+  emitRemoveBlocks() {
+    let removeBlockOperation = {};
+    Array.prototype.map.call(this.props.workspace.rows, (row) => {
+      let blocksToDelete = [];
+      row.audioBlocks.map( (block) => {
+        if (block.selected) blocksToDelete.push(block._id);
+      });
+      removeBlockOperation[row._id] = blocksToDelete;
+    });
+    this.socket.emit('removeBlocks', removeBlockOperation);
+  }
 
   setZoom(newZoom) {
     let zoomRatio = this.props.workspace.zoomLevel/newZoom;
     this.props.dispatch(workspaceActions.setZoom(newZoom));
-    let newSeeker = ((this.props.workspace.timing.seeker) * zoomRatio);
-    let newCursor = ((this.props.workspace.timing.cursor) * zoomRatio);
+    let newSeeker = this.props.workspace.timing.seeker * zoomRatio;
+    let newCursor = this.props.workspace.timing.cursor * zoomRatio;
     if (newZoom <= zoomLimits.UPPER && newZoom >= zoomLimits.LOWER) {
       this.setSeeker(newSeeker);
       this.setCursor(newCursor);
@@ -105,22 +100,24 @@ class Workspace extends Component {
       this.addRow(applyOperation, audioCtx);
     });
 
-    this.socket.on('applyRemoveRow', rowId => {
-      this.removeRow(rowId);
+    this.socket.on('applyRemoveRow', updatedRows => {
+      this.removeRow(updatedRows);
     });
 
-    this.socket.on('applyFlagBlock', newFlags => {
-      // TODO: Figure out where the row and block Ids will be coming from for this
-      this.flagBlock(newFlags);
+    this.socket.on('applyRemoveBlocks', newBlocksPerRow => {
+      this.removeBlocks(newBlocksPerRow);
+    });
+
+    this.socket.on('applyFlagBlock', flagOperation => {
+      this.flagBlock(flagOperation);
     });
 
     this.socket.on('applySplitBlock', splitOperation => {
       this.splitBlock(splitOperation);
     });
 
-    this.socket.on('applyMoveBlock', newBlocks => {
-      // TODO: Again, where does the rowId come from? This should be returned as an operation
-      this.moveBlock(newBlocks);
+    this.socket.on('applyMoveBlock', moveOperation => {
+      this.moveBlock(moveOperation);
     });
   }
 
@@ -133,29 +130,42 @@ class Workspace extends Component {
       dispatch(workspaceActions.setCursor(0));
       dispatch(workspaceActions.setWorkspaceWidth('100vw'));
     }
-
+    // If row added or deleted, allow row delete
+    if (this.props.workspace.rows.length !== prevProps.workspace.rows.length) {
+      this.toggleRowDelete(true);
+    }
     if (this.props.workspace.playing !== prevProps.workspace.playing) {
       switch (this.props.workspace.playing) {
         case (playingMode.PLAYING):
           if (this.audioCtx === undefined) {
+            // This means last state was STOP
+            this.setSeeker(this.props.workspace.timing.cursor);
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             this.playMusic();
           } else {
+            // This means last state was PAUSE
             this.audioCtx.resume();
           }
           break;
 
         case (playingMode.PAUSE):
           this.audioCtx.suspend();
+          // Have to reset the seeker to handle a bug when repeatedly hitting pause/play
           this.setSeeker((this.time+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
           break;
 
         case (playingMode.STOP):
+          // Close and remove audo context
           this.audioCtx.close();
           this.audioCtx = undefined;
+
+          // Have to reset the cursor to handle a bug when repeatedly hitting stop/play
           this.time = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
           break;
       }
+    } else if ( this.props.workspace.playing === playingMode.STOP ){
+      // This handles the case when seeking while play is stopped.
+      this.time = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
     }
   }
 
@@ -165,6 +175,9 @@ class Workspace extends Component {
     data.append('name', 'song');
     data.append('workspaceId', this.props.workspace.id);
     data.append('rowIndex', this.props.workspace.rows.length);
+
+    // Disable row delete to allow indices of workspace.rows to sync properly
+    this.toggleRowDelete(false);
 
     fetch('/api/upload', {
       method: 'POST',
@@ -190,16 +203,34 @@ class Workspace extends Component {
 
   playMusic(){
     let workspace = this.props.workspace;
-    this.sourceBuffers = Array.prototype.map.call(workspace.rows, (elem) => {
-      let source = this.audioCtx.createBufferSource();
-      source.buffer = elem.rawAudio;
-      source.connect(this.audioCtx.destination);
+    let sourceBuffers = Array.prototype.map.call(workspace.rows, (elem) => {
+      let blocks = Array.prototype.map.call(elem.audioBlocks, (audioBlock)=>{
+        let block = {};
+        // Connect the graph of audio
+        block.source = this.audioCtx.createBufferSource();
+        block.source.buffer = elem.rawAudio;
+        block.source.connect(this.audioCtx.destination);
 
-      return source;
+        // Offsets are an array element into audio file and not time;
+        // this converts them to time offsets
+        block.file_offset = ((audioBlock.file_offset*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration)/2;
+        block.file_end = ((audioBlock.file_end*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration)/2;
+        block.row_offset = ((audioBlock.row_offset*2000*this.props.workspace.zoomLevel)/block.source.buffer.length * block.source.buffer.duration);
+        return block
+      });
+
+      return blocks;
     });
 
-    this.sourceBuffers.map( (elem) => {
-      elem.start(this.audioCtx.currentTime, this.time);
+    sourceBuffers.map( (row) => {
+      row.map( (block) => {
+        // file_end is sometimes undefined which breaks things
+        if( block.file_end ){
+          block.source.start(this.audioCtx.currentTime+block.row_offset, this.time+block.file_offset, block.file_end);
+        } else {
+          block.source.start(this.audioCtx.currentTime+block.row_offset, this.time+block.file_offset);
+        }
+      });
     });
   }
 
@@ -227,6 +258,7 @@ class Workspace extends Component {
           <Toolbar className={styles.toolbar} 
             setPlayingMode={this.setPlayingMode} 
             playing={this.props.workspace.playing}
+            deleteSelected={this.emitRemoveBlocks}
             toolMode={this.props.workspace.toolMode}
             setZoom={this.setZoom}
             currentZoom={this.props.workspace.zoomLevel}
@@ -240,6 +272,8 @@ class Workspace extends Component {
             <TrackBox className={styles.trackbox} 
               socket={this.socket}
               workspace={this.props.workspace} 
+              highlightBlock={this.highlightBlock}
+              emitRemoveRow={this.emitRemoveRow}
               setCursor={this.setCursor}
               setSeeker={this.setSeeker}
               seekTime={this.seekTime}

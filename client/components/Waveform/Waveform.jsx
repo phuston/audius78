@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 // import styles from './Waveform.scss'
 
 // Others
-import { playingMode, toolMode } from '../../../utils.js';
+import { playingMode, toolMode, UIConstants } from '../../../utils.js';
 
 // Audio Processing
 import extractPeaks from 'webaudio-peaks';
@@ -18,33 +18,34 @@ class Waveform extends Component {
     this.draw = this.draw.bind(this);
     this.processProps = this.processProps.bind(this);
     this.needsToUpdate = this.needsToUpdate.bind(this);
-    this.processProps(this.props.currentZoom, this.props.block);
+    this.processProps(this.props); //this.props.currentZoom, this.props.block, this.props.rawAudio);
     this.handleCanvasClick = this.handleCanvasClick.bind(this);
     this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
   }
 
   needsToUpdate(oldProps, newProps) {
-  	// New properties only need to be computed if a zoom event fires 
-  	// or a block changes.
+  	// New properties only need to be computed if a zoom event fires or a block changes.
   	return (
   		(oldProps.currentZoom !== newProps.currentZoom) ||
-  		(oldProps.block.file_end !== newProps.block.file_end)
+  		(oldProps.block.file_end !== newProps.block.file_end) ||
+      (oldProps.block.row_offset !== newProps.block.row_offset) ||
+      (oldProps.block._id !== newProps.block._id)
 		);
   }
 
-  processProps(zoom, block) {
+  processProps(props) {
   	// Set new peaks and starting and ending points of waveform block
-  	this.peaks = extractPeaks(this.props.rawAudio, 2000*zoom, true);
-  	this.firstPeak = Math.floor(block.file_offset / zoom);
-  	this.lastPeak = Math.ceil((block.file_end / zoom) || (this.peaks.data[0].length - 1));
+    let zoom = props.currentZoom;
+  	this.peaks = extractPeaks(props.rawAudio, 2000*zoom, true);
+  	this.firstPeak = Math.floor(props.block.file_offset / zoom);
+  	this.lastPeak = Math.ceil((props.block.file_end / zoom) || (this.peaks.data[0].length - 1));
   	this.width = this.peaks.data[0].slice(this.firstPeak, this.lastPeak).length/2 - 2;
-  	this.props.setWorkspaceWidth(this.width + block.row_offset);
   }
 
   componentWillReceiveProps(nextProps) {
   	// Need to pre-emptively update state so that component can render with correct width
   	if (this.needsToUpdate(this.props, nextProps)) {
-    	this.processProps(nextProps.currentZoom, nextProps.block);
+    	this.processProps(nextProps);
   	}
   }
 
@@ -52,6 +53,9 @@ class Waveform extends Component {
   	// Only draw once the canvas has been rendered
     if (this.needsToUpdate(prevProps, this.props)) {
     	let ctx = ReactDOM.findDOMNode(this).getContext('2d');
+      let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+      this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
+      this.props.setWorkspaceWidth(this.left + this.width + 400);
       this.draw(ctx);
       this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
     }
@@ -59,6 +63,9 @@ class Waveform extends Component {
 
   componentDidMount() {
     let ctx = ReactDOM.findDOMNode(this).getContext('2d');
+    let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+    this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
+    this.props.setWorkspaceWidth(this.left + this.width);
     this.draw(ctx);
   }
 
@@ -66,24 +73,24 @@ class Waveform extends Component {
   	// Figure out which tool mode the workspace is in to apply the correct operation
     if (this.props.toolMode === toolMode.CURSOR) {
       if (this.props.playing === playingMode.PLAYING) {
-        this.props.setSeeker(e.pageX-90);
+        this.props.setSeeker(e.pageX - UIConstants.LEFT - 2);
       } else {
-        this.props.setCursor(e.pageX-90);
-        console.log('start at', this.firstPeak, 'end at', this.lastPeak);
+        this.props.setCursor(e.pageX - UIConstants.LEFT - 2);
       }
     } else if (this.props.toolMode === toolMode.SPLIT) {
-    	// e.pageX - 83 so that it is exactly where the dashed line on the cursor is
-      let splitElement = Math.ceil(((e.pageX-85) * 2) * this.props.currentZoom);
+      let distanceInWaveform = e.pageX - this.left + 5;
+      let start = this.firstPeak * this.props.currentZoom;
+      let end = this.lastPeak * this.props.currentZoom;
 
-      // Only accept splitting if it's +/- 5px from left or right border
-      let start = this.firstPeak * this.props.currentZoom + 10;
-      let end = this.lastPeak * this.props.currentZoom - 10;
-      if (splitElement > start && splitElement < end) {
+      let splitElement = Math.ceil((end - start) * (distanceInWaveform/this.width)) + start;
+      if (splitElement > start+10 && splitElement < end-10) {
 	      this.props.emitSplitBlock(this.props.block._id, splitElement);
       }
       
     } else if (this.props.toolMode === toolMode.DRAG) {
-      console.log('drag');
+    	// Do something here. Probably nothing.
+    } else if (this.props.toolMode === toolMode.SELECT) {
+      this.props.highlightBlock();
     }
   }
 
@@ -93,7 +100,7 @@ class Waveform extends Component {
     let bits = this.peaks.bits;
 
     let i;
-    let h2 = 50; // canvas.height / 2;
+    let h2 = UIConstants.ROW_HEIGHT / 2;
 
     let minPeak, min;
     let maxPeak, max;
@@ -101,10 +108,10 @@ class Waveform extends Component {
     let maxValue = Math.pow(2, bits-1);
 
     ctx.save();
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = '#0A381C';
 
     // Every two peaks fit into one pixel width: one from top and one from bottom border
-    for (i=this.firstPeak+1; i < this.lastPeak-1; i+=2) {
+    for (i=this.firstPeak+2; i < this.lastPeak-1; i+=2) {
       minPeak = peaks[i] / maxValue;
       maxPeak = peaks[i+1] / maxValue;
 
@@ -122,8 +129,8 @@ class Waveform extends Component {
 
   render() {
     return (
-      <canvas width={this.width} height={100}
-        style={{'border': '1px solid black'}}
+      <canvas width={this.width} height={UIConstants.ROW_HEIGHT-2}
+        style={{'border': '1px solid white', 'borderRadius': '5px'}}
         onClick={this.handleCanvasClick}
       />
     );

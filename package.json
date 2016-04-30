@@ -47,6 +47,7 @@
     "precss": "^1.4.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
+    "react-draggable": "^2.0.0-beta3",
     "react-dropzone": "^3.4.0",
     "react-redux": "^4.4.1",
     "react-router": "^2.0.1",

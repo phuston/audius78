@@ -1,5 +1,4 @@
 import { handleActions } from 'redux-actions';
-import { filter } from 'filter-object';
 import { zoomLimits } from '../../utils';
 
 export default handleActions({
@@ -13,6 +12,25 @@ export default handleActions({
 
   SET_WORKSPACE_WIDTH: (state, action) => {
     return {...state, width: action.payload};
+  },
+
+  TOGGLE_ROW_DELETE: (state, action) => {
+    return {...state, allowRowDelete: action.payload};
+  },
+
+  HIGHLIGHT_BLOCK: (state, action) => {
+    let blocks = state.rows[action.payload.rowIndex].audioBlocks;
+    blocks[action.payload.blockIndex].selected = !blocks[action.payload.blockIndex].selected;
+    return {
+      ...state, 
+      rows: {
+        ...state.rows, 
+        [action.payload.rowIndex]: {
+          ...state.rows[action.payload.rowIndex],
+          audioBlocks: blocks,
+        }
+      }
+    };
   },
 
   SET_TOOL_MODE: (state, action) => {
@@ -47,32 +65,52 @@ export default handleActions({
   },
 
   REMOVE_ROW: (state, action) => {
-    // TODO: Tentative, might not work. Also update indices
-    let query = '!' + action.payload;
-    let newRows = filter(state.rows, query);
-    newRows.length -= 1;
+    let updatedRows = {};
+    let numRow = 0;
+    let thisRow;
+    for (var key in state.rows) {
+      if (key === 'length') {
+        updatedRows.length = state.rows.length - 1;
+      } else {
+        if (state.rows[key]._id !== action.payload.deletedRowId) {
+          thisRow = state.rows[key];
+          thisRow.rowId = numRow;
+          updatedRows[Number(numRow)] = thisRow;
+          numRow++;
+        }
+      }
+    }
+    return {...state, rows: updatedRows};
+  },
+
+  REMOVE_BLOCKS: (state, action) => {
+    let newRows = state.rows;
+    Array.prototype.forEach.call(newRows, (row, i) => {
+      if (action.payload.response[row.rowId] !== undefined) {
+        newRows[row.rowId].audioBlocks = action.payload.response[row.rowId];
+      }
+    });
     return {...state, rows: newRows};
   },
 
-  CLEAR_ROWS: (state, action) => {
-    return {...state, rows: {length: 0}}
-  },
-
-  // TODO: Fix this (maybe) - not sure if actually broken
   FLAG_BLOCK: (state, action) => {
-    var block = {...state.rows[action.rowId][action.blockId], flags: action.newFlags};
-    var row = {...state[action.rowId], [action.blockId]:block};
-    return {...state, rows: {...state.rows, [action.payload.rowId]:row}};
+    let block = state.rows[action.payload.rowId][action.payload.blockId];
+    block.flags = action.payload.newFlags;
+    let newBlocks = {...state[action.payload.rowId].audioBlocks, [action.payload.blockId]:block};
+    let newRow = {...state[action.payload.rowId], audioBlocks: newBlocks}
+    return {...state, rows: {...state.rows, [action.payload.rowId]:newRow}};
   },
 
   SPLIT_BLOCK: (state, action) => {
-    var rowToUpdate = state.rows[action.payload.rowId];
+    let rowToUpdate = state.rows[action.payload.rowId];
     rowToUpdate.audioBlocks = action.payload.newBlocks;
     return {...state, rows: {...state.rows, [action.payload.rowId]: rowToUpdate}};
   },
 
   MOVE_BLOCK: (state, action) => {
-    return {...state, rows: {...state.rows, [action.rowId]:action.newRow}};
+    let rowToUpdate = state.rows[action.payload.rowId];
+    rowToUpdate.audioBlocks = action.payload.newBlocks;
+    return {...state, rows: {...state.rows, [action.payload.rowId]: rowToUpdate}};
   }
 }, {});
 

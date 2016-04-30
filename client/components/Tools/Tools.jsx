@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { playingMode, toolMode } from '../../../utils.js';
+import { playingMode, toolMode, selectColor } from '../../../utils.js';
 
 import styles from './Tools.scss';
 
@@ -14,6 +14,7 @@ class Tools extends Component{
     this.changeToCursor = this.changeToCursor.bind(this);
     this.changeToDrag = this.changeToDrag.bind(this);
     this.changeToSplit = this.changeToSplit.bind(this);
+    this.changeToSelect = this.changeToSelect.bind(this);
   }
 
   setPlayingMode() {
@@ -36,6 +37,10 @@ class Tools extends Component{
     this.props.setToolMode(toolMode.DRAG);
   }
 
+  changeToSelect() {
+    this.props.setToolMode(toolMode.SELECT);
+  }
+
   stopPlaying(){
     this.props.stopPlaying();
     this.props.setSeeker(this.props.cursor); // Change this to cursor position
@@ -54,14 +59,16 @@ class Tools extends Component{
   }
 
   render() {
-    let cursorStyle, splitStyle, dragStyle;
+    let cursorStyle, splitStyle, dragStyle, selectStyle;
 
     if (this.props.toolMode === toolMode.CURSOR) {
-      cursorStyle = {'backgroundColor': 'red'};
+      cursorStyle = {'backgroundColor': selectColor};
     } else if (this.props.toolMode === toolMode.SPLIT) {
-      splitStyle = {'backgroundColor': 'red'};
+      splitStyle = {'backgroundColor': selectColor};
     } else if (this.props.toolMode === toolMode.DRAG) {
-      dragStyle = {'backgroundColor': 'red'};
+      dragStyle = {'backgroundColor': selectColor};
+    } else if (this.props.toolMode === toolMode.SELECT) {
+      selectStyle = {'backgroundColor': selectColor};
     }
 
     return (
@@ -84,8 +91,16 @@ class Tools extends Component{
           className={styles.split} 
           onClick={this.changeToSplit}
           style={splitStyle} />
-        <input type='button' value='Zoom In' onClick={this.zoomIn} />
-        <input type='button' value='Zoom Out' onClick={this.zoomOut} />
+        <input type='button' value='Select'
+          className={styles.select}
+          onClick={this.changeToSelect}
+          style={selectStyle} />
+        <input type='button' value='Delete'
+          onClick={this.props.deleteSelected} />
+        <input type='button' value='Zoom In'
+          onClick={this.zoomIn} />
+        <input type='button' value='Zoom Out'
+          onClick={this.zoomOut} />
       </div>
     )
   }

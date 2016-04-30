@@ -19,6 +19,7 @@ class Toolbar extends Component{
         <h2> Toolbar </h2>
         <Tools setPlayingMode={this.props.setPlayingMode} 
           setToolMode={this.props.setToolMode}
+          deleteSelected={this.props.deleteSelected}
           setZoom={this.props.setZoom}
           currentZoom={this.props.currentZoom}
           stopPlaying={this.props.stopPlaying}

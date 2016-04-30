@@ -31,7 +31,6 @@ export const newWorkspace = createAction(types.LOAD_WORKSPACE, (audioCtx)=>{
           let len;
 
           data.workspace.rows.map((row, i) => {
-            console.log(i, row);
             row.rawAudio = buffers[i];
             rows[Number(i)] = row;
             len = i;
@@ -101,6 +100,56 @@ export const setWorkspaceWidth = createAction(types.SET_WORKSPACE_WIDTH, (width)
   return width;
 });
 
+export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
+  // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that
+  // Not sure if this works
+  return fetch(addOperation.newRow.rawAudio)
+  .then((file) => {
+    return file.arrayBuffer();
+  })
+  .then((arrayBuffer) => {
+    return audioCtx.decodeAudioData(arrayBuffer)
+  })
+  .then((buffer) => {
+    // Have to close the audioCtx used to create buffer objects
+    audioCtx.close();
+
+    addOperation.newRow.rawAudio = buffer;
+    return addOperation.newRow;
+  })
+  .catch(err => {
+    console.log(err);
+  });
+});
+
+export const toggleRowDelete = createAction(types.TOGGLE_ROW_DELETE, (status) => {
+  return status;
+});
+
+export const removeRow = createAction(types.REMOVE_ROW, (updatedRows) => {
+  return updatedRows;
+});
+
+export const removeBlocks = createAction(types.REMOVE_BLOCKS, (newBlocksPerRow) => {
+  return newBlocksPerRow;
+});
+
+export const highlightBlock = createAction(types.HIGHLIGHT_BLOCK, (blockInfo) => {
+  return blockInfo;
+});
+
+export const flagBlock = createAction(types.FLAG_TRACK, (flagOperation) => {
+  return flagOperation;
+});
+
+export const splitBlock = createAction(types.SPLIT_BLOCK, (splitOperation) => {
+  return splitOperation;
+});
+
+export const moveBlock = createAction(types.MOVE_BLOCK, (moveOperation) => {
+  return moveOperation;
+});
+
 export const setPlayingMode = createAction(types.SET_PLAYING_MODE, (mode) => {
   return mode;
 });
@@ -129,45 +178,5 @@ export const setSpeed = createAction(types.SET_SPEED, (speed) => {
   return speed;
 });
 
-export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
-  // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that
-  // Not sure if this works
-  return fetch(addOperation.newRow.rawAudio)
-  .then((file) => {
-    return file.arrayBuffer();
-  })
-  .then((arrayBuffer) => {
-    return audioCtx.decodeAudioData(arrayBuffer)
-  })
-  .then((buffer) => {
-    // Have to close the audioCtx used to create buffer objects
-    audioCtx.close();
 
-    addOperation.newRow.rawAudio = buffer;
-    return addOperation.newRow;
-  })
-  .catch(err => {
-    console.log(err);
-  });
-});
-
-export const removeRow = createAction(types.REMOVE_ROW, (rowId) => {
-  return rowId;
-});
-
-export const clearRows = createAction(types.CLEAR_ROWS, () => {
-  return;
-});
-
-export const flagBlock = createAction(types.FLAG_TRACK, (newFlags) => {
-  return newFlags;
-});
-
-export const splitBlock = createAction(types.SPLIT_BLOCK, (splitOperation) => {
-  return splitOperation;
-});
-
-export const moveBlock = createAction(types.MOVE_BLOCK, (newBlocks) => {
-  return newBlocks;
-});
 
