@@ -156,7 +156,7 @@ class TrackBox extends Component{
       this.drawTimescale(this.props.workspace.timing.seeker);
     }
 
-    let trackboxStyle = {'height': this.props.workspace.rows.length * UIConstants.ROW_HEIGHT + 74};
+    let trackboxStyle = {'height': this.props.workspace.rows.length * UIConstants.ROW_HEIGHT + 74, 'overflow': 'scroll'};
 
     return (
       <div className={styles.trackbox} style={trackboxStyle}>

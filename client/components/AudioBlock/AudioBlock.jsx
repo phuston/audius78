@@ -19,88 +19,99 @@ class AudioBlock extends Component {
 	constructor(props) {
 		super(props);
 
-    this.handleStopDrag = this.handleStopDrag.bind(this);
-    this.handleDrag = this.handleDrag.bind(this);
-    this.numBlocks = this.props.data.audioBlocks.length;
-
-    // moveShift is the amount moved from original position for each block
-    this.moveShift = {};
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.allowDrag = this.allowDrag.bind(this);
+    this.totalMoved = 0;
+    this.zIndices = {};
+    this.totalMoved = {};
     this.initialOffset = {};
 
-    // Intial positions of each block. Used to calculate relative shifting.
-    this.props.data.audioBlocks.map((block) => {
-      this.moveShift[block._id] = 0;
+    this.props.data.audioBlocks.map( (block) => {
+      this.zIndices[block._id] = 0;
+      this.totalMoved[block._id] = 0;
       this.initialOffset[block._id] = block.row_offset;
     });
 	}
 
+  allowDrag() {
+    return (this.props.toolMode === toolMode.DRAG);
+  }
+
   componentWillUpdate(nextProps, nextState) {
-    if (nextProps.data.audioBlocks.length !== this.numBlocks || nextProps.data._id !== this.props.data._id) {
-      let newMoveShift = {};
-      let newInitialOffset = {};
-      nextProps.data.audioBlocks.map((block, i) => {
-        newMoveShift[block._id] = this.moveShift[block._id] === undefined ? 0 : this.moveShift[block._id];
-        newInitialOffset[block._id] = this.initialOffset[block._id] === undefined ? block.row_offset : this.initialOffset[block._id];
-      });
-      this.moveShift = newMoveShift;
-      this.initialOffset = newInitialOffset;
-      this.numBlocks = nextProps.data.audioBlocks.length;
-    }  
+    nextProps.data.audioBlocks.map( (block) => {
+      this.zIndices[block._id] = this.zIndices[block._id] || 0;
+      this.totalMoved[block._id] = this.totalMoved[block._id] || 0;
+      this.initialOffset[block._id] = block.row_offset;
+    });
   }
 
-  handleStopDrag(blockId, index, e) {
-    // When user is done dragging, socket emits the event to update the server.
-    let normalizedShift = this.moveShift[blockId] * this.props.currentZoom + this.initialOffset[blockId];
-    this.props.emitMoveBlock(blockId, normalizedShift);
-  }
+  onMouseDown(blockId, index, e) {
+    if (this.allowDrag()) {
+      e.preventDefault();
+      this.zIndices[blockId] = 1;
 
-  handleDrag(blockId, event, ui) {
-    // Updates the shift amount by the dragged amount
-    this.moveShift[blockId] += ui.deltaX;
+      let el = e.target;
+      let prevX = e.clientX;
+
+      let emitShift = (x) => {
+        let deltaX = x - prevX;
+        prevX = x;
+        this.totalMoved[blockId] += deltaX || 0;
+
+        // Sets width to what it is, so that state "changes" and everything is forced to re-render. This makes the waveform "draggable".
+        // Comment out this line to see the difference.
+        this.props.setWorkspaceWidth(this.props.width-90);
+      };
+
+      // Dynamically adds onMouseMove event to element
+      el.onmousemove = (e) => {
+        e.preventDefault();
+        emitShift(e.clientX);
+      };
+
+      let complete = (e) => {
+        e.preventDefault();
+        el.onmousemove = el.onmouseup = null;
+        this.props.emitMoveBlock(blockId, this.totalMoved[blockId] * this.props.currentZoom);
+        this.totalMoved[blockId] = 0;
+        this.zIndices[blockId] = 0;
+      };
+
+      el.onmouseup = complete;
+    }
   }
 
   render() {
   	let data = this.props.data;
-    let dragDisabled = this.props.toolMode !== toolMode.DRAG;
   	let waveforms = data.audioBlocks.map((block, i) => {
       let background = '#16783C';
       if (block.selected) background = selectColor;
       let style = {
-        'id': block._id,
         'backgroundColor': background,
         'border': 'none',
         'display': 'inline-block',
         'position': 'absolute',
         'height': '100px',
         'top': UIConstants.TOP + data.rowId * (UIConstants.ROW_HEIGHT+4),
-        'left': (block.row_offset) + UIConstants.LEFT - this.moveShift[block._id],
+        'left': Math.max(this.initialOffset[block._id] / this.props.currentZoom + this.totalMoved[block._id], 0) + UIConstants.LEFT,
+        'zIndex': this.zIndices[block._id],
       };
 
   		return (
-        <Draggable
-          key={i}
-          axis='x'
-          disabled={dragDisabled}
-          bounds={{left: -this.initialOffset[block._id] / this.props.currentZoom}}
-          onDrag={this.handleDrag.bind(this, block._id)}
-          onStop={this.handleStopDrag.bind(this, block._id, i)}
-          >
-    			<div style={style}>
-    				<Waveform block={block} 
-              moveShift={this.moveShift[block._id]}
-              highlightBlock={this.props.highlightBlock.bind(null, i)}
-              emitSplitBlock={this.props.emitSplitBlock}
-              playing={this.props.playing}
-              toolMode={this.props.toolMode}
-              currentZoom={this.props.currentZoom} 
-              rawAudio={this.props.data.rawAudio}
-              setCursor={this.props.setCursor}
-              setSeeker={this.props.setSeeker}
-              setSpeed={this.props.setSpeed}
-              setWorkspaceWidth={this.props.setWorkspaceWidth}
-            />
-    			</div>
-        </Draggable>
+  			<div key={i} style={style} onMouseDown={this.onMouseDown.bind(this, block._id, i)}>
+  				<Waveform block={block}
+            highlightBlock={this.props.highlightBlock.bind(null, i)}
+            emitSplitBlock={this.props.emitSplitBlock}
+            playing={this.props.playing}
+            toolMode={this.props.toolMode}
+            currentZoom={this.props.currentZoom} 
+            rawAudio={this.props.data.rawAudio}
+            setCursor={this.props.setCursor}
+            setSeeker={this.props.setSeeker}
+            setSpeed={this.props.setSpeed}
+            setWorkspaceWidth={this.props.setWorkspaceWidth}
+          />
+  			</div>
 			);
   	});
 

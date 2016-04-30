@@ -54,7 +54,7 @@ class Waveform extends Component {
     if (this.needsToUpdate(prevProps, this.props)) {
     	let ctx = ReactDOM.findDOMNode(this).getContext('2d');
       let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
-      this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0) - this.props.moveShift;
+      this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
       this.props.setWorkspaceWidth(this.left + this.width + 400);
       this.draw(ctx);
       this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
@@ -64,7 +64,7 @@ class Waveform extends Component {
   componentDidMount() {
     let ctx = ReactDOM.findDOMNode(this).getContext('2d');
     let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
-    this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0) - this.props.moveShift;
+    this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
     this.props.setWorkspaceWidth(this.left + this.width);
     this.draw(ctx);
   }
@@ -78,7 +78,7 @@ class Waveform extends Component {
         this.props.setCursor(e.pageX - UIConstants.LEFT - 2);
       }
     } else if (this.props.toolMode === toolMode.SPLIT) {
-      let distanceInWaveform = e.pageX - this.left - this.props.moveShift + 5;
+      let distanceInWaveform = e.pageX - this.left + 5;
       let start = this.firstPeak * this.props.currentZoom;
       let end = this.lastPeak * this.props.currentZoom;
 

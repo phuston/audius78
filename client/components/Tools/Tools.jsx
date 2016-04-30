@@ -97,6 +97,10 @@ class Tools extends Component{
           style={selectStyle} />
         <input type='button' value='Delete'
           onClick={this.props.deleteSelected} />
+        <input type='button' value='Zoom In'
+          onClick={this.zoomIn} />
+        <input type='button' value='Zoom Out'
+          onClick={this.zoomOut} />
       </div>
     )
   }

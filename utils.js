@@ -26,4 +26,4 @@ module.exports.UIConstants = Object.freeze({
 	ROW_HEIGHT: 100,
 });
 
-module.exports.selectColor = '#2E6CAD';
+module.exports.selectColor = '#5489BD';

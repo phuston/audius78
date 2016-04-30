@@ -49,7 +49,7 @@ class Workspace extends Component {
     this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
     this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
     this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
-    this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+90, document.documentElement.clientWidth) ));
+    this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+90, document.documentElement.clientWidth, this.props.workspace.width) ));
   }
 
   emitRemoveRow(rowId) {
