@@ -13,6 +13,7 @@ import Toolbar from './Toolbar.jsx';
 
 // Outside
 import * as workspaceActions from '../actions/workspace.js';
+import TimeRuler from '../components/TimeRuler/TimeRuler.jsx'
 
 //Styling 
 import styles from './Containers.scss';
@@ -82,7 +83,7 @@ class Workspace extends Component {
       removeBlockOperation[row._id] = blocksToDelete;
     });
 
-    if (!isEmpty) this.socket.emit('removeBlocks', removeBlockOperation);
+    if (!isEmpty && this.props.workspace.playing !== playingMode.PLAYING) this.socket.emit('removeBlocks', removeBlockOperation);
   }
 
   setZoom(newZoom) {
@@ -131,6 +132,10 @@ class Workspace extends Component {
       this.moveBlock(moveOperation);
       this.rerenderAudio = true;
     });
+
+    window.addEventListener('scroll', (e) => {
+      dispatch(workspaceActions.setScroll(window.pageXOffset - (document.documentElement.clientLeft || 0) ));
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -140,7 +145,10 @@ class Workspace extends Component {
       dispatch(workspaceActions.setSeeker(0));
       dispatch(workspaceActions.setZoom(1));
       dispatch(workspaceActions.setCursor(0));
-      dispatch(workspaceActions.setWorkspaceWidth('100vw'));
+      dispatch(workspaceActions.setScroll(0));
+      dispatch(workspaceActions.setWorkspaceWidth('1600'));
+      dispatch(workspaceActions.toggleRowDelete(true));
+      dispatch(workspaceActions.setToolMode(toolMode.CURSOR));
     }
     // If row added or deleted, allow row delete
     if (this.props.workspace.rows.length !== prevProps.workspace.rows.length) {
@@ -215,7 +223,7 @@ class Workspace extends Component {
 
   handleAudioBlockEnding() {
     this.countingBlocks++;
-    console.log(this.countingBlocks, this.numBlocks);
+    // console.log(this.countingBlocks, this.numBlocks);
     if (this.countingBlocks === this.numBlocks) {
       this.setPlayingMode(playingMode.STOP);
       this.setSeeker(this.props.workspace.timing.cursor);
@@ -229,9 +237,7 @@ class Workspace extends Component {
 
     let workspace = this.props.workspace;
     const samplesPerPeak = workspace.zoomLevel * 2000;
-    const peaksPerPixel = 2;
-    const samplesPerSec = 44100;
-    const pixelsPerSec = this.props.workspace.timing.speed;
+    const pixelsPerSec = this.props.workspace.timing.speed * workspace.zoomLevel;
 
     let sourceBuffers = Array.prototype.map.call(workspace.rows, (elem) => {
       let blocks = Array.prototype.map.call(elem.audioBlocks, (audioBlock, i)=>{
@@ -245,10 +251,10 @@ class Workspace extends Component {
 
         // Offsets are an array element into audio file and not time;
         // this converts them to time offsets
-        let audioEnd = ((audioBlock.file_end * samplesPerPeak)/rawAudioLength * duration)/2;
+        let audioEnd = ((audioBlock.file_end * samplesPerPeak)/rawAudioLength * duration)/(2 * workspace.zoomLevel);
 
-        block.audioOffset = ((audioBlock.file_offset * samplesPerPeak)/rawAudioLength * duration)/2;
-        block.duration = (audioEnd || duration) - block.audioOffset;
+        block.audioOffset = ((audioBlock.file_offset * samplesPerPeak)/rawAudioLength * duration)/(2 * workspace.zoomLevel);
+        block.duration = ((audioEnd || duration) - block.audioOffset);
         block.delayTime = audioBlock.row_offset/pixelsPerSec;
         this.numBlocks++;
         return block;
@@ -286,18 +292,21 @@ class Workspace extends Component {
     let workspace;
     if (this.props.workspace.rows.length > 0) {
       workspace = (
-        <div className={styles.songs}>
-          <TrackBox className={styles.trackbox} 
-            socket={this.socket}
-            workspace={this.props.workspace} 
-            highlightBlock={this.highlightBlock}
-            emitRemoveRow={this.emitRemoveRow}
-            setCursor={this.setCursor}
-            setSeeker={this.setSeeker}
-            seekTime={this.seekTime}
-            setSpeed={this.setSpeed}
-            setWorkspaceWidth={this.setWorkspaceWidth}
-          />
+        <div>
+          <TimeRuler workspace={this.props.workspace}/>
+          <div className={styles.songs}>
+            <TrackBox className={styles.trackbox} 
+              socket={this.socket}
+              workspace={this.props.workspace} 
+              highlightBlock={this.highlightBlock}
+              emitRemoveRow={this.emitRemoveRow}
+              setCursor={this.setCursor}
+              setSeeker={this.setSeeker}
+              seekTime={this.seekTime}
+              setSpeed={this.setSpeed}
+              setWorkspaceWidth={this.setWorkspaceWidth}
+            />
+          </div>
         </div>
       );
     } else {
@@ -315,7 +324,7 @@ class Workspace extends Component {
         </div>
 
 
-        <div style={{'top': '70px', 'position': 'fixed', 'height': '70px'}}><h1>{this.props.workspace.id}</h1></div>
+        <div style={{'top': '70px', 'position': 'fixed', 'height': '70px', 'zIndex': '100', 'backgroundColor': '#8D8F8F', 'width': this.props.workspace.width}}><h1>{this.props.workspace.id}</h1></div>
 
         <div className={styles.workspace} style={{'width': this.props.workspace.width}}>
 
