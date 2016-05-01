@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 import { routeActions } from 'redux-simple-router';
 import * as workspaceActions from '../actions/workspace.js'
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import RaisedButton from 'material-ui/lib/raised-button';
 
 //Components
 import Welcome from '../components/Welcome/Welcome.jsx'
@@ -16,6 +18,7 @@ class WelcomeBox extends Component {
   constructor(props) {
     super(props);
     let dispatch = this.props.dispatch;
+    injectTapEventPlugin();
 
     //Bind Actions
     this.newWorkspace = (audioCtx) => dispatch(workspaceActions.newWorkspace(audioCtx)).then(() => {
@@ -30,6 +33,7 @@ class WelcomeBox extends Component {
     return (
       <div className={styles.welcome}>
         <h1>Welcome to Audius78</h1>
+        <RaisedButton label="Welcome" />
         <Welcome onNewWorkspace={this.newWorkspace} onLoadWorkspace={this.loadWorkspace}/>
       </div>
     )
