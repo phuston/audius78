@@ -38,7 +38,8 @@ class Row extends Component{
     return (
       <div className={styles.row} >
         <RowTool 
-          top={this.props.rowData.rowId * (UIConstants.ROW_HEIGHT+4) + UIConstants.TOP}
+          scrollX={this.props.scrollX}
+          top={(this.props.rowData.rowId === 0 ? 50 : 4)}
           rowData={this.props.rowData}
           emitRemoveRow={this.props.emitRemoveRow}
         />

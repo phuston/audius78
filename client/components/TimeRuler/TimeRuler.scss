@@ -3,5 +3,10 @@
 
 .time {
   background-color: $dark;
-  margin: 10px;
+  position: fixed;
+  margin-left: 80px;
+  padding: 0;
+  height: 40px;
+  top: 210px;
+  z-index: 100;
 }

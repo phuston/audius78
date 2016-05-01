@@ -126,6 +126,10 @@ export const toggleRowDelete = createAction(types.TOGGLE_ROW_DELETE, (status) =>
   return status;
 });
 
+export const setScroll = createAction(types.SET_SCROLL, (amount) => {
+  return amount;
+});
+
 export const removeRow = createAction(types.REMOVE_ROW, (updatedRows) => {
   return updatedRows;
 });
