@@ -8,7 +8,6 @@ import styles from './Containers.scss';
 
 // Components
 import Row from '../components/Row/Row.jsx';
-import TimeRuler from '../components/TimeRuler/TimeRuler.jsx'
 
 class Cursor extends Component {
   constructor(props) {
@@ -21,7 +20,7 @@ class Cursor extends Component {
       'top': '272px', 
       'left': this.props.styling.left + UIConstants.LEFT, 
       'width': '3px', 
-      'background': 'rgba(182,184,1,0.5)', 
+      'background': 'rgba(240,0,0,0.5)', 
       'zIndex': '5', 
       'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT
     };
@@ -133,7 +132,8 @@ class TrackBox extends Component{
   	if (this.props.workspace.rows !== undefined) {
 			var rows = Array.prototype.map.call(this.props.workspace.rows, (row) => {
 	  		return (
-          <Row key={row.rowId} 
+          <Row key={row.rowId}
+            scrollX={this.props.workspace.scrollX}
             highlightBlock={this.props.highlightBlock}
             rowData={row} 
             currentZoom={this.props.workspace.zoomLevel}
@@ -156,11 +156,10 @@ class TrackBox extends Component{
       this.drawTimescale(this.props.workspace.timing.seeker);
     }
 
-    let trackboxStyle = {'height': this.props.workspace.rows.length * (UIConstants.ROW_HEIGHT+4) + 70, 'overflow': 'scroll'};
+    let trackboxStyle = {'height': this.props.workspace.rows.length * (UIConstants.ROW_HEIGHT+4) + 70};
 
     return (
       <div className={styles.trackbox} style={trackboxStyle}>
-        <TimeRuler workspace={this.props.workspace}/>
         <Seeker styling={{left: this.props.workspace.timing.seeker, numRows: this.props.workspace.rows.length}}/>
         <Cursor styling={{left: this.props.workspace.timing.cursor, numRows: this.props.workspace.rows.length}}/>
         {rows}

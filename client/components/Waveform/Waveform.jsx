@@ -77,20 +77,19 @@ class Waveform extends Component {
       } else {
         this.props.setCursor(e.pageX - UIConstants.LEFT - 2);
       }
-    } else if (this.props.toolMode === toolMode.SPLIT) {
-      let distanceInWaveform = e.pageX - this.left + 5;
-      let start = this.firstPeak * this.props.currentZoom;
-      let end = this.lastPeak * this.props.currentZoom;
+    } else if (this.props.playing !== playingMode.PLAYING) {
+      if (this.props.toolMode === toolMode.SPLIT) {
+        let distanceInWaveform = e.pageX - this.left + 5;
+        let start = this.firstPeak * this.props.currentZoom;
+        let end = this.lastPeak * this.props.currentZoom;
 
-      let splitElement = Math.ceil((end - start) * (distanceInWaveform/this.width)) + start;
-      if (splitElement > start+10 && splitElement < end-10) {
-	      this.props.emitSplitBlock(this.props.block._id, splitElement);
+        let splitElement = Math.ceil((end - start) * (distanceInWaveform/this.width)) + start;
+        if (splitElement > start+10 && splitElement < end-10) {
+          this.props.emitSplitBlock(this.props.block._id, splitElement);
+        }
+      } else if (this.props.toolMode === toolMode.SELECT) {
+        this.props.highlightBlock();
       }
-      
-    } else if (this.props.toolMode === toolMode.DRAG) {
-    	// Do something here. Probably nothing.
-    } else if (this.props.toolMode === toolMode.SELECT) {
-      this.props.highlightBlock();
     }
   }
 
@@ -100,7 +99,7 @@ class Waveform extends Component {
     let bits = this.peaks.bits;
 
     let i;
-    let h2 = UIConstants.ROW_HEIGHT / 2;
+    let h2 = (UIConstants.ROW_HEIGHT - 4) / 2;
 
     let minPeak, min;
     let maxPeak, max;
@@ -111,7 +110,7 @@ class Waveform extends Component {
     ctx.fillStyle = '#0A381C';
 
     // Every two peaks fit into one pixel width: one from top and one from bottom border
-    for (i=this.firstPeak+2; i < this.lastPeak-1; i+=2) {
+    for (i=this.firstPeak+2; i < this.lastPeak-2; i+=2) {
       minPeak = peaks[i] / maxValue;
       maxPeak = peaks[i+1] / maxValue;
 
@@ -128,9 +127,10 @@ class Waveform extends Component {
   }
 
   render() {
+    let borderColor = this.props.selected ? '2px solid #E8F149' : '2px solid white';
     return (
-      <canvas width={this.width} height={UIConstants.ROW_HEIGHT-2}
-        style={{'border': '1px solid white', 'borderRadius': '5px'}}
+      <canvas width={this.width} height={UIConstants.ROW_HEIGHT-4}
+        style={{'border': borderColor, 'borderRadius': '5px'}}
         onClick={this.handleCanvasClick}
       />
     );

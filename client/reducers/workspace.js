@@ -33,6 +33,10 @@ export default handleActions({
     };
   },
 
+  SET_SCROLL: (state, action) => {
+    return {...state, scrollX: action.payload};
+  },
+
   SET_TOOL_MODE: (state, action) => {
     return {...state, toolMode: action.payload};
   },

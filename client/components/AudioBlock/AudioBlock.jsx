@@ -35,7 +35,7 @@ class AudioBlock extends Component {
 	}
 
   allowDrag() {
-    return (this.props.toolMode === toolMode.DRAG);
+    return (this.props.toolMode === toolMode.DRAG && this.props.playing !== playingMode.PLAYING);
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -96,7 +96,7 @@ class AudioBlock extends Component {
   	let data = this.props.data;
   	let waveforms = data.audioBlocks.map((block, i) => {
       let background = '#16783C';
-      if (block.selected) background = selectColor;
+      // if (block.selected) background = selectColor;
       let style = {
         'backgroundColor': background,
         'border': 'none',
@@ -113,6 +113,7 @@ class AudioBlock extends Component {
   				<Waveform block={block}
             highlightBlock={this.props.highlightBlock.bind(null, i)}
             emitSplitBlock={this.props.emitSplitBlock}
+            selected={block.selected}
             playing={this.props.playing}
             toolMode={this.props.toolMode}
             currentZoom={this.props.currentZoom} 
@@ -127,7 +128,13 @@ class AudioBlock extends Component {
   	});
 
     // Sets cursor image depending on tool mode
-    let audioBlockStyle = {'cursor': 'auto', 'width': this.props.width, 'background': '#282928', 'height': UIConstants.ROW_HEIGHT+4};
+    let audioBlockStyle = {
+      'cursor': 'auto', 
+      'width': this.props.width, 
+      'background': '#282928', 
+      'height': UIConstants.ROW_HEIGHT+4,
+      'marginTop': (data.rowId === 0 ? 50 : 0),
+    };
     switch (this.props.toolMode) {
       case (toolMode.SPLIT):
         audioBlockStyle.cursor = 'url("http://localhost:3000/icons/cut.png"),auto';
