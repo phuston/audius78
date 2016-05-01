@@ -55,7 +55,7 @@ class Waveform extends Component {
     	let ctx = ReactDOM.findDOMNode(this).getContext('2d');
       let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
       this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
-      this.props.setWorkspaceWidth(this.left + this.width + 100);
+      this.props.setWorkspaceWidth(this.left + (this.peaks.data[0].length/2) + 100);
       this.draw(ctx);
       this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
     }
@@ -65,7 +65,7 @@ class Waveform extends Component {
     let ctx = ReactDOM.findDOMNode(this).getContext('2d');
     let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
     this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
-    this.props.setWorkspaceWidth(this.left + this.width + 100);
+    this.props.setWorkspaceWidth(this.left + (this.peaks.data[0].length/2) + 100);
     this.draw(ctx);
   }
 

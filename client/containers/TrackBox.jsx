@@ -17,12 +17,12 @@ class Cursor extends Component {
   render() {
     let cursorStyle = {
       'position': 'absolute', 
-      'top': '272px', 
+      'top': '243px', 
       'left': this.props.styling.left + UIConstants.LEFT, 
       'width': '3px', 
       'background': 'rgba(240,0,0,0.5)', 
       'zIndex': '5', 
-      'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT
+      'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT + 29
     };
     return <div id='cursor' style={cursorStyle}/>;
   }
@@ -36,12 +36,12 @@ class Seeker extends Component {
   render() {
     let seekerStyle = {
       'position': 'absolute', 
-      'top': '272px', 
+      'top': '243px', 
       'left': this.props.styling.left + UIConstants.LEFT, 
       'width': '3px', 
       'background': 'rgba(255,255,255,0.7)', 
       'zIndex': '5', 
-      'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT
+      'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT + 29
     };
     return <div id='seeker' style={seekerStyle}/>;
   }

@@ -133,7 +133,7 @@ class AudioBlock extends Component {
       'width': this.props.width, 
       'background': '#282928', 
       'height': UIConstants.ROW_HEIGHT+4,
-      'marginTop': (data.rowId === 0 ? 50 : 0),
+      'marginTop': (data.rowId === 0 ? 12 : 0),
     };
     switch (this.props.toolMode) {
       case (toolMode.SPLIT):
