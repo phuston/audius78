@@ -223,7 +223,7 @@ class Workspace extends Component {
 
   handleAudioBlockEnding() {
     this.countingBlocks++;
-    console.log(this.countingBlocks, this.numBlocks);
+    // console.log(this.countingBlocks, this.numBlocks);
     if (this.countingBlocks === this.numBlocks) {
       this.setPlayingMode(playingMode.STOP);
       this.setSeeker(this.props.workspace.timing.cursor);
@@ -251,10 +251,10 @@ class Workspace extends Component {
 
         // Offsets are an array element into audio file and not time;
         // this converts them to time offsets
-        let audioEnd = ((audioBlock.file_end * samplesPerPeak)/rawAudioLength * duration)/2;
+        let audioEnd = ((audioBlock.file_end * samplesPerPeak)/rawAudioLength * duration)/(2 * workspace.zoomLevel);
 
-        block.audioOffset = ((audioBlock.file_offset * samplesPerPeak)/rawAudioLength * duration)/2;
-        block.duration = ((audioEnd || duration) - block.audioOffset)/workspace.zoomLevel;
+        block.audioOffset = ((audioBlock.file_offset * samplesPerPeak)/rawAudioLength * duration)/(2 * workspace.zoomLevel);
+        block.duration = ((audioEnd || duration) - block.audioOffset);
         block.delayTime = audioBlock.row_offset/pixelsPerSec;
         this.numBlocks++;
         return block;
@@ -266,7 +266,6 @@ class Workspace extends Component {
     sourceBuffers.map( (row) => {
       row.map( (block, i) => {
         let delay = block.delayTime - this.startTime;
-        console.log(block, delay);
         if (delay >= 0) {
           block.source.start(delay, block.audioOffset, block.duration);
         } else if (-delay < block.duration) {
