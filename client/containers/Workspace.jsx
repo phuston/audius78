@@ -60,7 +60,10 @@ class Workspace extends Component {
       this.userLoggingOut = true;
     };
     this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
-    this.setWorkspaceWidth = (width) => dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+90, document.documentElement.clientWidth, this.props.workspace.width) ));
+    this.setWorkspaceWidth = (width) => {
+      let widthOfWaveforms = Math.min(this.props.workspace.width, width+150);
+      dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+150, document.documentElement.clientWidth) ));
+    }
   }
 
   emitRemoveRow(rowId) {
@@ -251,11 +254,11 @@ class Workspace extends Component {
 
         // Offsets are an array element into audio file and not time;
         // this converts them to time offsets
-        let audioEnd = ((audioBlock.file_end * samplesPerPeak)/rawAudioLength * duration)/(2 * workspace.zoomLevel);
+        let audioEnd = audioBlock.file_end * 1000 * duration / rawAudioLength;
 
-        block.audioOffset = ((audioBlock.file_offset * samplesPerPeak)/rawAudioLength * duration)/(2 * workspace.zoomLevel);
-        block.duration = ((audioEnd || duration) - block.audioOffset);
-        block.delayTime = audioBlock.row_offset/pixelsPerSec;
+        block.audioOffset = audioBlock.file_offset * 1000 * duration / rawAudioLength;
+        block.duration = (audioEnd || duration) - block.audioOffset;
+        block.delayTime = audioBlock.row_offset / pixelsPerSec;
         this.numBlocks++;
         return block;
       });
@@ -265,6 +268,7 @@ class Workspace extends Component {
 
     sourceBuffers.map( (row) => {
       row.map( (block, i) => {
+        console.log(block);
         let delay = block.delayTime - this.startTime;
         if (delay >= 0) {
           block.source.start(delay, block.audioOffset, block.duration);
