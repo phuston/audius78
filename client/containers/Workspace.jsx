@@ -6,6 +6,7 @@ import { routeActions } from 'redux-simple-router';
 import Dropzone from 'react-dropzone';
 import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 
+
 //Containers
 import TrackBox from './TrackBox.jsx';
 import Navbar from '../components/Navbar/Navbar.jsx'
@@ -21,6 +22,7 @@ class Workspace extends Component {
 
   constructor(props) {
     super(props);
+
     this.socket = io('http://localhost:3000');
     this.audioCtx = undefined;
     this.startTime = 0;

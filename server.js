@@ -10,6 +10,8 @@ var workspace = require( './routes/workspace');
 var app = express();
 var index =require('./routes/index.js')();
 var db = require('./db.js');
+var injectTapEventPlugin = require('react-tap-event-plugin');
+
 
 var isDeveloping = process.env.NODE_ENV !== 'production';
 
@@ -17,6 +19,8 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:false}));
 app.use(cookieParser());
+
+injectTapEventPlugin();
 
 if(isDeveloping) {
   var webpackMiddleware = require('webpack-dev-middleware');

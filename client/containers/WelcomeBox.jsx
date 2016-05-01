@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 import { routeActions } from 'redux-simple-router';
 import * as workspaceActions from '../actions/workspace.js'
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import RaisedButton from 'material-ui/lib/raised-button';
 
 //Components
@@ -18,7 +17,6 @@ class WelcomeBox extends Component {
   constructor(props) {
     super(props);
     let dispatch = this.props.dispatch;
-    injectTapEventPlugin();
 
     //Bind Actions
     this.newWorkspace = (audioCtx) => dispatch(workspaceActions.newWorkspace(audioCtx)).then(() => {
