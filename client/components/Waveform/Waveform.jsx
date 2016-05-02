@@ -107,7 +107,9 @@ class Waveform extends Component {
     let maxValue = Math.pow(2, bits-1);
 
     ctx.save();
-    ctx.fillStyle = '#0A381C';
+    // ctx.fillStyle = '#0A381C';
+    ctx.fillStyle = '#00bcd4';
+
 
     // Every two peaks fit into one pixel width: one from top and one from bottom border
     for (i=this.firstPeak+2; i < this.lastPeak-2; i+=2) {

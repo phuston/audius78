@@ -6,6 +6,9 @@ import { playingMode, toolMode, UIConstants } from '../../utils.js';
 // Styling 
 import styles from './Containers.scss';
 
+// Material
+import Card from 'material-ui/lib/card/card';
+
 // Components
 import Row from '../components/Row/Row.jsx';
 
@@ -132,6 +135,7 @@ class TrackBox extends Component{
   	if (this.props.workspace.rows !== undefined) {
 			var rows = Array.prototype.map.call(this.props.workspace.rows, (row) => {
 	  		return (
+          <Card>
           <Row key={row.rowId}
             scrollX={this.props.workspace.scrollX}
             highlightBlock={this.props.highlightBlock}
@@ -147,8 +151,8 @@ class TrackBox extends Component{
             emitMoveBlock={this.emitMoveBlock}
             emitRemoveRow={this.props.emitRemoveRow}
             setWorkspaceWidth={this.props.setWorkspaceWidth}
-            width={this.props.workspace.width}
-          />
+            width={this.props.workspace.width} />
+          </Card>
         );
 	  	});
   	}

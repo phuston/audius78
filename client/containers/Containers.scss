@@ -22,7 +22,6 @@ body {
   height: 70px;
   display: flex;
   flex-flow: columns;
-  background-color: $accent;
   z-index: 100;
 }
 
@@ -40,7 +39,7 @@ body {
 .songs {
   display: flex;
   flex-flow: column;
-  background-color: $primary;
+  // background-color: $primary;
   width: 100%;
 }
 

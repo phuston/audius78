@@ -1,6 +1,13 @@
+// Outside
 import React, { Component } from 'react';
 import { playingMode } from '../../../utils';
 
+// Material
+import Remove from 'material-ui/lib/svg-icons/content/remove-circle';
+import IconButton from 'material-ui/lib/icon-button';
+
+
+// Styling
 import styles from './RowTool.scss';
 
 class RowTool extends Component{
@@ -38,10 +45,11 @@ class RowTool extends Component{
           value={this.props.row.gain} 
           onChange={this.handleVolumeChange} 
           className={styles.mute} />
-        <input type='button' 
-          value='Delete' 
-          className={styles.delete} 
-          onClick={this.handleDeleteRow}/>
+
+          <IconButton onClick={this.handleDeleteRow} tooltip="Remove Row">
+              <Remove />
+          </IconButton>
+
       </div>
     )
   }

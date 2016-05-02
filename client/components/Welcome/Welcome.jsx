@@ -31,7 +31,7 @@ class Welcome extends Component{
       <div className={styles.existingWorkspace} >
         <div className={styles.newButton} >
           <RaisedButton 
-            label={'Create New Workspace'}
+            label={'New Workspace'}
             onClick={this.createWorkspace}/>
         </div>
 
@@ -40,15 +40,11 @@ class Welcome extends Component{
              hintText="enter code"
              onChange={this.handleInputChange} 
              underlineShow={true} />
-        </div>
-
-        <div className={styles.loadButton}>
           <RaisedButton
-            label={'Enter Existing Workspace'}
+            label={'Load Workspace'}
             onClick={this.loadWorkspace}
             primary={true} />
         </div>
-
       </div>
     );
   }
