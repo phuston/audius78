@@ -326,11 +326,14 @@ class Workspace extends Component {
     return (
       <div className={styles.page} >
         <div className = {styles.navbar} >
-          <Navbar onLogout={this.logout} />
+          <Navbar 
+            onLogout={this.logout}
+            workspaceWidth = {this.props.workspace.width}
+            workspaceId = {this.props.workspace.id} />
         </div>
 
 
-        <div style={{'top': '70px', 'position': 'fixed', 'height': '70px', 'zIndex': '100', 'backgroundColor': '#8D8F8F', 'width': this.props.workspace.width}}><h1>{this.props.workspace.id}</h1></div>
+        <div style={{'top': '70px', 'position': 'fixed', 'height': '70px', 'zIndex': '100', 'backgroundColor': '#FFFFFF', 'width': this.props.workspace.width}}></div>
 
         <div className={styles.workspace} style={{'width': this.props.workspace.width}}>
 
@@ -344,8 +347,7 @@ class Workspace extends Component {
             stopPlaying={this.stopPlaying}
             setSeeker={this.setSeeker}
             setToolMode={this.setToolMode}
-            cursor={this.props.workspace.timing.cursor}
-            />
+            cursor={this.props.workspace.timing.cursor} />
 
           {workspace}
 

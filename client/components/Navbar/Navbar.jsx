@@ -15,15 +15,19 @@ class Navbar extends Component{
 
   constructor(props) {
     super(props);
-
   }
 
+
+
+
   render() {
+
     return (
       <div className = {styles.navbar} >
-      <AppBar 
-        title={<span style={styles.title}>Audius78</span>}
-        iconElementRight={<FlatButton label="Logout" onClick={this.props.onLogout}/>}/>
+        <AppBar 
+          title={<span style={styles.title}>Audius78 <span className={styles.code}>Workpace ID: {this.props.workspaceId}</span></span>}
+          iconElementRight={<FlatButton label="Logout" className={styles.logout} onClick={this.props.onLogout} />}
+          showMenuIconButton={false} />
       </div>
     )
   }

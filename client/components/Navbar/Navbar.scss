@@ -4,21 +4,14 @@
 .navbar {
   position: fixed;
   top: 0;
-  background-color: $dark;
   height: 70px;
   width: 100vw;
-  display: flex;
-  flex-flow: row;
-  z-index: 100;
 }
 
-.button {
-  text-decoration: none;
-  color: white;
-  font-size: 0.5em;
-  border-radius: 2em;
-  border: 1px solid white;
-  padding: 5px 2% 5px 2%;
-  background-color: $primary;
-  margin: 1vw 0 0 60vw;
+.logout {
+  margin-right: 50px !important;
+}
+
+.code {
+	padding-left: 40%;
 }

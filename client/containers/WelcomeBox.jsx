@@ -31,7 +31,6 @@ class WelcomeBox extends Component {
     return (
       <div className={styles.welcome}>
         <h1>Welcome to Audius78</h1>
-        <RaisedButton label="Welcome" />
         <Welcome onNewWorkspace={this.newWorkspace} onLoadWorkspace={this.loadWorkspace}/>
       </div>
     )

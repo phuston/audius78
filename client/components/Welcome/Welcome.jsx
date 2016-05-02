@@ -1,8 +1,18 @@
+// Outside
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 
+// Actions
 import * as workspaceActions from '../../actions/workspace.js'
+
+// Styling
 import styles from './Welcome.scss';
+
+// Material
+import RaisedButton from 'material-ui/lib/raised-button';
+import TextField from 'material-ui/lib/text-field';
+
+
 
 class Welcome extends Component{
   constructor(props) {
@@ -19,27 +29,26 @@ class Welcome extends Component{
   render() {
     return (
       <div className={styles.existingWorkspace} >
-        <input 
-          className={styles.workspaceButton}
-          type='button' 
-          value='Create Workspace' 
-          onClick={this.createWorkspace}
-        />
+        <div className={styles.newButton} >
+          <RaisedButton 
+            label={'Create New Workspace'}
+            onClick={this.createWorkspace}/>
+        </div>
 
-        <input
-          id='workspaceId'
-          className={styles.existingInput}
-          type='text' 
-          placeholder='Enter Code'
-          onChange={this.handleInputChange} 
-        />
-        
-        <input 
-          className={styles.existingButton}
-          type='button' 
-          value='Enter Existing Workspace'
-          onClick={this.loadWorkspace}
-        />
+        <div className={styles.enterCode} >
+          <TextField
+             hintText="enter code"
+             onChange={this.handleInputChange} 
+             underlineShow={true} />
+        </div>
+
+        <div className={styles.loadButton}>
+          <RaisedButton
+            label={'Enter Existing Workspace'}
+            onClick={this.loadWorkspace}
+            primary={true} />
+        </div>
+
       </div>
     );
   }
