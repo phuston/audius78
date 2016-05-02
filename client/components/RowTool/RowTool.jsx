@@ -19,12 +19,12 @@ class RowTool extends Component{
 	}
 
 	handleDeleteRow() {
-		this.props.emitRemoveRow(this.props.row._id);
+		this.props.ee.emit('removeRow', this.props.row._id);
 	}
 
   handleVolumeChange(e) {
     if (this.props.playing !== playingMode.PLAYING) {
-      this.props.emitChangeRowGain({
+      this.props.ee.emit('setRowGain', {
         rowId: this.props.row._id,
         gain: e.target.value
       });

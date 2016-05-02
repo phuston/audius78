@@ -16,16 +16,12 @@ class Toolbar extends Component{
   render() {
     return (
       <div className = {styles.toolbar}>
-        <Tools setPlayingMode={this.props.setPlayingMode} 
-          setToolMode={this.props.setToolMode}
-          deleteSelected={this.props.deleteSelected}
-          setZoom={this.props.setZoom}
-          currentZoom={this.props.currentZoom}
-          stopPlaying={this.props.stopPlaying}
+        <Tools currentZoom={this.props.currentZoom}
           toolMode={this.props.toolMode}
           playing={this.props.playing}
-          setSeeker={this.props.setSeeker}
-          cursor={this.props.cursor} />
+          cursor={this.props.cursor}
+          ee={this.props.ee}
+        />
       </div>
     )
   }

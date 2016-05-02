@@ -5,6 +5,7 @@ import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 import { routeActions } from 'redux-simple-router';
 import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 import * as workspaceActions from '../actions/workspace.js';
+import EventEmitter from 'event-emitter';
 
 // Containers + Components
 import TrackBox from './TrackBox.jsx';
@@ -35,12 +36,125 @@ class Workspace extends Component {
     this.userLoggingOut = false;
     this.sourceBuffers = [];
     this.onDrop = this.onDrop.bind(this);
+    this.ee = new EventEmitter();
+
+    this.ee.on('playPause', () => {
+      if (this.isPlaying()) 
+        this.setPlayingMode(playingMode.PAUSE);
+      else
+        this.setPlayingMode(playingMode.PLAYING);
+    });
+
+    this.ee.on('stop', () => {
+      this.setPlayingMode(playingMode.STOP);
+    });
+
+    this.ee.on('cursor', () => {
+      this.setToolMode(toolMode.CURSOR);
+    });
+
+    this.ee.on('split', () => {
+      this.setToolMode(toolMode.SPLIT);
+    });
+
+    this.ee.on('drag', () => {
+      this.setToolMode(toolMode.DRAG);
+    });
+
+    this.ee.on('select', () => {
+      this.setToolMode(toolMode.SELECT);
+    });
+
+    this.ee.on('zoomIn', () => {
+      if (!this.isPlaying())
+        this.setZoom(this.props.workspace.zoomLevel / 2);
+    });
+
+    this.ee.on('zoomOut', () => {
+      if (!this.isPlaying())
+        this.setZoom(this.props.workspace.zoomLevel * 2);
+    });
+
+    this.ee.on('splitBlock', (rowId, blockId, splitElement) => {
+      const splitOperation = {
+        rowId: rowId,
+        blockId: blockId,
+        operation: {
+          splitElement: splitElement
+        }
+      };
+      this.socket.emit('splitBlock', splitOperation);
+    });
+
+    this.ee.on('moveBlock', (rowId, blockId, moveShift) => {
+      const moveOperation = {
+        rowId: rowId,
+        blockId: blockId,
+        operation: {
+          moveShift: moveShift
+        }
+      };
+      this.socket.emit('moveBlock', moveOperation);
+    });
+
+    this.ee.on('flagBlock', (rowId, blockId, flagType, startTime, duration) => {
+      const flagOperation = {
+        rowId: rowId,
+        blockId: blockId,
+        operation: {
+          type: flagType,
+          startTime: startTime,
+          duration: duration
+        }
+      };
+      this.socket.emit('flagBlock', flagOperation);
+    });
+
+    this.ee.on('setSeeker', (position) => {
+      this.setSeeker(position);
+    });
+
+    this.ee.on('setCursor', (position) => {
+      this.setCursor(position);
+    });
+
+    this.ee.on('seekTime', (time) => {
+      this.seekTime(time);
+    });
+
+    this.ee.on('setSpeed', (speed) => {
+      this.setSpeed(speed);
+    });
+
+    this.ee.on('setRowGain', (gainOperation) => {
+      this.socket.emit('changeRowGain', gainOperation);
+    });
+
+    this.ee.on('setWidth', (width) => {
+      let widthOfWaveforms = Math.min(this.props.workspace.width, width+150);
+      dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+150, document.documentElement.clientWidth) ));
+    });
+
+    this.ee.on('removeRow', (rowId) => {
+      if (this.props.workspace.allowRowDelete === true)
+        this.socket.emit('removeRow', {rowId: rowId});
+    });
+
+    this.ee.on('removeBlocks', () => {
+      this.emitRemoveBlocks();
+    });
+
+    this.ee.on('highlightBlock', (blockInfo) => {
+      this.highlightBlock(blockInfo);
+    })
 
     this.playMusic = this.playMusic.bind(this);
+    this.isPlaying = this.isPlaying.bind(this);
     this.seekTime = this.seekTime.bind(this);
     this.setZoom = this.setZoom.bind(this);
     this.handleAudioBlockEnding = this.handleAudioBlockEnding.bind(this);
 
+    // Server side events
     this.addRow = (newRow, audioCtx) => dispatch(workspaceActions.addRow(newRow, audioCtx));
     this.removeRow = (updatedRows) => dispatch(workspaceActions.removeRow(updatedRows));
     this.flagBlock = (newFlags) => dispatch(workspaceActions.flagBlock(newFlags));
@@ -48,10 +162,8 @@ class Workspace extends Component {
     this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
     this.removeBlocks = (newBlocksPerRow) => dispatch(workspaceActions.removeBlocks(newBlocksPerRow));
     this.emitRemoveBlocks = this.emitRemoveBlocks.bind(this);
-    this.emitRemoveRow = this.emitRemoveRow.bind(this);
-    this.emitChangeRowGain = this.emitChangeRowGain.bind(this);
 
-    // Bind Actions
+    // Client side events
     let dispatch = this.props.dispatch;
     this.setToolMode = (mode) => dispatch(workspaceActions.setToolMode(mode));
     this.setSpeed = (speed) => dispatch(workspaceActions.setSpeed(speed));
@@ -59,54 +171,12 @@ class Workspace extends Component {
     this.setPlayingMode = (playing) => dispatch(workspaceActions.setPlayingMode(playing));
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
-    this.stopPlaying = () => dispatch(workspaceActions.stopPlaying(playingMode.STOP));
-    this.setAudioContext = (audioCtx) => dispatch(workspaceActions.setAudioContext(audioCtx));
     this.logout = () => {
       dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
       this.userLoggingOut = true;
     };
     this.setRowGain = (info) => dispatch(workspaceActions.setRowGain(info));
     this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
-    this.setWorkspaceWidth = (width) => {
-      let widthOfWaveforms = Math.min(this.props.workspace.width, width+150);
-      dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+150, document.documentElement.clientWidth) ));
-    }
-  }
-
-  emitChangeRowGain(gainOperation) {
-    this.socket.emit('changeRowGain', gainOperation);
-  }
-
-  emitRemoveRow(rowId) {
-    if (this.props.workspace.allowRowDelete === true)
-      this.socket.emit('removeRow', {rowId: rowId});
-  }
-
-  emitRemoveBlocks() {
-    let removeBlockOperation = {};
-    let isEmpty = true;
-    Array.prototype.map.call(this.props.workspace.rows, (row) => {
-      let blocksToDelete = [];
-      row.audioBlocks.map( (block) => {
-        isEmpty = isEmpty && (!block.selected);
-        if (block.selected) blocksToDelete.push(block._id);
-      });
-
-      removeBlockOperation[row._id] = blocksToDelete;
-    });
-
-    if (!isEmpty && this.props.workspace.playing !== playingMode.PLAYING) this.socket.emit('removeBlocks', removeBlockOperation);
-  }
-
-  setZoom(newZoom) {
-    let zoomRatio = this.props.workspace.zoomLevel/newZoom;
-    this.props.dispatch(workspaceActions.setZoom(newZoom));
-    let newSeeker = this.props.workspace.timing.seeker * zoomRatio;
-    let newCursor = this.props.workspace.timing.cursor * zoomRatio;
-    if (newZoom <= zoomLimits.UPPER && newZoom >= zoomLimits.LOWER) {
-      this.setSeeker(newSeeker);
-      this.setCursor(newCursor);
-    }
   }
 
   componentDidMount() {
@@ -157,6 +227,8 @@ class Workspace extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     let dispatch = this.props.dispatch;
+
+    // If user logging out, reset state
     if (this.userLoggingOut) {
       dispatch(routeActions.push('/'));
       dispatch(workspaceActions.setSeeker(0));
@@ -167,6 +239,7 @@ class Workspace extends Component {
       dispatch(workspaceActions.toggleRowDelete(true));
       dispatch(workspaceActions.setToolMode(toolMode.CURSOR));
     }
+
     // If row added or deleted, allow row delete
     if (this.props.workspace.rows.length !== prevProps.workspace.rows.length) {
       this.toggleRowDelete(true);
@@ -177,7 +250,7 @@ class Workspace extends Component {
         case (playingMode.PLAYING):
           if (this.audioCtx === undefined || this.rerenderAudio) {
             // This means last state was STOP
-            this.setSeeker(this.props.workspace.timing.cursor);
+            this.ee.emit('setSeeker', this.props.workspace.timing.cursor);
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             this.playMusic();
           } else {
@@ -189,7 +262,7 @@ class Workspace extends Component {
         case (playingMode.PAUSE):
           this.audioCtx.suspend();
           // Have to reset the seeker to handle a bug when repeatedly hitting pause/play
-          this.setSeeker((this.startTime+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
+          this.ee.emit('setSeeker', (this.startTime+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
           break;
 
         case (playingMode.STOP):
@@ -207,54 +280,11 @@ class Workspace extends Component {
     }
   }
 
-  onDrop(files){
-    let data = new FormData();
-    console.log(files[0].name);
-    data.append('file', files[0]);
-    data.append('name', files[0].name);
-    data.append('workspaceId', this.props.workspace.id);
-    data.append('rowIndex', this.props.workspace.rows.length);
-
-    // Disable row delete to allow indices of workspace.rows to sync properly
-    this.toggleRowDelete(false);
-
-    fetch('/api/upload', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json'
-      },
-      body: data
-    })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      let addRowOperation = {
-        workspaceId: this.props.workspace.id,
-        rowId: data.rowId
-      }
-      this.socket.emit('addRow', addRowOperation);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  }
-
-  handleAudioBlockEnding() {
-    this.countingBlocks++;
-    // console.log(this.countingBlocks, this.numBlocks);
-    if (this.countingBlocks === this.numBlocks) {
-      this.setPlayingMode(playingMode.STOP);
-      this.setSeeker(this.props.workspace.timing.cursor);
-      this.countingBlocks = 0;
-    }
-  }
-
   playMusic(){
     this.rerenderAudio = false;
     this.numBlocks = 0;
 
-    let workspace = this.props.workspace;
+    const workspace = this.props.workspace;
     const samplesPerPeak = workspace.zoomLevel * 2000;
     const pixelsPerSec = this.props.workspace.timing.speed * workspace.zoomLevel;
 
@@ -305,6 +335,79 @@ class Workspace extends Component {
     });
   }
 
+  isPlaying() {
+    return this.props.workspace.playing === playingMode.PLAYING;
+  }
+
+  emitRemoveBlocks() {
+    let removeBlockOperation = {};
+    let isEmpty = true;
+    Array.prototype.map.call(this.props.workspace.rows, (row) => {
+      let blocksToDelete = [];
+      row.audioBlocks.map( (block) => {
+        isEmpty = isEmpty && (!block.selected);
+        if (block.selected) blocksToDelete.push(block._id);
+      });
+
+      removeBlockOperation[row._id] = blocksToDelete;
+    });
+
+    if (!isEmpty && this.props.workspace.playing !== playingMode.PLAYING) this.socket.emit('removeBlocks', removeBlockOperation);
+  }
+
+  setZoom(newZoom) {
+    let zoomRatio = this.props.workspace.zoomLevel/newZoom;
+    this.props.dispatch(workspaceActions.setZoom(newZoom));
+    let newSeeker = this.props.workspace.timing.seeker * zoomRatio;
+    let newCursor = this.props.workspace.timing.cursor * zoomRatio;
+    if (newZoom <= zoomLimits.UPPER && newZoom >= zoomLimits.LOWER) {
+      this.ee.emit('setSeeker', newSeeker);
+      this.ee.emit('setCursor', newCursor);
+    }
+  }
+
+  onDrop(files){
+    let data = new FormData();
+    data.append('file', files[0]);
+    data.append('name', files[0].name);
+    data.append('workspaceId', this.props.workspace.id);
+    data.append('rowIndex', this.props.workspace.rows.length);
+
+    // Disable row delete to allow indices of workspace.rows to sync properly
+    this.toggleRowDelete(false);
+
+    fetch('/api/upload', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json'
+      },
+      body: data
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      let addRowOperation = {
+        workspaceId: this.props.workspace.id,
+        rowId: data.rowId
+      }
+      this.socket.emit('addRow', addRowOperation);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
+  handleAudioBlockEnding() {
+    this.countingBlocks++;
+
+    if (this.countingBlocks === this.numBlocks) {
+      this.ee.emit('stop');
+      this.ee.emit('setSeeker', this.props.workspace.timing.cursor);
+      this.countingBlocks = 0;
+    }
+  }
+
   seekTime(time) {
     this.startTime = time;
     if( this.props.workspace.playing === playingMode.PLAYING ){
@@ -324,23 +427,16 @@ class Workspace extends Component {
           <Seeker position={this.props.workspace.timing.seeker} 
             numRows={this.props.workspace.rows.length}
             playing={this.props.workspace.playing}
-            setSeeker={this.setSeeker}
-            seekTime={this.seekTime}
             speed={this.props.workspace.timing.speed}
+            ee={this.ee}
           />
-          <Cursor left={this.props.workspace.timing.cursor} numRows={this.props.workspace.rows.length}/>
+          <Cursor position={this.props.workspace.timing.cursor} 
+            numRows={this.props.workspace.rows.length}/>
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} 
-              socket={this.socket}
               workspace={this.props.workspace} 
-              highlightBlock={this.highlightBlock}
-              emitRemoveRow={this.emitRemoveRow}
-              setCursor={this.setCursor}
-              setSeeker={this.setSeeker}
-              seekTime={this.seekTime}
-              setSpeed={this.setSpeed}
-              emitChangeRowGain={this.emitChangeRowGain}
-              setWorkspaceWidth={this.setWorkspaceWidth} />
+              ee={this.ee}
+            />
           </div>
         </div>
       );
@@ -367,16 +463,12 @@ class Workspace extends Component {
         <div className={styles.workspace} style={{'width': this.props.workspace.width}}>
 
           <Toolbar className={styles.toolbar} 
-            setPlayingMode={this.setPlayingMode} 
             playing={this.props.workspace.playing}
-            deleteSelected={this.emitRemoveBlocks}
             toolMode={this.props.workspace.toolMode}
-            setZoom={this.setZoom}
             currentZoom={this.props.workspace.zoomLevel}
-            stopPlaying={this.stopPlaying}
-            setSeeker={this.setSeeker}
-            setToolMode={this.setToolMode}
-            cursor={this.props.workspace.timing.cursor} />
+            cursor={this.props.workspace.timing.cursor} 
+            ee={this.ee}
+          />
 
           {workspace}
 

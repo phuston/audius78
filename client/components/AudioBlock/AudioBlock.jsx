@@ -61,7 +61,7 @@ class AudioBlock extends Component {
 
         // Sets width to what it is, so that state "changes" and everything is forced to re-render. This makes the waveform "draggable".
         // Comment out this line to see the difference.
-        this.props.setWorkspaceWidth(this.props.width-90);
+        this.props.ee.emit('setWidth', this.props.width-90);
       };
 
       // Dynamically adds onMouseMove event to element
@@ -85,9 +85,9 @@ class AudioBlock extends Component {
   seekAudio(e) {
     if (this.props.toolMode === toolMode.CURSOR) {
       if (this.props.playing === playingMode.PLAYING) {
-        this.props.setSeeker(e.pageX - UIConstants.LEFT - 2);
+        this.props.ee.emit('setSeeker', e.pageX - UIConstants.LEFT - 2);
       } else {
-        this.props.setCursor(e.pageX - UIConstants.LEFT - 2);
+        this.props.ee.emit('setCursor', e.pageX - UIConstants.LEFT - 2);
       }
     }
   }  
@@ -119,10 +119,8 @@ class AudioBlock extends Component {
             toolMode={this.props.toolMode}
             currentZoom={this.props.currentZoom} 
             rawAudio={this.props.row.rawAudio}
-            setCursor={this.props.setCursor}
-            setSeeker={this.props.setSeeker}
-            setSpeed={this.props.setSpeed}
-            setWorkspaceWidth={this.props.setWorkspaceWidth}/>
+            ee={this.props.ee}
+          />
   			</div>
 			);
   	});

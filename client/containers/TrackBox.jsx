@@ -15,47 +15,7 @@ import Row from '../components/Row/Row.jsx';
 class TrackBox extends Component{
 	constructor(props) {
 		super(props);
-
-    this.emitSplitBlock = this.emitSplitBlock.bind(this);
-    this.emitFlagBlock = this.emitFlagBlock.bind(this);
-    this.emitMoveBlock = this.emitMoveBlock.bind(this);
 	}
-
-  emitSplitBlock(rowId, blockId, splitElement) {
-    let splitOperation = {
-      rowId: rowId,
-      blockId: blockId,
-      operation: {
-        splitElement: splitElement
-      }
-    };
-    this.props.socket.emit('splitBlock', splitOperation);
-  }
-
-  emitFlagBlock(rowId, blockId, flagType, startTime, duration) {
-    console.log("Emitting flag operation");
-    let flagOperation = {
-      rowId: rowId,
-      blockId: blockId,
-      operation: {
-        type: flagType,
-        startTime: startTime,
-        duration: duration
-      }
-    };
-    this.props.socket.emit('flagBlock', flagOperation);
-  }
-
-  emitMoveBlock(rowId, blockId, moveShift) {
-    let moveOperation = {
-      rowId: rowId,
-      blockId: blockId,
-      operation: {
-        moveShift: moveShift
-      }
-    };
-    this.props.socket.emit('moveBlock', moveOperation);
-  }
 
   render() {
     let rows;
@@ -65,20 +25,13 @@ class TrackBox extends Component{
           <Card key={row.rowId}>
             <Row
               scrollX={this.props.workspace.scrollX}
-              highlightBlock={this.props.highlightBlock}
-              row={row} 
+              row={row}
               currentZoom={this.props.workspace.zoomLevel}
               toolMode={this.props.workspace.toolMode}
               playing={this.props.workspace.playing}
-              setCursor={this.props.setCursor}
-              setSeeker={this.props.setSeeker}
-              setSpeed={this.props.setSpeed}
-              emitChangeRowGain={this.props.emitChangeRowGain}
-              emitSplitBlock={this.emitSplitBlock}
-              emitMoveBlock={this.emitMoveBlock}
-              emitRemoveRow={this.props.emitRemoveRow}
-              setWorkspaceWidth={this.props.setWorkspaceWidth}
-              width={this.props.workspace.width} />
+              width={this.props.workspace.width}
+              ee={this.props.ee}
+            />
           </Card>
         );
 	  	});
