@@ -47,11 +47,15 @@ module.exports = function(){
                       return res.status(500).json(err);
                     }
 
+                    console.log(req.file.name)
+
                     var rowId = new ObjectId();
                     var newRow = {
                       rowId: req.body.rowIndex,
+                      name: req.body.name,
                       _id: rowId,
                       rawAudio: outFP,
+                      gain: 1,
                       audioBlocks: [{
                         file_end: undefined,
                         row_offset: 0,

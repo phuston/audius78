@@ -20,17 +20,17 @@ class Row extends Component{
   }
 
   emitSplitBlock(blockId, splitElement) {
-    this.props.emitSplitBlock(this.props.rowData._id, blockId, splitElement);
+    this.props.emitSplitBlock(this.props.row._id, blockId, splitElement);
   }
 
   emitMoveBlock(blockId, moveShift) {
-    this.props.emitMoveBlock(this.props.rowData._id, blockId, moveShift);
+    this.props.emitMoveBlock(this.props.row._id, blockId, moveShift);
   }
 
   highlightBlock(blockIndex) {
     this.props.highlightBlock({
       blockIndex: blockIndex,
-      rowIndex: this.props.rowData.rowId
+      rowIndex: this.props.row.rowId
     });
   }
 
@@ -39,11 +39,12 @@ class Row extends Component{
       <div className={styles.row} >
         <RowTool 
           scrollX={this.props.scrollX}
-          top={(this.props.rowData.rowId === 0 ? 13 : 5)}
-          rowData={this.props.rowData}
+          top={(this.props.row.rowId === 0 ? 13 : 5)}
+          row={this.props.row}
           emitRemoveRow={this.props.emitRemoveRow}
+          emitChangeRowGain={this.props.emitChangeRowGain}
         />
-        <AudioBlock data={this.props.rowData} 
+        <AudioBlock row={this.props.row} 
           emitSplitBlock={this.emitSplitBlock}
           emitMoveBlock={this.emitMoveBlock}
           highlightBlock={this.highlightBlock}

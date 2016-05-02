@@ -78,7 +78,6 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, au
           let len;
 
           data.workspace.rows.map((row, i) => {
-            console.log(i, row);
             row.rawAudio = buffers[i];
             rows[Number(i)] = row;
             len = i;
@@ -168,6 +167,10 @@ export const setSeeker = createAction(types.SET_SEEKER, (seeker) => {
 
 export const setZoom = createAction(types.SET_ZOOM, (zoom) => {
   return zoom;
+});
+
+export const setRowGain = createAction(types.SET_ROW_GAIN, (info) => {
+  return info;
 });
 
 export const stopPlaying = createAction(types.STOP_PLAYING, (stop) => {
