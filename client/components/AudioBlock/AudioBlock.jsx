@@ -27,7 +27,7 @@ class AudioBlock extends Component {
     this.totalMoved = {};
     this.initialOffset = {};
 
-    this.props.data.audioBlocks.map( (block) => {
+    this.props.row.audioBlocks.map( (block) => {
       this.zIndices[block._id] = 0;
       this.totalMoved[block._id] = 0;
       this.initialOffset[block._id] = block.row_offset;
@@ -39,7 +39,7 @@ class AudioBlock extends Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    nextProps.data.audioBlocks.map( (block) => {
+    nextProps.row.audioBlocks.map( (block) => {
       this.zIndices[block._id] = this.zIndices[block._id] || 0;
       this.totalMoved[block._id] = this.totalMoved[block._id] || 0;
       this.initialOffset[block._id] = block.row_offset;
@@ -93,7 +93,7 @@ class AudioBlock extends Component {
   }  
 
   render() {
-  	let data = this.props.data;
+  	let data = this.props.row;
   	let waveforms = data.audioBlocks.map((block, i) => {
       let background = '#16783C';
       // if (block.selected) background = selectColor;
@@ -111,13 +111,14 @@ class AudioBlock extends Component {
   		return (
   			<div key={i} style={style} onMouseDown={this.onMouseDown.bind(this, block._id, i)}>
   				<Waveform block={block}
+            fileName={this.props.row.name}
             highlightBlock={this.props.highlightBlock.bind(null, i)}
             emitSplitBlock={this.props.emitSplitBlock}
             selected={block.selected}
             playing={this.props.playing}
             toolMode={this.props.toolMode}
             currentZoom={this.props.currentZoom} 
-            rawAudio={this.props.data.rawAudio}
+            rawAudio={this.props.row.rawAudio}
             setCursor={this.props.setCursor}
             setSeeker={this.props.setSeeker}
             setSpeed={this.props.setSpeed}

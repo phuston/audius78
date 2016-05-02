@@ -135,13 +135,14 @@ class TrackBox extends Component{
           <Row key={row.rowId}
             scrollX={this.props.workspace.scrollX}
             highlightBlock={this.props.highlightBlock}
-            rowData={row} 
+            row={row} 
             currentZoom={this.props.workspace.zoomLevel}
             toolMode={this.props.workspace.toolMode}
             playing={this.props.workspace.playing}
             setCursor={this.props.setCursor}
             setSeeker={this.props.setSeeker}
             setSpeed={this.props.setSpeed}
+            emitChangeRowGain={this.props.emitChangeRowGain}
             emitSplitBlock={this.emitSplitBlock}
             emitMoveBlock={this.emitMoveBlock}
             emitRemoveRow={this.props.emitRemoveRow}
