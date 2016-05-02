@@ -43,6 +43,7 @@ class Row extends Component{
           row={this.props.row}
           emitRemoveRow={this.props.emitRemoveRow}
           emitChangeRowGain={this.props.emitChangeRowGain}
+          playing={this.props.playing}
         />
         <AudioBlock row={this.props.row} 
           emitSplitBlock={this.emitSplitBlock}
