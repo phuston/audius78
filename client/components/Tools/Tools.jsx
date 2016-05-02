@@ -35,6 +35,7 @@ class Tools extends Component{
     this.changeToDrag = this.changeToDrag.bind(this);
     this.changeToSplit = this.changeToSplit.bind(this);
     this.changeToSelect = this.changeToSelect.bind(this);
+    this.removeBlocks = this.removeBlocks.bind(this);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -68,6 +69,10 @@ class Tools extends Component{
     this.props.ee.emit('stop');
     // Change seeker to cursor position
     this.props.ee.emit('setSeeker', this.props.cursor); 
+  }
+
+  removeBlocks() {
+    this.props.ee.emit('removeBlocks');
   }
 
   zoomIn() {
@@ -122,7 +127,7 @@ class Tools extends Component{
                 <Hand color={selectStyle} />
               </IconButton>
 
-              <IconButton onClick={this.props.deleteSelected} tooltip="Delete">
+              <IconButton onClick={this.removeBlocks} tooltip="Delete">
                 <Delete />
               </IconButton>
 

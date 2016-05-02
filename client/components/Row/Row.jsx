@@ -28,7 +28,7 @@ class Row extends Component{
   }
 
   highlightBlock(blockIndex) {
-    this.props.highlightBlock({
+    this.props.ee.emit('highlightBlock', {
       blockIndex: blockIndex,
       rowIndex: this.props.row.rowId
     });
@@ -41,7 +41,6 @@ class Row extends Component{
           scrollX={this.props.scrollX}
           top={(this.props.row.rowId === 0 ? 13 : 5)}
           row={this.props.row}
-          emitRemoveRow={this.props.emitRemoveRow}
           playing={this.props.playing}
           ee={this.props.ee}
         />

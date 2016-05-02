@@ -16,8 +16,7 @@ class Toolbar extends Component{
   render() {
     return (
       <div className = {styles.toolbar}>
-        <Tools deleteSelected={this.props.deleteSelected}
-          currentZoom={this.props.currentZoom}
+        <Tools currentZoom={this.props.currentZoom}
           toolMode={this.props.toolMode}
           playing={this.props.playing}
           cursor={this.props.cursor}

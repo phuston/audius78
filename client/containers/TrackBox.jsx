@@ -31,8 +31,6 @@ class TrackBox extends Component{
               playing={this.props.workspace.playing}
               width={this.props.workspace.width}
               ee={this.props.ee}
-              highlightBlock={this.props.highlightBlock}
-              emitRemoveRow={this.props.emitRemoveRow}
             />
           </Card>
         );

@@ -135,6 +135,19 @@ class Workspace extends Component {
       dispatch(workspaceActions.setWorkspaceWidth( Math.max(width+150, document.documentElement.clientWidth) ));
     });
 
+    this.ee.on('removeRow', (rowId) => {
+      if (this.props.workspace.allowRowDelete === true)
+        this.socket.emit('removeRow', {rowId: rowId});
+    });
+
+    this.ee.on('removeBlocks', () => {
+      this.emitRemoveBlocks();
+    });
+
+    this.ee.on('highlightBlock', (blockInfo) => {
+      this.highlightBlock(blockInfo);
+    })
+
     this.playMusic = this.playMusic.bind(this);
     this.isPlaying = this.isPlaying.bind(this);
     this.seekTime = this.seekTime.bind(this);
@@ -149,7 +162,6 @@ class Workspace extends Component {
     this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
     this.removeBlocks = (newBlocksPerRow) => dispatch(workspaceActions.removeBlocks(newBlocksPerRow));
     this.emitRemoveBlocks = this.emitRemoveBlocks.bind(this);
-    this.emitRemoveRow = this.emitRemoveRow.bind(this);
 
     // Client side events
     let dispatch = this.props.dispatch;
@@ -327,11 +339,6 @@ class Workspace extends Component {
     return this.props.workspace.playing === playingMode.PLAYING;
   }
 
-  emitRemoveRow(rowId) {
-    if (this.props.workspace.allowRowDelete === true)
-      this.socket.emit('removeRow', {rowId: rowId});
-  }
-
   emitRemoveBlocks() {
     let removeBlockOperation = {};
     let isEmpty = true;
@@ -429,8 +436,6 @@ class Workspace extends Component {
             <TrackBox className={styles.trackbox} 
               workspace={this.props.workspace} 
               ee={this.ee}
-              highlightBlock={this.highlightBlock}
-              emitRemoveRow={this.emitRemoveRow}
             />
           </div>
         </div>
@@ -459,7 +464,6 @@ class Workspace extends Component {
 
           <Toolbar className={styles.toolbar} 
             playing={this.props.workspace.playing}
-            deleteSelected={this.emitRemoveBlocks}
             toolMode={this.props.workspace.toolMode}
             currentZoom={this.props.workspace.zoomLevel}
             cursor={this.props.workspace.timing.cursor} 
