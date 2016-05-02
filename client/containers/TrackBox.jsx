@@ -12,54 +12,13 @@ import Card from 'material-ui/lib/card/card';
 // Components
 import Row from '../components/Row/Row.jsx';
 
-class Cursor extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    let cursorStyle = {
-      'position': 'absolute', 
-      'top': '243px', 
-      'left': this.props.styling.left + UIConstants.LEFT, 
-      'width': '3px', 
-      'background': 'rgba(240,0,0,0.5)', 
-      'zIndex': '5', 
-      'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT + 29
-    };
-    return <div id='cursor' style={cursorStyle}/>;
-  }
-}
-
-class Seeker extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    let seekerStyle = {
-      'position': 'absolute', 
-      'top': '243px', 
-      'left': this.props.styling.left + UIConstants.LEFT, 
-      'width': '3px', 
-      'background': 'rgba(255,255,255,0.7)', 
-      'zIndex': '5', 
-      'height': (UIConstants.ROW_HEIGHT+4) * (this.props.styling.numRows-1) + UIConstants.ROW_HEIGHT + 29
-    };
-    return <div id='seeker' style={seekerStyle}/>;
-  }
-}
-
 class TrackBox extends Component{
 	constructor(props) {
 		super(props);
 
-    this.drawTimescale = this.drawTimescale.bind(this);
     this.emitSplitBlock = this.emitSplitBlock.bind(this);
     this.emitFlagBlock = this.emitFlagBlock.bind(this);
     this.emitMoveBlock = this.emitMoveBlock.bind(this);
-    this.updating = false;
-    this.seekedNew = false;
 	}
 
   emitSplitBlock(rowId, blockId, splitElement) {
@@ -98,75 +57,39 @@ class TrackBox extends Component{
     this.props.socket.emit('moveBlock', moveOperation);
   }
 
-  componentWillUpdate(nextProps, nextState) {
-    let newSeeker = nextProps.workspace.timing.seeker;
-    let oldSeeker = this.props.workspace.timing.seeker;
-
-    // If the new seeker is at least 10px from where the current seeker is
-    // tell Workspace component to update its AudioCtx time, and then set
-    // seekedNew to true so this.drawTimescale knows to update new value during its animation
-    if ( (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) 
-            && (this.props.workspace.playing === playingMode.PLAYING) ) {
-      this.props.seekTime(newSeeker / this.props.workspace.timing.speed);
-      this.seekedNew = true;
-    }
-  }
-
-  drawTimescale(x) {
-    // Animates the seeker across the screen. Stops on command.
-    this.updating = true;
-
-    if (this.seekedNew) {
-      // If a different part of audio is seeked, use that value instead of the passed in parameter
-      x = this.props.workspace.timing.seeker;
-      this.seekedNew = false;
-    }
-
-    if (this.props.workspace.playing === playingMode.PLAYING) {
-      // Only animate when audio is playing
-      let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.props.workspace.timing.speed/60));
-      this.props.setSeeker(x);
-    } else {
-      this.updating = false;
-    }
-  }
-
   render() {
-  	if (this.props.workspace.rows !== undefined) {
-			var rows = Array.prototype.map.call(this.props.workspace.rows, (row) => {
+    let rows;
+  	if (this.props.workspace.rows) {
+			rows = Array.prototype.map.call(this.props.workspace.rows, (row) => {
 	  		return (
-          <Card>
-          <Row key={row.rowId}
-            scrollX={this.props.workspace.scrollX}
-            highlightBlock={this.props.highlightBlock}
-            row={row} 
-            currentZoom={this.props.workspace.zoomLevel}
-            toolMode={this.props.workspace.toolMode}
-            playing={this.props.workspace.playing}
-            setCursor={this.props.setCursor}
-            setSeeker={this.props.setSeeker}
-            setSpeed={this.props.setSpeed}
-            emitChangeRowGain={this.props.emitChangeRowGain}
-            emitSplitBlock={this.emitSplitBlock}
-            emitMoveBlock={this.emitMoveBlock}
-            emitRemoveRow={this.props.emitRemoveRow}
-            setWorkspaceWidth={this.props.setWorkspaceWidth}
-            width={this.props.workspace.width} />
+          <Card key={row.rowId}>
+            <Row
+              scrollX={this.props.workspace.scrollX}
+              highlightBlock={this.props.highlightBlock}
+              row={row} 
+              currentZoom={this.props.workspace.zoomLevel}
+              toolMode={this.props.workspace.toolMode}
+              playing={this.props.workspace.playing}
+              setCursor={this.props.setCursor}
+              setSeeker={this.props.setSeeker}
+              setSpeed={this.props.setSpeed}
+              emitChangeRowGain={this.props.emitChangeRowGain}
+              emitSplitBlock={this.emitSplitBlock}
+              emitMoveBlock={this.emitMoveBlock}
+              emitRemoveRow={this.props.emitRemoveRow}
+              setWorkspaceWidth={this.props.setWorkspaceWidth}
+              width={this.props.workspace.width} />
           </Card>
         );
 	  	});
   	}
 
-    if (this.props.workspace.playing === playingMode.PLAYING && this.updating === false) {
-      this.drawTimescale(this.props.workspace.timing.seeker);
-    }
-
-    let trackboxStyle = {'height': this.props.workspace.rows.length * (UIConstants.ROW_HEIGHT+4) + 70};
+    let trackboxStyle = {
+      'height': this.props.workspace.rows.length * (UIConstants.ROW_HEIGHT+4) + 70
+    };
 
     return (
       <div className={styles.trackbox} style={trackboxStyle}>
-        <Seeker styling={{left: this.props.workspace.timing.seeker, numRows: this.props.workspace.rows.length}}/>
-        <Cursor styling={{left: this.props.workspace.timing.cursor, numRows: this.props.workspace.rows.length}}/>
         {rows}
       </div>
     )

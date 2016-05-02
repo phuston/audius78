@@ -131,13 +131,13 @@ class Waveform extends Component {
     ctx.fillStyle = '#fff';
     ctx.font = '10px Arial';
     console.log(this.props.fileName);
-    ctx.fillText(this.props.fileName, 5, 11, this.width);
+    ctx.fillText(this.props.fileName, 5, 11, 100);
 
     ctx.restore();
   }
 
   render() {
-    let borderColor = this.props.selected ? '2px solid #E8F149' : '2px solid white';
+    let borderColor = this.props.selected ? '2px solid black' : '2px solid white';
     return (
       <canvas width={this.width} height={UIConstants.ROW_HEIGHT-4}
         style={{'border': borderColor, 'borderRadius': '5px', 'box-shadow' : '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'}}

@@ -3,17 +3,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 import { routeActions } from 'redux-simple-router';
-import Dropzone from 'react-dropzone';
 import { playingMode, zoomLimits, toolMode } from '../../utils.js';
-
-
-// Containers
-import TrackBox from './TrackBox.jsx';
-import Navbar from '../components/Navbar/Navbar.jsx'
-import Toolbar from './Toolbar.jsx';
-
-// Outside
 import * as workspaceActions from '../actions/workspace.js';
+
+// Containers + Components
+import TrackBox from './TrackBox.jsx';
+import Navbar from '../components/Navbar/Navbar.jsx';
+import Toolbar from './Toolbar.jsx';
+import Seeker from '../components/Seeker/Seeker.jsx';
+import Cursor from '../components/Cursor/Cursor.jsx';
+import Dropzone from 'react-dropzone';
 import TimeRuler from '../components/TimeRuler/TimeRuler.jsx'
 
 // Styling 
@@ -322,6 +321,14 @@ class Workspace extends Component {
       workspace = (
         <div>
           <TimeRuler workspace={this.props.workspace}/>
+          <Seeker position={this.props.workspace.timing.seeker} 
+            numRows={this.props.workspace.rows.length}
+            playing={this.props.workspace.playing}
+            setSeeker={this.setSeeker}
+            seekTime={this.seekTime}
+            speed={this.props.workspace.timing.speed}
+          />
+          <Cursor left={this.props.workspace.timing.cursor} numRows={this.props.workspace.rows.length}/>
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} 
               socket={this.socket}
