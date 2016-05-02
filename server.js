@@ -13,7 +13,7 @@ var db = require('./db.js');
 var injectTapEventPlugin = require('react-tap-event-plugin');
 
 
-var isDeveloping = process.env.NODE_ENV !== 'production';
+var isDev = process.env.NODE_ENV !== 'production';
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -22,7 +22,7 @@ app.use(cookieParser());
 
 injectTapEventPlugin();
 
-if(isDeveloping) {
+if(isDev) {
   var webpackMiddleware = require('webpack-dev-middleware');
   var webpackHotMiddleware = require('webpack-hot-middleware');
 
