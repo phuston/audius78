@@ -101,7 +101,7 @@ class Tools extends Component{
           <ToolbarGroup firstChild={true} float="left">
             <ToolbarTitle text="Toolbar" />
 
-              <IconButton onClick={this.setPlayingMode} > 
+              <IconButton onClick={this.setPlayingMode} tooltip="Play/Pause"> 
                 {this.props.playing === playingMode.PLAYING ? <Pause /> : <Play />} 
               </IconButton>
 

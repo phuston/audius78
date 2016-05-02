@@ -25,8 +25,7 @@ class Toolbar extends Component{
           toolMode={this.props.toolMode}
           playing={this.props.playing}
           setSeeker={this.props.setSeeker}
-          cursor={this.props.cursor}
-        />
+          cursor={this.props.cursor} />
       </div>
     )
   }

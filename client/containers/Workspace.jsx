@@ -329,8 +329,7 @@ class Workspace extends Component {
               seekTime={this.seekTime}
               setSpeed={this.setSpeed}
               emitChangeRowGain={this.emitChangeRowGain}
-              setWorkspaceWidth={this.setWorkspaceWidth}
-            />
+              setWorkspaceWidth={this.setWorkspaceWidth} />
           </div>
         </div>
       );
@@ -352,7 +351,7 @@ class Workspace extends Component {
         </div>
 
 
-        <div style={{'top': '70px', 'position': 'fixed', 'height': '70px', 'zIndex': '100', 'backgroundColor': '#FFFFFF', 'width': this.props.workspace.width}}></div>
+        <div style={{'top': '90px', 'position': 'fixed', 'height': '90px', 'zIndex': '100', 'backgroundColor': '#FFFFFF', 'width': this.props.workspace.width}}></div>
 
         <div className={styles.workspace} style={{'width': this.props.workspace.width}}>
 
