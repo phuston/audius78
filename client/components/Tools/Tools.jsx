@@ -23,9 +23,6 @@ import OpenWith from 'material-ui/lib/svg-icons/action/open-with';
 import Play from 'material-ui/lib/svg-icons/av/play-arrow';
 import Pause from 'material-ui/lib/svg-icons/av/pause';
 
-
-
-
 class Tools extends Component{
   constructor(props) {
     super(props);
@@ -38,6 +35,13 @@ class Tools extends Component{
     this.changeToDrag = this.changeToDrag.bind(this);
     this.changeToSplit = this.changeToSplit.bind(this);
     this.changeToSelect = this.changeToSelect.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      nextProps.playingMode !== this.props.playingMode ||
+      nextProps.toolMode !== this.props.toolMode
+    );
   }
 
   setPlayingMode() {
@@ -125,7 +129,7 @@ class Tools extends Component{
                 <Hand color={selectStyle} />
               </IconButton>
 
-              <IconButton onClick={this.deleteSelected} tooltip="Delete">
+              <IconButton onClick={this.props.deleteSelected} tooltip="Delete">
                 <Delete />
               </IconButton>
 
