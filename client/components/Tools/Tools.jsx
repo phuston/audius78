@@ -45,44 +45,37 @@ class Tools extends Component{
   }
 
   setPlayingMode() {
-    if( this.props.playing === playingMode.PLAYING ){
-      this.props.setPlayingMode(playingMode.PAUSE);
-    } else {
-      this.props.setPlayingMode(playingMode.PLAYING);
-    }
+    this.props.ee.emit('playPause');
   }
 
   changeToCursor() {
-    this.props.setToolMode(toolMode.CURSOR);
+    this.props.ee.emit('cursor');
   }
 
   changeToSplit() {
-    this.props.setToolMode(toolMode.SPLIT);
+    this.props.ee.emit('split');
   }
 
   changeToDrag() {
-    this.props.setToolMode(toolMode.DRAG);
+    this.props.ee.emit('drag');
   }
 
   changeToSelect() {
-    this.props.setToolMode(toolMode.SELECT);
+    this.props.ee.emit('select');
   }
 
   stopPlaying(){
-    this.props.stopPlaying();
-    this.props.setSeeker(this.props.cursor); // Change this to cursor position
+    this.props.ee.emit('stop');
+    // Change seeker to cursor position
+    this.props.ee.emit('setSeeker', this.props.cursor); 
   }
 
   zoomIn() {
-    if (this.props.playing !== playingMode.PLAYING) {
-      this.props.setZoom(this.props.currentZoom/2);
-    }
+    this.props.ee.emit('zoomIn');
   }
 
   zoomOut() {
-    if (this.props.playing !== playingMode.PLAYING) {
-      this.props.setZoom(this.props.currentZoom*2);
-    }
+    this.props.ee.emit('zoomOut');
   }
 
   render() {

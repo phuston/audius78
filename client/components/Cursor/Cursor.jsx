@@ -9,7 +9,7 @@ class Cursor extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
   	return (
-  		nextProps.left !== this.props.left || 
+  		nextProps.position !== this.props.position || 
   		nextProps.numRows !== this.props.numRows
   	);
   }
@@ -18,7 +18,7 @@ class Cursor extends Component {
     let cursorStyle = {
       'position': 'absolute', 
       'top': '243px', 
-      'left': this.props.left + UIConstants.LEFT, 
+      'left': this.props.position + UIConstants.LEFT, 
       'width': '3px', 
       'background': 'rgba(240,0,0,0.5)', 
       'zIndex': '5', 

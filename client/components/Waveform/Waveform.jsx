@@ -21,9 +21,9 @@ class Waveform extends Component {
     this.draw = this.draw.bind(this);
     this.processProps = this.processProps.bind(this);
     this.needsToUpdate = this.needsToUpdate.bind(this);
-    this.processProps(this.props); //this.props.currentZoom, this.props.block, this.props.rawAudio);
+    this.processProps(this.props);
     this.handleCanvasClick = this.handleCanvasClick.bind(this);
-    this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
+    this.props.ee.emit('setSpeed', this.peaks.data[0].length/(2*this.props.rawAudio.duration));
   }
 
   needsToUpdate(oldProps, newProps) {
@@ -58,9 +58,9 @@ class Waveform extends Component {
     	let ctx = ReactDOM.findDOMNode(this).getContext('2d');
       let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
       this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
-      this.props.setWorkspaceWidth(this.left + (this.peaks.data[0].length/2) + 100);
+      this.props.ee.emit('setWidth', this.left + (this.peaks.data[0].length/2) + 100);
       this.draw(ctx);
-      this.props.setSpeed(this.peaks.data[0].length/(2*this.props.rawAudio.duration));
+      this.props.ee.emit('setSpeed', this.peaks.data[0].length/(2*this.props.rawAudio.duration));
     }
   }
 
@@ -68,7 +68,7 @@ class Waveform extends Component {
     let ctx = ReactDOM.findDOMNode(this).getContext('2d');
     let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
     this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
-    this.props.setWorkspaceWidth(this.left + (this.peaks.data[0].length/2) + 100);
+    this.props.ee.emit('setWidth', this.left + (this.peaks.data[0].length/2) + 100);
     this.draw(ctx);
   }
 
@@ -76,9 +76,9 @@ class Waveform extends Component {
   	// Figure out which tool mode the workspace is in to apply the correct operation
     if (this.props.toolMode === toolMode.CURSOR) {
       if (this.props.playing === playingMode.PLAYING) {
-        this.props.setSeeker(e.pageX - UIConstants.LEFT - 2);
+        this.props.ee.emit('setSeeker', e.pageX - UIConstants.LEFT - 2);
       } else {
-        this.props.setCursor(e.pageX - UIConstants.LEFT - 2);
+        this.props.ee.emit('setCursor', e.pageX - UIConstants.LEFT - 2);
       }
     } else if (this.props.playing !== playingMode.PLAYING) {
       if (this.props.toolMode === toolMode.SPLIT) {
@@ -110,9 +110,7 @@ class Waveform extends Component {
     let maxValue = Math.pow(2, bits-1);
 
     ctx.save();
-    // ctx.fillStyle = '#0A381C';
     ctx.fillStyle = '#00bcd4';
-
 
     // Every two peaks fit into one pixel width: one from top and one from bottom border
     for (i=this.firstPeak+2; i < this.lastPeak-2; i+=2) {
@@ -130,7 +128,6 @@ class Waveform extends Component {
 
     ctx.fillStyle = '#fff';
     ctx.font = '10px Arial';
-    console.log(this.props.fileName);
     ctx.fillText(this.props.fileName, 5, 11, 100);
 
     ctx.restore();

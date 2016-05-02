@@ -29,7 +29,7 @@ class Seeker extends Component {
     // seekedNew to true so this.drawTimescale knows to update new value during its animation
     if ( (newSeeker > oldSeeker+10 || newSeeker < oldSeeker-10) 
             && (this.props.playing === playingMode.PLAYING) ) {
-      this.props.seekTime(newSeeker / this.props.speed);
+      this.props.ee.emit('seekTime', newSeeker / this.props.speed);
       this.seekedNew = true;
     }
   }
@@ -47,15 +47,13 @@ class Seeker extends Component {
     if (this.props.playing === playingMode.PLAYING) {
       // Only animate when audio is playing
       let req = window.requestAnimationFrame(this.drawTimescale.bind(null, x + this.props.speed/60));
-      this.props.setSeeker(x);
+      this.props.ee.emit('setSeeker', x);
     } else {
       this.animationInProgress = false;
     }
   }
 
   render() {
-
-  	// If 
   	if (this.props.playing === playingMode.PLAYING && !this.animationInProgress) {
       this.drawTimescale(this.props.position);
     }
