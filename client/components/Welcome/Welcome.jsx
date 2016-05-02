@@ -32,7 +32,8 @@ class Welcome extends Component{
         <div className={styles.newButton} >
           <RaisedButton 
             label={'New Workspace'}
-            onClick={this.createWorkspace}/>
+            onClick={this.createWorkspace}
+            secondary={true}/>
         </div>
 
         <div className={styles.enterCode} >

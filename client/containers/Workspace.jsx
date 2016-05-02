@@ -7,7 +7,7 @@ import Dropzone from 'react-dropzone';
 import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 
 
-//Containers
+// Containers
 import TrackBox from './TrackBox.jsx';
 import Navbar from '../components/Navbar/Navbar.jsx'
 import Toolbar from './Toolbar.jsx';
@@ -16,8 +16,12 @@ import Toolbar from './Toolbar.jsx';
 import * as workspaceActions from '../actions/workspace.js';
 import TimeRuler from '../components/TimeRuler/TimeRuler.jsx'
 
-//Styling 
+// Styling 
 import styles from './Containers.scss';
+
+// Material
+import FloatingActionButton from 'material-ui/lib/floating-action-button';
+import ContentAdd from 'material-ui/lib/svg-icons/content/add';
 
 class Workspace extends Component {
 
@@ -369,10 +373,12 @@ class Workspace extends Component {
 
           {workspace}
 
-          <div style={{'position': 'absolute', 'bottom': '0', 'width': '100px', 'height': '100px'}}>
-            <Dropzone onDrop={this.onDrop} />
+          <div className={styles.dropzoneBox}>
+            <Dropzone onDrop={this.onDrop} className={styles.dropzone}><span className={styles.addNew}>+</span></Dropzone>
           </div>
+
         </div>
+
       </div>
     )
   }
