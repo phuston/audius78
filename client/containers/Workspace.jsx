@@ -166,6 +166,7 @@ class Workspace extends Component {
     if (this.props.workspace.rows.length !== prevProps.workspace.rows.length) {
       this.toggleRowDelete(true);
     }
+    
     if (this.props.workspace.playing !== prevProps.workspace.playing) {
       switch (this.props.workspace.playing) {
         case (playingMode.PLAYING):

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { playingMode } from '../../../utils';
 
 import styles from './RowTool.scss';
 
@@ -15,10 +16,12 @@ class RowTool extends Component{
 	}
 
   handleVolumeChange(e) {
-    this.props.emitChangeRowGain({
-      rowId: this.props.row._id,
-      gain: e.target.value
-    });
+    if (this.props.playing !== playingMode.PLAYING) {
+      this.props.emitChangeRowGain({
+        rowId: this.props.row._id,
+        gain: e.target.value
+      });
+    }
   }
 
   render() {
