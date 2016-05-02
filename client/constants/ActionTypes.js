@@ -21,6 +21,7 @@ export const SET_SPEED = 'SET_SPEED';
 export const ADD_ROW = 'ADD_ROW';
 export const REMOVE_ROW = 'REMOVE_ROW';
 export const REMOVE_BLOCKS = 'REMOVE_BLOCKS';
+export const SPLICE_BLOCKS = 'SPLICE_BLOCKS';
 export const FLAG_BLOCK = 'FLAG_BLOCK';
 export const SPLIT_BLOCK = 'SPLIT_BLOCK';
 export const MOVE_BLOCK = 'MOVE_BLOCK';

@@ -117,6 +117,19 @@ export default handleActions({
     return {...state, rows: newRows};
   },
 
+  SPLICE_BLOCKS: (state, action) => {
+    return {
+      ...state,
+      rows: {
+        ...state.rows,
+        [action.payload.rowId]: {
+          ...state.rows[action.payload.rowId],
+          audioBlocks: action.payload.newBlocks
+        }
+      }
+    };
+  },
+
   FLAG_BLOCK: (state, action) => {
     let block = state.rows[action.payload.rowId][action.payload.blockId];
     block.flags = action.payload.newFlags;

@@ -96,7 +96,6 @@ class AudioBlock extends Component {
   	let data = this.props.row;
   	let waveforms = data.audioBlocks.map((block, i) => {
       let background = '#00838F'; // Color of the waveform
-      // if (block.selected) background = selectColor;
       let style = {
         'backgroundColor': background,
         'border': 'none',
