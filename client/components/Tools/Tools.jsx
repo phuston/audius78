@@ -22,6 +22,7 @@ import Hand from 'material-ui/lib/svg-icons/action/pan-tool';
 import OpenWith from 'material-ui/lib/svg-icons/action/open-with';
 import Play from 'material-ui/lib/svg-icons/av/play-arrow';
 import Pause from 'material-ui/lib/svg-icons/av/pause';
+import Queue from 'material-ui/lib/svg-icons/av/queue';
 
 class Tools extends Component{
   constructor(props) {
@@ -36,6 +37,7 @@ class Tools extends Component{
     this.changeToSplit = this.changeToSplit.bind(this);
     this.changeToSelect = this.changeToSelect.bind(this);
     this.removeBlocks = this.removeBlocks.bind(this);
+    this.joinBlocks = this.joinBlocks.bind(this);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -73,6 +75,10 @@ class Tools extends Component{
 
   removeBlocks() {
     this.props.ee.emit('removeBlocks');
+  }
+
+  joinBlocks() {
+    this.props.ee.emit('spliceBlocks');
   }
 
   zoomIn() {
@@ -129,6 +135,10 @@ class Tools extends Component{
 
               <IconButton onClick={this.removeBlocks} tooltip="Delete">
                 <Delete />
+              </IconButton>
+
+              <IconButton onClick={this.joinBlocks} tooltip="Join">
+                <Queue />
               </IconButton>
 
           </ToolbarGroup>
