@@ -123,6 +123,11 @@ class Waveform extends Component {
       x += 1;
     }
 
+    ctx.fillStyle = '#fff';
+    ctx.font = '10px Arial';
+    console.log(this.props.fileName);
+    ctx.fillText(this.props.fileName, 5, 11, this.width);
+
     ctx.restore();
   }
 

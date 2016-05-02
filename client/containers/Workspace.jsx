@@ -44,6 +44,7 @@ class Workspace extends Component {
     this.removeBlocks = (newBlocksPerRow) => dispatch(workspaceActions.removeBlocks(newBlocksPerRow));
     this.emitRemoveBlocks = this.emitRemoveBlocks.bind(this);
     this.emitRemoveRow = this.emitRemoveRow.bind(this);
+    this.emitChangeRowGain = this.emitChangeRowGain.bind(this);
 
     // Bind Actions
     let dispatch = this.props.dispatch;
@@ -59,6 +60,7 @@ class Workspace extends Component {
       dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
       this.userLoggingOut = true;
     };
+    this.setRowGain = (info) => dispatch(workspaceActions.setRowGain(info));
     this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
     this.setWorkspaceWidth = (width) => {
       let widthOfWaveforms = Math.min(this.props.workspace.width, width+150);
@@ -66,11 +68,13 @@ class Workspace extends Component {
     }
   }
 
+  emitChangeRowGain(gainOperation) {
+    this.socket.emit('changeRowGain', gainOperation);
+  }
+
   emitRemoveRow(rowId) {
     if (this.props.workspace.allowRowDelete === true)
       this.socket.emit('removeRow', {rowId: rowId});
-
-    this.rerenderAudio = true;
   }
 
   emitRemoveBlocks() {
@@ -118,6 +122,11 @@ class Workspace extends Component {
 
     this.socket.on('applyRemoveBlocks', newBlocksPerRow => {
       this.removeBlocks(newBlocksPerRow);
+      this.rerenderAudio = true;
+    });
+
+    this.socket.on('applySetGain', newRowGain => {
+      this.setRowGain(newRowGain);
       this.rerenderAudio = true;
     });
 
@@ -194,8 +203,9 @@ class Workspace extends Component {
 
   onDrop(files){
     let data = new FormData();
+    console.log(files[0].name);
     data.append('file', files[0]);
-    data.append('name', 'song');
+    data.append('name', files[0].name);
     data.append('workspaceId', this.props.workspace.id);
     data.append('rowIndex', this.props.workspace.rows.length);
 
@@ -242,15 +252,23 @@ class Workspace extends Component {
     const samplesPerPeak = workspace.zoomLevel * 2000;
     const pixelsPerSec = this.props.workspace.timing.speed * workspace.zoomLevel;
 
-    let sourceBuffers = Array.prototype.map.call(workspace.rows, (elem) => {
-      let blocks = Array.prototype.map.call(elem.audioBlocks, (audioBlock, i)=>{
+    let sourceBuffers = Array.prototype.map.call(workspace.rows, (row) => {
+      let blocks = Array.prototype.map.call(row.audioBlocks, (audioBlock, i)=>{
+
         let block = {};
+        let gainNode = this.audioCtx.createGain();
+
         // Connect the graph of audio
         block.source = this.audioCtx.createBufferSource();
-        block.source.buffer = elem.rawAudio;
-        block.source.connect(this.audioCtx.destination);
+        block.source.buffer = row.rawAudio;
+        block.source.connect(gainNode);
+        gainNode.connect(this.audioCtx.destination);
+
         let rawAudioLength = block.source.buffer.length;
         let duration = block.source.buffer.duration;
+
+        // Set volume
+        gainNode.gain.value = row.gain;
 
         // Offsets are an array element into audio file and not time;
         // this converts them to time offsets
@@ -268,7 +286,6 @@ class Workspace extends Component {
 
     sourceBuffers.map( (row) => {
       row.map( (block, i) => {
-        console.log(block);
         let delay = block.delayTime - this.startTime;
         if (delay >= 0) {
           block.source.start(delay, block.audioOffset, block.duration);
@@ -308,6 +325,7 @@ class Workspace extends Component {
               setSeeker={this.setSeeker}
               seekTime={this.seekTime}
               setSpeed={this.setSpeed}
+              emitChangeRowGain={this.emitChangeRowGain}
               setWorkspaceWidth={this.setWorkspaceWidth}
             />
           </div>
@@ -316,7 +334,7 @@ class Workspace extends Component {
     } else {
       workspace = (
         <div style={{'marginTop': '212px', 'position': 'fixed', 'height': '70px'}}>
-          <h1>Upload a file to start using the Audius78!</h1>
+          <h1>Upload a file to start using the Audius78 editor!</h1>
         </div>
       );
     }

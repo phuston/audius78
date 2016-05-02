@@ -33,6 +33,19 @@ export default handleActions({
     };
   },
 
+  SET_ROW_GAIN: (state, action) => {
+    return {
+      ...state,
+      rows: {
+        ...state.rows,
+        [action.payload.rowId]: {
+          ...state.rows[action.payload.rowId],
+          gain: action.payload.gain
+        }
+      }
+    };
+  },
+
   SET_SCROLL: (state, action) => {
     return {...state, scrollX: action.payload};
   },
@@ -65,7 +78,14 @@ export default handleActions({
   
   ADD_ROW: (state, action) => {
     let oldLength = state.rows.length;
-		return {...state, rows: {...state.rows, [action.payload.rowId]:action.payload, length: oldLength+1}};
+		return {
+      ...state, 
+      rows: {
+        ...state.rows, 
+        [action.payload.rowId]: action.payload, 
+        length: oldLength+1
+      }
+    };
   },
 
   REMOVE_ROW: (state, action) => {

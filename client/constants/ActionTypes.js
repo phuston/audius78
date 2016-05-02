@@ -9,6 +9,7 @@ export const SET_WORKSPACE_WIDTH = 'SET_WORKSPACE_WIDTH';
 export const TOGGLE_ROW_DELETE = 'TOGGLE_ROW_DELETE';
 export const HIGHLIGHT_BLOCK = 'HIGHLIGHT_BLOCK';
 export const CONN_SOCKET = 'CONN_SOCKET';
+export const SET_ROW_GAIN = 'SET_ROW_GAIN';
 export const SET_SCROLL = 'SET_SCROLL';
 export const SET_PLAYING_MODE = 'SET_PLAYING_MODE';
 export const SET_TOOL_MODE = 'SET_TOOL_MODE';
