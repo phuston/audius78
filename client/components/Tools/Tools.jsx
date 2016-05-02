@@ -10,11 +10,18 @@ import Toolbar from 'material-ui/lib/toolbar/toolbar';
 import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';
 import ToolbarTitle from 'material-ui/lib/toolbar/toolbar-title';
 import IconButton from 'material-ui/lib/icon-button';
+
+// Material Icons
 import ActionZoomIn from 'material-ui/lib/svg-icons/action/zoom-in';
 import ActionZoomOut from 'material-ui/lib/svg-icons/action/zoom-out';
-import RaisedButton from 'material-ui/lib/raised-button';
-import FontIcon from 'material-ui/lib/font-icon';
-
+import Stop from 'material-ui/lib/svg-icons/av/stop';
+import LocationSearch from 'material-ui/lib/svg-icons/device/location-searching';
+import Scissor from 'material-ui/lib/svg-icons/content/content-cut';
+import Delete from 'material-ui/lib/svg-icons/action/delete';
+import Hand from 'material-ui/lib/svg-icons/action/pan-tool';
+import OpenWith from 'material-ui/lib/svg-icons/action/open-with';
+import Play from 'material-ui/lib/svg-icons/av/play-arrow';
+import Pause from 'material-ui/lib/svg-icons/av/pause';
 
 
 
@@ -78,13 +85,13 @@ class Tools extends Component{
     let cursorStyle, splitStyle, dragStyle, selectStyle;
 
     if (this.props.toolMode === toolMode.CURSOR) {
-      cursorStyle = {'backgroundColor': selectColor};
+      cursorStyle = selectColor;
     } else if (this.props.toolMode === toolMode.SPLIT) {
-      splitStyle = {'backgroundColor': selectColor};
+      splitStyle =  selectColor;
     } else if (this.props.toolMode === toolMode.DRAG) {
-      dragStyle = {'backgroundColor': selectColor};
+      dragStyle =  selectColor;
     } else if (this.props.toolMode === toolMode.SELECT) {
-      selectStyle = {'backgroundColor': selectColor};
+      selectStyle = selectColor;
     }
 
     return (
@@ -93,43 +100,46 @@ class Tools extends Component{
 
           <ToolbarGroup firstChild={true} float="left">
             <ToolbarTitle text="Toolbar" />
-              <input type='button' 
-                value={this.props.playing === playingMode.PLAYING ? 'Pause' : 'Play'} 
-                className={styles.pauseplay} 
-                onClick={this.setPlayingMode}/>
-              <input type='button' value='Stop' className={styles.stop}
-                onClick={this.stopPlaying} />
-              <input type='button' value='Cursor' 
-                className={styles.cut} 
-                onClick={this.changeToCursor}
-                style={cursorStyle} />
-              <input type='button' value='Drag' 
-                className={styles.move} 
-                onClick={this.changeToDrag} 
-                style={dragStyle} />
-              <input type='button' value='Split' 
-                className={styles.split} 
-                onClick={this.changeToSplit}
-                style={splitStyle} />
-              <input type='button' value='Select'
-                className={styles.select}
-                onClick={this.changeToSelect}
-                style={selectStyle} />
-              <input type='button' value='Delete'
-                onClick={this.props.deleteSelected} />
+
+              <IconButton onClick={this.setPlayingMode} > 
+                {this.props.playing === playingMode.PLAYING ? <Pause /> : <Play />} 
+              </IconButton>
+
+              <IconButton onClick={this.stopPlaying} tooltip="Stop">
+                <Stop />
+              </IconButton>
+
+              <IconButton onClick={this.changeToCursor} tooltip="Cursor">
+                <LocationSearch color={cursorStyle}/>
+              </IconButton>
+
+              <IconButton onClick={this.changeToDrag} tooltip="Drag">
+                <OpenWith color={dragStyle} />
+              </IconButton>
+
+              <IconButton onClick={this.changeToSplit} tooltip="Split">
+                <Scissor color={splitStyle} />
+              </IconButton>
+
+              <IconButton onClick={this.changeToSelect} tooltip="Select">
+                <Hand color={selectStyle} />
+              </IconButton>
+
+              <IconButton onClick={this.deleteSelected} tooltip="Delete">
+                <Delete />
+              </IconButton>
+
           </ToolbarGroup>
 
           <ToolbarGroup float="right">
 
-            <IconButton 
-              tooltip="Zoom In!"
-              iconClassName="material-icons"
-              onClick={this.zoomIn}>zoom_in </IconButton>
+            <IconButton onClick={this.zoomIn} tooltip="Zoom In!">
+             <ActionZoomIn />
+            </IconButton>
 
-            <IconButton 
-              tooltip="Zoom Out!"
-              iconClassName="material-icons"
-              onClick={this.zoomIn}>zoom_out </IconButton>
+            <IconButton onClick={this.zoomOut} tooltip="Zoom Out!">
+             <ActionZoomOut />
+            </IconButton>
 
           </ToolbarGroup>
 
