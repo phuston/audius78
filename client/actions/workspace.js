@@ -3,7 +3,7 @@ import * as types from '../constants/ActionTypes';
 import utils from '../../utils';
 
 export const newWorkspace = createAction(types.LOAD_WORKSPACE, (audioCtx)=>{
-  return fetch(`/workspace/create`, {
+  return fetch(`/api/workspace/create`, {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'

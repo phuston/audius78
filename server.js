@@ -6,12 +6,15 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var webpack = require('webpack');
 var config = require('./webpack.config.js');
-var workspace = require( './routes/workspace');
-var app = express();
-var index =require('./routes/index.js')();
-var db = require('./db.js');
 var injectTapEventPlugin = require('react-tap-event-plugin');
+var app = express();
 
+// Import routes
+var workspace = require( './routes/workspace');
+var upload = require('./routes/upload.js')();
+
+// Import database
+var db = require('./db.js');
 
 var isDev = process.env.NODE_ENV !== 'production';
 
@@ -22,6 +25,7 @@ app.use(cookieParser());
 
 injectTapEventPlugin();
 
+// Set up webpack for development environment
 if(isDev) {
   var webpackMiddleware = require('webpack-dev-middleware');
   var webpackHotMiddleware = require('webpack-hot-middleware');
@@ -48,15 +52,15 @@ if(isDev) {
 app.use(express.static(path.join(__dirname, '/public')));  
 app.use(express.static(path.join(__dirname, '/static')));  
 
-app.use('/workspace/', workspace);
-app.post('/api/upload', index.upload);
+app.use('/api/workspace/', workspace);
+app.post('/api/upload', upload.handleUpload);
 
 var PORT = process.env.PORT || 3000;
 var server = app.listen(PORT, function() {
   console.log('Application running on port:', PORT);
 });
 
-// Socket.IO Port
+// Socket handling
 var sockets = require('./sockets');
 sockets.socketServer(server);
 
