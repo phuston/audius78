@@ -1,7 +1,23 @@
+// Outside
 import React, { Component } from 'react';
 import { playingMode, toolMode, selectColor } from '../../../utils.js';
 
+// Styling
 import styles from './Tools.scss';
+
+// Material
+import Toolbar from 'material-ui/lib/toolbar/toolbar';
+import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';
+import ToolbarTitle from 'material-ui/lib/toolbar/toolbar-title';
+import IconButton from 'material-ui/lib/icon-button';
+import ActionZoomIn from 'material-ui/lib/svg-icons/action/zoom-in';
+import ActionZoomOut from 'material-ui/lib/svg-icons/action/zoom-out';
+import RaisedButton from 'material-ui/lib/raised-button';
+import FontIcon from 'material-ui/lib/font-icon';
+
+
+
+
 
 class Tools extends Component{
   constructor(props) {
@@ -73,34 +89,51 @@ class Tools extends Component{
 
     return (
       <div className = {styles.tools} >
-        <input type='button' 
-          value={this.props.playing === playingMode.PLAYING ? 'Pause' : 'Play'} 
-          className={styles.pauseplay} 
-          onClick={this.setPlayingMode}/>
-        <input type='button' value='Stop' className={styles.stop}
-          onClick={this.stopPlaying} />
-        <input type='button' value='Cursor' 
-          className={styles.cut} 
-          onClick={this.changeToCursor}
-          style={cursorStyle} />
-        <input type='button' value='Drag' 
-          className={styles.move} 
-          onClick={this.changeToDrag} 
-          style={dragStyle} />
-        <input type='button' value='Split' 
-          className={styles.split} 
-          onClick={this.changeToSplit}
-          style={splitStyle} />
-        <input type='button' value='Select'
-          className={styles.select}
-          onClick={this.changeToSelect}
-          style={selectStyle} />
-        <input type='button' value='Delete'
-          onClick={this.props.deleteSelected} />
-        <input type='button' value='Zoom In'
-          onClick={this.zoomIn} />
-        <input type='button' value='Zoom Out'
-          onClick={this.zoomOut} />
+        <Toolbar >
+
+          <ToolbarGroup firstChild={true} float="left">
+            <ToolbarTitle text="Toolbar" />
+              <input type='button' 
+                value={this.props.playing === playingMode.PLAYING ? 'Pause' : 'Play'} 
+                className={styles.pauseplay} 
+                onClick={this.setPlayingMode}/>
+              <input type='button' value='Stop' className={styles.stop}
+                onClick={this.stopPlaying} />
+              <input type='button' value='Cursor' 
+                className={styles.cut} 
+                onClick={this.changeToCursor}
+                style={cursorStyle} />
+              <input type='button' value='Drag' 
+                className={styles.move} 
+                onClick={this.changeToDrag} 
+                style={dragStyle} />
+              <input type='button' value='Split' 
+                className={styles.split} 
+                onClick={this.changeToSplit}
+                style={splitStyle} />
+              <input type='button' value='Select'
+                className={styles.select}
+                onClick={this.changeToSelect}
+                style={selectStyle} />
+              <input type='button' value='Delete'
+                onClick={this.props.deleteSelected} />
+          </ToolbarGroup>
+
+          <ToolbarGroup float="right">
+
+            <IconButton 
+              tooltip="Zoom In!"
+              iconClassName="material-icons"
+              onClick={this.zoomIn}>zoom_in </IconButton>
+
+            <IconButton 
+              tooltip="Zoom Out!"
+              iconClassName="material-icons"
+              onClick={this.zoomIn}>zoom_out </IconButton>
+
+          </ToolbarGroup>
+
+        </Toolbar>
       </div>
     )
   }

@@ -16,7 +16,6 @@ class Toolbar extends Component{
   render() {
     return (
       <div className = {styles.toolbar}>
-        <h2> Toolbar </h2>
         <Tools setPlayingMode={this.props.setPlayingMode} 
           setToolMode={this.props.setToolMode}
           deleteSelected={this.props.deleteSelected}
