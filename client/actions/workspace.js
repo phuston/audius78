@@ -137,6 +137,10 @@ export const removeBlocks = createAction(types.REMOVE_BLOCKS, (newBlocksPerRow) 
   return newBlocksPerRow;
 });
 
+export const spliceBlocks = createAction(types.SPLICE_BLOCKS, (newBlocksPerRow) => {
+  return newBlocksPerRow;
+});
+
 export const highlightBlock = createAction(types.HIGHLIGHT_BLOCK, (blockInfo) => {
   return blockInfo;
 });

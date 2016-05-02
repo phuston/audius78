@@ -144,9 +144,13 @@ class Workspace extends Component {
       this.emitRemoveBlocks();
     });
 
+    this.ee.on('spliceBlocks', () => {
+      this.emitSpliceBlocks();
+    })
+
     this.ee.on('highlightBlock', (blockInfo) => {
       this.highlightBlock(blockInfo);
-    })
+    });
 
     this.playMusic = this.playMusic.bind(this);
     this.isPlaying = this.isPlaying.bind(this);
@@ -161,7 +165,9 @@ class Workspace extends Component {
     this.splitBlock = (newBlocks) => dispatch(workspaceActions.splitBlock(newBlocks));
     this.moveBlock = (newBlocks) => dispatch(workspaceActions.moveBlock(newBlocks));
     this.removeBlocks = (newBlocksPerRow) => dispatch(workspaceActions.removeBlocks(newBlocksPerRow));
+    this.spliceBlocks = (newBlocksPerRow) => dispatch(workspaceActions.spliceBlocks(newBlocksPerRow));
     this.emitRemoveBlocks = this.emitRemoveBlocks.bind(this);
+    this.emitSpliceBlocks = this.emitSpliceBlocks.bind(this);
 
     // Client side events
     let dispatch = this.props.dispatch;
@@ -197,6 +203,11 @@ class Workspace extends Component {
 
     this.socket.on('applyRemoveBlocks', newBlocksPerRow => {
       this.removeBlocks(newBlocksPerRow);
+      this.rerenderAudio = true;
+    });
+
+    this.socket.on('applySpliceBlocks', newBlocksPerRow => {
+      this.spliceBlocks(newBlocksPerRow);
       this.rerenderAudio = true;
     });
 
@@ -342,8 +353,9 @@ class Workspace extends Component {
   emitRemoveBlocks() {
     let removeBlockOperation = {};
     let isEmpty = true;
+    let blocksToDelete = [];
+
     Array.prototype.map.call(this.props.workspace.rows, (row) => {
-      let blocksToDelete = [];
       row.audioBlocks.map( (block) => {
         isEmpty = isEmpty && (!block.selected);
         if (block.selected) blocksToDelete.push(block._id);
@@ -352,7 +364,43 @@ class Workspace extends Component {
       removeBlockOperation[row._id] = blocksToDelete;
     });
 
-    if (!isEmpty && this.props.workspace.playing !== playingMode.PLAYING) this.socket.emit('removeBlocks', removeBlockOperation);
+    if (!isEmpty && !this.isPlaying()) this.socket.emit('removeBlocks', removeBlockOperation);
+  }
+
+  emitSpliceBlocks() {
+    let spliceOperation = {};
+    let selectedBlocks = [];
+
+    Array.prototype.map.call(this.props.workspace.rows, (row) => {
+      row.audioBlocks.map( (block) => {
+        if (block.selected) {
+          block.rowId = row._id;
+          selectedBlocks.push(block);
+        }
+      });
+    });
+
+    if (selectedBlocks.length !== 2) {
+      return console.log('Can only join two blocks');
+    } 
+
+    if (selectedBlocks[0].rowId !== selectedBlocks[1].rowId) {
+      return console.log('Blocks don\'t belong to the same track.');
+    }
+
+    if (selectedBlocks[0].file_offset === selectedBlocks[1].file_end) {
+      spliceOperation.leftBlockId = selectedBlocks[1]._id;
+      spliceOperation.rightBlockId = selectedBlocks[0]._id;
+      spliceOperation.rowId = selectedBlocks[1].rowId;
+    } else if (selectedBlocks[1].file_offset === selectedBlocks[0].file_end) {
+      spliceOperation.leftBlockId = selectedBlocks[0]._id;
+      spliceOperation.rightBlockId = selectedBlocks[1]._id;
+      spliceOperation.rowId = selectedBlocks[1].rowId;
+    } else {
+      return console.log('Join failed - blocks are not adjacent.');
+    }
+
+    if (!this.isPlaying()) this.socket.emit('spliceBlocks', spliceOperation);
   }
 
   setZoom(newZoom) {
