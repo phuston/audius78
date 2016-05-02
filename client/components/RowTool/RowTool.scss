@@ -33,3 +33,44 @@
 .delete {
   
 }
+
+input[type=range]{
+  -webkit-appearance: none;
+  position: relative;
+  margin: auto;
+  width: 60%;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    height: 5px;
+    background: #e1e1e1;
+    border: none;
+    border-radius: 100px;
+  cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background: #0F82DA;
+    margin-top: -2px;
+    border: 0px solid white;
+    transition: .1s ease-out;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+  cursor: -webkit-grab;
+}
+
+input[type=range]::-webkit-slider-thumb:active {
+  border: 12px solid  #1A237E;
+  cursor: -webkit-grabbing;
+  background: #1A237E;
+}
+
+input[type=range]:focus {
+    outline: none;
+}

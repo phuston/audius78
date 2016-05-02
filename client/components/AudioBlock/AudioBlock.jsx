@@ -122,8 +122,7 @@ class AudioBlock extends Component {
             setCursor={this.props.setCursor}
             setSeeker={this.props.setSeeker}
             setSpeed={this.props.setSpeed}
-            setWorkspaceWidth={this.props.setWorkspaceWidth}
-          />
+            setWorkspaceWidth={this.props.setWorkspaceWidth}/>
   			</div>
 			);
   	});

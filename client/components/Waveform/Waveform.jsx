@@ -5,6 +5,9 @@ import ReactDOM from 'react-dom';
 // Styling 
 // import styles from './Waveform.scss'
 
+// Material
+import Card from 'material-ui/lib/card/card';
+
 // Others
 import { playingMode, toolMode, UIConstants } from '../../../utils.js';
 
@@ -137,9 +140,8 @@ class Waveform extends Component {
     let borderColor = this.props.selected ? '2px solid #E8F149' : '2px solid white';
     return (
       <canvas width={this.width} height={UIConstants.ROW_HEIGHT-4}
-        style={{'border': borderColor, 'borderRadius': '5px'}}
-        onClick={this.handleCanvasClick}
-      />
+        style={{'border': borderColor, 'borderRadius': '5px', 'box-shadow' : '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'}}
+        onClick={this.handleCanvasClick} />
     );
   }
 }
