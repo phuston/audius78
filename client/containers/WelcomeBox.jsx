@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 import { routeActions } from 'redux-simple-router';
 import * as workspaceActions from '../actions/workspace.js'
+import RaisedButton from 'material-ui/lib/raised-button';
 
 //Components
 import Welcome from '../components/Welcome/Welcome.jsx'

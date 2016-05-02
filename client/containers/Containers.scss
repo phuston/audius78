@@ -2,7 +2,8 @@ $primary: #3F403F;
 $dark: #777876;
 $accent: #8D8F8F;
 $light: #fff;
-$background: #D9DBD9;
+$background: #FFFFFF;
+// $background: #D9DBD9;
 $darker: #282928;
 
 body {
@@ -21,7 +22,6 @@ body {
   height: 70px;
   display: flex;
   flex-flow: columns;
-  background-color: $accent;
   z-index: 100;
 }
 
@@ -39,12 +39,36 @@ body {
 .songs {
   display: flex;
   flex-flow: column;
-  background-color: $primary;
   width: 100%;
 }
 
 .trackbox{
   margin-top: 0;
+}
+
+.dropzone{
+  position: absolute;
+  right: 100px;
+  bottom: 100px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background-color: red;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  display: flex;
+  align-items: center;
+
+}
+
+.addNew{
+  padding-left: 23px;
+  font-size: 50px;
+  color: white;
+}
+
+.fab {
+  height: 50px;
+  width: 50px;
 }
 
 .row {

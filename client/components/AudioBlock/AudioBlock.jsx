@@ -95,7 +95,7 @@ class AudioBlock extends Component {
   render() {
   	let data = this.props.row;
   	let waveforms = data.audioBlocks.map((block, i) => {
-      let background = '#16783C';
+      let background = '#00838F'; // Color of the waveform
       // if (block.selected) background = selectColor;
       let style = {
         'backgroundColor': background,
@@ -122,8 +122,7 @@ class AudioBlock extends Component {
             setCursor={this.props.setCursor}
             setSeeker={this.props.setSeeker}
             setSpeed={this.props.setSpeed}
-            setWorkspaceWidth={this.props.setWorkspaceWidth}
-          />
+            setWorkspaceWidth={this.props.setWorkspaceWidth}/>
   			</div>
 			);
   	});
@@ -132,7 +131,6 @@ class AudioBlock extends Component {
     let audioBlockStyle = {
       'cursor': 'auto', 
       'width': this.props.width, 
-      'background': '#282928', 
       'height': UIConstants.ROW_HEIGHT+4,
       'marginTop': (data.rowId === 0 ? 12 : 0),
     };

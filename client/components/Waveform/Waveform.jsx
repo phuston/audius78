@@ -5,6 +5,9 @@ import ReactDOM from 'react-dom';
 // Styling 
 // import styles from './Waveform.scss'
 
+// Material
+import Card from 'material-ui/lib/card/card';
+
 // Others
 import { playingMode, toolMode, UIConstants } from '../../../utils.js';
 
@@ -107,7 +110,9 @@ class Waveform extends Component {
     let maxValue = Math.pow(2, bits-1);
 
     ctx.save();
-    ctx.fillStyle = '#0A381C';
+    // ctx.fillStyle = '#0A381C';
+    ctx.fillStyle = '#00bcd4';
+
 
     // Every two peaks fit into one pixel width: one from top and one from bottom border
     for (i=this.firstPeak+2; i < this.lastPeak-2; i+=2) {
@@ -135,9 +140,8 @@ class Waveform extends Component {
     let borderColor = this.props.selected ? '2px solid #E8F149' : '2px solid white';
     return (
       <canvas width={this.width} height={UIConstants.ROW_HEIGHT-4}
-        style={{'border': borderColor, 'borderRadius': '5px'}}
-        onClick={this.handleCanvasClick}
-      />
+        style={{'border': borderColor, 'borderRadius': '5px', 'box-shadow' : '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'}}
+        onClick={this.handleCanvasClick} />
     );
   }
 }

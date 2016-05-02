@@ -6,7 +6,8 @@ import { routeActions } from 'redux-simple-router';
 import Dropzone from 'react-dropzone';
 import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 
-//Containers
+
+// Containers
 import TrackBox from './TrackBox.jsx';
 import Navbar from '../components/Navbar/Navbar.jsx'
 import Toolbar from './Toolbar.jsx';
@@ -15,13 +16,18 @@ import Toolbar from './Toolbar.jsx';
 import * as workspaceActions from '../actions/workspace.js';
 import TimeRuler from '../components/TimeRuler/TimeRuler.jsx'
 
-//Styling 
+// Styling 
 import styles from './Containers.scss';
+
+// Material
+import FloatingActionButton from 'material-ui/lib/floating-action-button';
+import ContentAdd from 'material-ui/lib/svg-icons/content/add';
 
 class Workspace extends Component {
 
   constructor(props) {
     super(props);
+
     this.socket = io('http://localhost:3000');
     this.audioCtx = undefined;
     this.startTime = 0;
@@ -327,8 +333,7 @@ class Workspace extends Component {
               seekTime={this.seekTime}
               setSpeed={this.setSpeed}
               emitChangeRowGain={this.emitChangeRowGain}
-              setWorkspaceWidth={this.setWorkspaceWidth}
-            />
+              setWorkspaceWidth={this.setWorkspaceWidth} />
           </div>
         </div>
       );
@@ -343,11 +348,14 @@ class Workspace extends Component {
     return (
       <div className={styles.page} >
         <div className = {styles.navbar} >
-          <Navbar onLogout={this.logout} />
+          <Navbar 
+            onLogout={this.logout}
+            workspaceWidth = {this.props.workspace.width}
+            workspaceId = {this.props.workspace.id} />
         </div>
 
 
-        <div style={{'top': '70px', 'position': 'fixed', 'height': '70px', 'zIndex': '100', 'backgroundColor': '#8D8F8F', 'width': this.props.workspace.width}}><h1>{this.props.workspace.id}</h1></div>
+        <div style={{'top': '90px', 'position': 'fixed', 'height': '90px', 'zIndex': '100', 'backgroundColor': '#FFFFFF', 'width': this.props.workspace.width}}></div>
 
         <div className={styles.workspace} style={{'width': this.props.workspace.width}}>
 
@@ -361,15 +369,16 @@ class Workspace extends Component {
             stopPlaying={this.stopPlaying}
             setSeeker={this.setSeeker}
             setToolMode={this.setToolMode}
-            cursor={this.props.workspace.timing.cursor}
-            />
+            cursor={this.props.workspace.timing.cursor} />
 
           {workspace}
 
-          <div style={{'position': 'absolute', 'bottom': '0', 'width': '100px', 'height': '100px'}}>
-            <Dropzone onDrop={this.onDrop} />
+          <div className={styles.dropzoneBox}>
+            <Dropzone onDrop={this.onDrop} className={styles.dropzone}><span className={styles.addNew}>+</span></Dropzone>
           </div>
+
         </div>
+
       </div>
     )
   }
