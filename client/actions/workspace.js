@@ -50,7 +50,7 @@ export const newWorkspace = createAction(types.LOAD_WORKSPACE, (audioCtx)=>{
 });
 
 export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, audioCtx) => {
-  return fetch(`/workspace/load`, {
+  return fetch(`/api/workspace/load`, {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'

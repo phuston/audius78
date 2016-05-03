@@ -6,7 +6,6 @@ import { routeActions } from 'redux-simple-router';
 import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 import * as workspaceActions from '../actions/workspace.js';
 import EventEmitter from 'event-emitter';
-import KeybindingMixin from 'react-keybinding-mixin';
 
 // Containers + Components
 import TrackBox from './TrackBox.jsx';
@@ -187,7 +186,6 @@ class Workspace extends Component {
 
   componentDidMount() {
 
-    mixins: [KeybindingMixin];
     let dispatch = this.props.dispatch;
 
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);

@@ -4,8 +4,10 @@ var isDev = process.env.NODE_ENV !== 'production';
 
 if (isDev) {
 	mongoose.connect('mongodb://localhost/audius78');
+	console.log('Connected to local database');
 } else {
 	mongoose.connect('mongodb://audius78:audius78@ds023490.mlab.com:23490/audius78');
+	console.log('Connected to MongoLab');
 }
 
 var connection = mongoose.connection;
