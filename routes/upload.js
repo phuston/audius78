@@ -13,7 +13,7 @@ var multerHandle = multer({
 
 module.exports = function(){
   return {
-    upload: function(req, res){
+    handleUpload: function(req, res){
       multerHandle(req, res, function(err){
         if( err ){
           console.error('Multer failure');
