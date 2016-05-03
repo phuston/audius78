@@ -6,6 +6,7 @@ import { routeActions } from 'redux-simple-router';
 import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 import * as workspaceActions from '../actions/workspace.js';
 import EventEmitter from 'event-emitter';
+import KeybindingMixin from 'react-keybinding-mixin';
 
 // Containers + Components
 import TrackBox from './TrackBox.jsx';
@@ -22,11 +23,12 @@ import styles from './Containers.scss';
 // Material
 import Snackbar from 'material-ui/lib/snackbar';
 
-
 class Workspace extends Component {
 
   constructor(props) {
     super(props);
+
+    mixins: [KeybindingMixin];
 
     this.socket = io('');
     this.audioCtx = undefined;
@@ -189,6 +191,10 @@ class Workspace extends Component {
     let dispatch = this.props.dispatch;
 
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
+
+    this.onKey(32, function(event) {
+        alert('you pressed spacebar, yo');
+    });
 
     this.socket.on('applyAddRow', applyOperation => {
       let audioCtx = new (window.AudioContext || window.webkitAudioContext)();

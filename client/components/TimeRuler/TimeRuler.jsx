@@ -1,6 +1,8 @@
+// Outside
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
+// Styling
 import styles from './TimeRuler.scss';
 
 
