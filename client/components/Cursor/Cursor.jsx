@@ -1,3 +1,4 @@
+// Outside
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { playingMode, toolMode, UIConstants } from '../../../utils.js';

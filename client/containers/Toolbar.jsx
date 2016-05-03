@@ -20,8 +20,7 @@ class Toolbar extends Component{
           toolMode={this.props.toolMode}
           playing={this.props.playing}
           cursor={this.props.cursor}
-          ee={this.props.ee}
-        />
+          ee={this.props.ee} />
       </div>
     )
   }

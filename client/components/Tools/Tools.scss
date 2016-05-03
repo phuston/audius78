@@ -1,44 +1,19 @@
 @import '../../containers/Containers.scss';
 
-.tools > input {
-  width: 50px;
-  margin: 20px;
-  border: none;
-  // background-color: $primary;
-  color: white;
-  text-align: center;
-  box-shadow: none;
-  border-radius: 2em;
-  outline: none;
-}
-
 .tools {
   width: 100vw;
   display: flex;
   flex-flow: row;
-}
-
-.move {
 
 }
 
-.split {
-
+.toolbar {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.23);
 }
 
-.select {
-
+.titletext {
+  margin-left: 20px;
 }
 
-.pauseplay {
 
-}
-
-.stop {
-
-}
-
-.cut {
-
-}
 

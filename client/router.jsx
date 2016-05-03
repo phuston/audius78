@@ -1,9 +1,13 @@
+// Outside
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, Route, browserHistory, IndexRoute } from 'react-router';
 
+// Store
 import store from './store/store';
+
+// Containers
 import Workspace from './containers/Workspace.jsx';
 import WelcomeBox from './containers/WelcomeBox.jsx';
 

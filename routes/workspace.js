@@ -14,7 +14,7 @@ function generateUUID() {
 };
 
 router.post('/create', function(req, res, next) {
-  // Compute real hash for new workspace here}
+  // Compute real hash for new workspace 
   var hash = generateUUID();
   var newWorkspace = defaultWorkspace;
   newWorkspace.id = hash;

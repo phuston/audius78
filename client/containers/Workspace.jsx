@@ -6,6 +6,7 @@ import { routeActions } from 'redux-simple-router';
 import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 import * as workspaceActions from '../actions/workspace.js';
 import EventEmitter from 'event-emitter';
+import KeybindingMixin from 'react-keybinding-mixin';
 
 // Containers + Components
 import TrackBox from './TrackBox.jsx';
@@ -20,8 +21,7 @@ import TimeRuler from '../components/TimeRuler/TimeRuler.jsx'
 import styles from './Containers.scss';
 
 // Material
-import FloatingActionButton from 'material-ui/lib/floating-action-button';
-import ContentAdd from 'material-ui/lib/svg-icons/content/add';
+import Snackbar from 'material-ui/lib/snackbar';
 
 class Workspace extends Component {
 
@@ -186,9 +186,47 @@ class Workspace extends Component {
   }
 
   componentDidMount() {
+
+    mixins: [KeybindingMixin];
     let dispatch = this.props.dispatch;
 
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
+
+    window.addEventListener('keydown', (e) => {
+      // Key Bindings for different workspace actions
+      switch(e.keyCode) {
+        case 32:
+          this.ee.emit('playPause');
+          break;
+        case 83:
+          this.ee.emit('stop');
+          break;
+        case 68:
+          this.ee.emit('drag');
+          break;
+        case 88:
+          this.ee.emit('split');
+          break;
+        case 46:
+          this.ee.emit('removeBlocks');
+          break;
+        case 74:
+          this.ee.emit('spliceBlocks');
+          break;
+        case 87:
+          this.ee.emit('zoomIn');
+          break;
+        case 81:
+          this.ee.emit('zoomOut');
+          break;
+        case 80:
+          this.ee.emit('select');
+          break;
+        case 67:
+          this.ee.emit('cursor');
+          break;
+      }
+    });
 
     this.socket.on('applyAddRow', applyOperation => {
       let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -380,11 +418,15 @@ class Workspace extends Component {
       });
     });
 
+    // Popup errors
+
     if (selectedBlocks.length !== 2) {
+      alert('Operation Not Supported: Can only join two audio blocks');
       return console.log('Can only join two blocks');
     } 
 
     if (selectedBlocks[0].rowId !== selectedBlocks[1].rowId) {
+      alert('Operation Not Supported: Cannot join audio blocks of different tracks')
       return console.log('Blocks don\'t belong to the same track.');
     }
 
@@ -397,6 +439,7 @@ class Workspace extends Component {
       spliceOperation.rightBlockId = selectedBlocks[1]._id;
       spliceOperation.rowId = selectedBlocks[1].rowId;
     } else {
+      alert('Operation Not Supported: Cannot join adjacent blocks')
       return console.log('Join failed - blocks are not adjacent.');
     }
 
@@ -476,15 +519,14 @@ class Workspace extends Component {
             numRows={this.props.workspace.rows.length}
             playing={this.props.workspace.playing}
             speed={this.props.workspace.timing.speed}
-            ee={this.ee}
-          />
+            ee={this.ee}/>
+
           <Cursor position={this.props.workspace.timing.cursor} 
             numRows={this.props.workspace.rows.length}/>
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} 
               workspace={this.props.workspace} 
-              ee={this.ee}
-            />
+              ee={this.ee} />
           </div>
         </div>
       );
@@ -515,8 +557,7 @@ class Workspace extends Component {
             toolMode={this.props.workspace.toolMode}
             currentZoom={this.props.workspace.zoomLevel}
             cursor={this.props.workspace.timing.cursor} 
-            ee={this.ee}
-          />
+            ee={this.ee} />
 
           {workspace}
 

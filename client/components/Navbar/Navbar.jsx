@@ -6,10 +6,8 @@ import { Link } from 'react-router';
 import AppBar from 'material-ui/lib/app-bar';
 import FlatButton from 'material-ui/lib/flat-button';
 
-
 // Styling
 import styles from './Navbar.scss';
-
 
 class Navbar extends Component{
 
@@ -17,15 +15,12 @@ class Navbar extends Component{
     super(props);
   }
 
-
-
-
   render() {
 
     return (
       <div className = {styles.navbar} >
         <AppBar 
-          title={<span style={styles.title}>Audius78 <span className={styles.code}>Workpace ID: {this.props.workspaceId}</span></span>}
+          title={<span style={styles.title}>Audius78 <span className={styles.code}>Workspace ID: {this.props.workspaceId}</span></span>}
           iconElementRight={<FlatButton label="Logout" className={styles.logout} onClick={this.props.onLogout} />}
           showMenuIconButton={false} />
       </div>

@@ -1,10 +1,10 @@
-$primary: #3F403F;
-$dark: #777876;
-$accent: #8D8F8F;
-$light: #fff;
+$primary: #F44336;
+$dark: #D32F2F;
+$accent: #E0E0E0;
+$light: #EF5350;
 $background: #FFFFFF;
-// $background: #D9DBD9;
 $darker: #282928;
+$blue: #00bcd4;   
 
 body {
   background-color: $background;
@@ -47,17 +47,21 @@ body {
 }
 
 .dropzone{
-  position: absolute;
-  right: 100px;
-  bottom: 100px;
+  position: fixed;
+  right: 4vw;
+  bottom: 2vw;
   width: 75px;
   height: 75px;
   border-radius: 50%;
-  background-color: red;
+  background-color: $primary;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   display: flex;
   align-items: center;
+  cursor: n-resize;
+}
 
+.dropzone:hover{
+  background-color: $light;
 }
 
 .addNew{
@@ -97,6 +101,22 @@ body {
   border: none;
 }
 
-.uploadform{
+body::-webkit-scrollbar-track
+{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 10px;
+  background-color: #F5F5F5;
+}
 
+body::-webkit-scrollbar
+{
+  width: 12px;
+  background-color: #F5F5F5;
+}
+
+body::-webkit-scrollbar-thumb
+{
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: $blue;
 }

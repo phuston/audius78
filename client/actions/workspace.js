@@ -1,3 +1,4 @@
+// Outside
 import { createAction } from 'redux-actions';
 import * as types from '../constants/ActionTypes';
 import utils from '../../utils';
@@ -100,8 +101,7 @@ export const setWorkspaceWidth = createAction(types.SET_WORKSPACE_WIDTH, (width)
 });
 
 export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
-  // TODO: Make a request to download the file at filename served statically, decode it, add to newRow object, return that
-  // Not sure if this works
+  
   return fetch(addOperation.newRow.rawAudio)
   .then((file) => {
     return file.arrayBuffer();

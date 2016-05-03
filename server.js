@@ -55,6 +55,7 @@ if(isDev) {
 app.use(express.static(path.join(__dirname, '/public')));  
 app.use(express.static(path.join(__dirname, '/static')));  
 
+// Routes
 app.use('/api/workspace/', workspace);
 app.post('/api/upload', upload.handleUpload);
 
