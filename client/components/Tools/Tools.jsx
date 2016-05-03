@@ -24,6 +24,7 @@ import Play from 'material-ui/lib/svg-icons/av/play-arrow';
 import Pause from 'material-ui/lib/svg-icons/av/pause';
 import Queue from 'material-ui/lib/svg-icons/av/queue';
 
+
 class Tools extends Component{
   constructor(props) {
     super(props);
@@ -104,10 +105,10 @@ class Tools extends Component{
 
     return (
       <div className = {styles.tools} >
-        <Toolbar >
+        <Toolbar className={styles.toolbar}>
 
           <ToolbarGroup firstChild={true} float="left">
-            <ToolbarTitle text="Toolbar" />
+            <ToolbarTitle className={styles.titletext} text="Toolbar" />
 
               <IconButton onClick={this.setPlayingMode} tooltip="Play/Pause"> 
                 {this.props.playing === playingMode.PLAYING ? <Pause /> : <Play />} 
@@ -125,7 +126,7 @@ class Tools extends Component{
                 <OpenWith color={dragStyle} />
               </IconButton>
 
-              <IconButton onClick={this.changeToSplit} tooltip="Split">
+              <IconButton onClick={this.changeToSplit} tooltip="Splice">
                 <Scissor color={splitStyle} />
               </IconButton>
 
