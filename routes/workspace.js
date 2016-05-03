@@ -1,5 +1,5 @@
 var router = require('express').Router();
-var sockets = require('../sockets');
+var sockets = require('../sockets/sockets');
 var Workspace = require('../models/workspace');
 var defaultWorkspace = require('../models/defaultWorkspace');
 

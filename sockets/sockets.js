@@ -1,5 +1,5 @@
 var socketIO = require('socket.io');
-var Workspace = require('./models/workspace');
+var Workspace = require('../models/workspace');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 var socketObject = {
