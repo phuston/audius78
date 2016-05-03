@@ -9,6 +9,9 @@ var config = require('./webpack.config.js');
 var injectTapEventPlugin = require('react-tap-event-plugin');
 var app = express();
 
+// Import socket handling
+var sockets = require('./sockets/sockets');
+
 // Import routes
 var workspace = require( './routes/workspace');
 var upload = require('./routes/upload.js')();
@@ -17,6 +20,7 @@ var upload = require('./routes/upload.js')();
 var db = require('./db.js');
 
 var isDev = process.env.NODE_ENV !== 'production';
+console.log("Environment", process.env.NODE_ENV);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -61,7 +65,6 @@ var server = app.listen(PORT, function() {
 });
 
 // Socket handling
-var sockets = require('./sockets');
 sockets.socketServer(server);
 
 module.exports = app;
