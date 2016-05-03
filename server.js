@@ -20,7 +20,6 @@ var upload = require('./routes/upload.js')();
 var db = require('./db.js');
 
 var isDev = process.env.NODE_ENV !== 'production';
-console.log("Environment", process.env.NODE_ENV);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
