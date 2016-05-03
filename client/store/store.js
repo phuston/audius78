@@ -20,8 +20,11 @@ if (process.env.NODE_ENV != 'production') {
 }
 
 const devTools = window.devToolsExtension ? window.devToolsExtension() : f => f;
+
+// Create store
 let store = createStore(rootReducer, compose(applyMiddleware(...middlewares), devTools));
 
+// Dispatch actions to set up workspace initially
 store.dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
 store.dispatch(workspaceActions.setToolMode(toolMode.CURSOR));
 store.dispatch(workspaceActions.setSeeker(0));
