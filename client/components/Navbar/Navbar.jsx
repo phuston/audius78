@@ -6,19 +6,14 @@ import { Link } from 'react-router';
 import AppBar from 'material-ui/lib/app-bar';
 import FlatButton from 'material-ui/lib/flat-button';
 
-
 // Styling
 import styles from './Navbar.scss';
-
 
 class Navbar extends Component{
 
   constructor(props) {
     super(props);
   }
-
-
-
 
   render() {
 

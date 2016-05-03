@@ -4,35 +4,12 @@
   display: flex;
   flex-flow: column;
   background-color: $accent;
-  opacity: 50%;
+  opacity: 0.9;
   width: 60px;
   height: 100px;
   border-radius: 10px;
   z-index: 10;
   margin-bottom: 4px;
-}
-
-.rowtool > input {
-  width: 50px;
-  margin: 5px;
-  border: none;
-  background-color: $light;
-  color: black;
-  text-align: center;
-  box-shadow: none;
-  border-radius: 2em;
-}
-
-.filter {
-
-}
-
-.mute {
-
-}
-
-.delete {
-  
 }
 
 input[type=range]{
@@ -44,10 +21,10 @@ input[type=range]{
 
 input[type=range]::-webkit-slider-runnable-track {
     height: 5px;
-    background: #e1e1e1;
+    background: white;
     border: none;
     border-radius: 100px;
-  cursor: pointer;
+    cursor: pointer;
 }
 
 input[type=range]::-webkit-slider-thumb {

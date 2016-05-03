@@ -39,8 +39,8 @@ class Row extends Component{
       <div className={styles.row} >
         <RowTool 
           scrollX={this.props.scrollX}
-          top={(this.props.row.rowId === 0 ? 13 : 5)}
-          row={this.props.row}
+          top={(this.props.row.rowId === 0 ? 13 : 4)}
+          row={this.props.row} 
           playing={this.props.playing}
           ee={this.props.ee} />
         <AudioBlock row={this.props.row} 

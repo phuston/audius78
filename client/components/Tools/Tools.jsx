@@ -22,7 +22,7 @@ import Hand from 'material-ui/lib/svg-icons/action/pan-tool';
 import OpenWith from 'material-ui/lib/svg-icons/action/open-with';
 import Play from 'material-ui/lib/svg-icons/av/play-arrow';
 import Pause from 'material-ui/lib/svg-icons/av/pause';
-import Queue from 'material-ui/lib/svg-icons/av/queue';
+import CompareArrows from 'material-ui/lib/svg-icons/action/compare-arrows';
 
 
 class Tools extends Component{
@@ -43,7 +43,7 @@ class Tools extends Component{
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
-      nextProps.playingMode !== this.props.playingMode ||
+      nextProps.playing !== this.props.playing ||
       nextProps.toolMode !== this.props.toolMode
     );
   }
@@ -91,6 +91,7 @@ class Tools extends Component{
   }
 
   render() {
+    // Change cursor apperance 
     let cursorStyle, splitStyle, dragStyle, selectStyle;
 
     if (this.props.toolMode === toolMode.CURSOR) {
@@ -102,60 +103,58 @@ class Tools extends Component{
     } else if (this.props.toolMode === toolMode.SELECT) {
       selectStyle = selectColor;
     }
+      console.log('tools rendering');
 
     return (
       <div className = {styles.tools} >
-        <Toolbar className={styles.toolbar}>
-
+        <Toolbar style={{'box-shadow':'0 1px 3px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.23)'}}>
           <ToolbarGroup firstChild={true} float="left">
             <ToolbarTitle className={styles.titletext} text="Toolbar" />
 
-              <IconButton onClick={this.setPlayingMode} tooltip="Play/Pause"> 
+              <IconButton onClick={this.setPlayingMode} tooltip="Play/Pause (spacebar) "> 
                 {this.props.playing === playingMode.PLAYING ? <Pause /> : <Play />} 
               </IconButton>
 
-              <IconButton onClick={this.stopPlaying} tooltip="Stop">
+              <IconButton onClick={this.stopPlaying} tooltip="Stop (S)">
                 <Stop />
               </IconButton>
 
-              <IconButton onClick={this.changeToCursor} tooltip="Cursor">
+              <IconButton onClick={this.changeToCursor} tooltip="Cursor (C)">
                 <LocationSearch color={cursorStyle}/>
               </IconButton>
 
-              <IconButton onClick={this.changeToDrag} tooltip="Drag">
+              <IconButton onClick={this.changeToDrag} tooltip="Drag (D)">
                 <OpenWith color={dragStyle} />
               </IconButton>
 
-              <IconButton onClick={this.changeToSplit} tooltip="Splice">
+              <IconButton onClick={this.changeToSplit} tooltip="Split (X)">
                 <Scissor color={splitStyle} />
               </IconButton>
 
-              <IconButton onClick={this.changeToSelect} tooltip="Select">
+              <IconButton onClick={this.changeToSelect} tooltip="Pick (P)">
                 <Hand color={selectStyle} />
               </IconButton>
 
-              <IconButton onClick={this.removeBlocks} tooltip="Delete">
+              <IconButton onClick={this.removeBlocks} tooltip="Delete (delete)">
                 <Delete />
               </IconButton>
 
-              <IconButton onClick={this.joinBlocks} tooltip="Join">
-                <Queue />
+              <IconButton onClick={this.joinBlocks} tooltip="Join (J)">
+                <CompareArrows />
               </IconButton>
 
           </ToolbarGroup>
 
           <ToolbarGroup float="right">
-
-            <IconButton onClick={this.zoomIn} tooltip="Zoom In!">
-             <ActionZoomIn />
-            </IconButton>
-
-            <IconButton onClick={this.zoomOut} tooltip="Zoom Out!">
+            <IconButton onClick={this.zoomOut} tooltip="Zoom Out (Q)">
              <ActionZoomOut />
             </IconButton>
 
-          </ToolbarGroup>
+            <IconButton onClick={this.zoomIn} tooltip="Zoom In (W)">
+             <ActionZoomIn />
+            </IconButton>
 
+          </ToolbarGroup>
         </Toolbar>
       </div>
     )

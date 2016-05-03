@@ -6,7 +6,6 @@ import { playingMode } from '../../../utils';
 import Remove from 'material-ui/lib/svg-icons/content/remove-circle';
 import IconButton from 'material-ui/lib/icon-button';
 
-
 // Styling
 import styles from './RowTool.scss';
 
@@ -46,7 +45,7 @@ class RowTool extends Component{
           onChange={this.handleVolumeChange} 
           className={styles.mute} />
 
-          <IconButton onClick={this.handleDeleteRow} tooltip="Remove Row">
+          <IconButton onClick={this.handleDeleteRow} tooltipPosition="top-center" tooltip="Remove Row">
               <Remove />
           </IconButton>
 

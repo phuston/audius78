@@ -1,3 +1,4 @@
+// Outside
 import { handleActions } from 'redux-actions';
 import { zoomLimits } from '../../utils';
 

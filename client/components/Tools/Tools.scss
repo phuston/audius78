@@ -1,16 +1,5 @@
 @import '../../containers/Containers.scss';
 
-.tools > input {
-  width: 50px;
-  margin: 20px;
-  border: none;
-  color: white;
-  text-align: center;
-  box-shadow: none;
-  border-radius: 2em;
-  outline: none;
-}
-
 .tools {
   width: 100vw;
   display: flex;
@@ -22,31 +11,9 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.23);
 }
 
-.move {
-
-}
-
 .titletext {
   margin-left: 20px;
 }
 
-.split {
 
-}
-
-.select {
-
-}
-
-.pauseplay {
-
-}
-
-.stop {
-
-}
-
-.cut {
-
-}
 

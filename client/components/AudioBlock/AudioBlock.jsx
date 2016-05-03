@@ -1,7 +1,6 @@
 // Outside
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Draggable from 'react-draggable';
 
 // Styling 
 import styles from './AudioBlock.scss'
@@ -95,14 +94,14 @@ class AudioBlock extends Component {
   render() {
   	let data = this.props.row;
   	let waveforms = data.audioBlocks.map((block, i) => {
-      let background = '#00838F'; // Color of the waveform
+      let background = '#00bcd4'; // Color of the waveform
       let style = {
         'backgroundColor': background,
         'border': 'none',
         'display': 'inline-block',
         'position': 'absolute',
         'height': '100px',
-        'top': UIConstants.TOP + data.rowId * (UIConstants.ROW_HEIGHT+4),
+        'top': UIConstants.TOP + data.rowId * (UIConstants.ROW_HEIGHT+7),
         'left': Math.max(this.initialOffset[block._id] / this.props.currentZoom + this.totalMoved[block._id], 0) + UIConstants.LEFT,
         'zIndex': this.zIndices[block._id],
       };
@@ -129,7 +128,7 @@ class AudioBlock extends Component {
       'cursor': 'auto', 
       'width': this.props.width, 
       'height': UIConstants.ROW_HEIGHT+4,
-      'marginTop': (data.rowId === 0 ? 12 : 0),
+      'marginTop': (data.rowId === 0 ? 12 : 4),
     };
     switch (this.props.toolMode) {
       case (toolMode.SPLIT):

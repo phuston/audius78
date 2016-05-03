@@ -28,8 +28,6 @@ class Workspace extends Component {
   constructor(props) {
     super(props);
 
-    mixins: [KeybindingMixin];
-
     this.socket = io('');
     this.audioCtx = undefined;
     this.startTime = 0;
@@ -188,12 +186,46 @@ class Workspace extends Component {
   }
 
   componentDidMount() {
+
+    mixins: [KeybindingMixin];
     let dispatch = this.props.dispatch;
 
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
 
-    this.onKey(32, function(event) {
-        alert('you pressed spacebar, yo');
+    window.addEventListener('keydown', (e) => {
+      // Key Bindings for different workspace actions
+      switch(e.keyCode) {
+        case 32:
+          this.ee.emit('playPause');
+          break;
+        case 83:
+          this.ee.emit('stop');
+          break;
+        case 68:
+          this.ee.emit('drag');
+          break;
+        case 88:
+          this.ee.emit('split');
+          break;
+        case 46:
+          this.ee.emit('removeBlocks');
+          break;
+        case 74:
+          this.ee.emit('spliceBlocks');
+          break;
+        case 87:
+          this.ee.emit('zoomIn');
+          break;
+        case 81:
+          this.ee.emit('zoomOut');
+          break;
+        case 80:
+          this.ee.emit('select');
+          break;
+        case 67:
+          this.ee.emit('cursor');
+          break;
+      }
     });
 
     this.socket.on('applyAddRow', applyOperation => {
@@ -476,7 +508,6 @@ class Workspace extends Component {
       this.playMusic();
     }
   }
-
 
   render() {
     let workspace;

@@ -1,9 +1,8 @@
 $primary: #F44336;
 $dark: #D32F2F;
-$accent: #B2DFDB;
+$accent: #E0E0E0;
 $light: #EF5350;
 $background: #FFFFFF;
-// $background: #D9DBD9;
 $darker: #282928;
 $blue: #00bcd4;   
 
@@ -58,6 +57,7 @@ body {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   display: flex;
   align-items: center;
+  cursor: n-resize;
 }
 
 .dropzone:hover{
@@ -99,10 +99,6 @@ body {
   box-shadow: 5px 5px 15px #888888;
   color: white;
   border: none;
-}
-
-.uploadform{
-
 }
 
 body::-webkit-scrollbar-track

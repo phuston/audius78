@@ -2,9 +2,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
-// Styling 
-// import styles from './Waveform.scss'
-
 // Material
 import Card from 'material-ui/lib/card/card';
 
@@ -110,7 +107,7 @@ class Waveform extends Component {
     let maxValue = Math.pow(2, bits-1);
 
     ctx.save();
-    ctx.fillStyle = '#00bcd4';
+    ctx.fillStyle = '#00838F';
 
     // Every two peaks fit into one pixel width: one from top and one from bottom border
     for (i=this.firstPeak+2; i < this.lastPeak-2; i+=2) {
