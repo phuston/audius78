@@ -388,58 +388,58 @@ class Workspace extends Component {
 
   emitRemoveBlocks() {
     let removeBlockOperation = {};
-    let isEmpty = true;
     let blocksToDelete = [];
 
     Array.prototype.map.call(this.props.workspace.rows, (row) => {
       row.audioBlocks.map( (block) => {
-        isEmpty = isEmpty && (!block.selected);
         if (block.selected) blocksToDelete.push(block._id);
       });
 
       removeBlockOperation[row._id] = blocksToDelete;
     });
 
-    if (!isEmpty && !this.isPlaying()) this.socket.emit('removeBlocks', removeBlockOperation);
+    if (blocksToDelete.length > 0 && !this.isPlaying()) this.socket.emit('removeBlocks', removeBlockOperation);
   }
 
   emitSpliceBlocks() {
-    let spliceOperation = {};
-    let selectedBlocks = [];
+    const spliceOperation = {};
+    const selectedBlocks = [];
+    const blocksToRemove = [];
+
+    let rowId;
+    let connected = true;
 
     Array.prototype.map.call(this.props.workspace.rows, (row) => {
-      row.audioBlocks.map( (block) => {
-        if (block.selected) {
-          block.rowId = row._id;
-          selectedBlocks.push(block);
-        }
-      });
+      if (!rowId) {
+        row.audioBlocks.map( (block) => {
+          if (block.selected) {
+            rowId = row.rowId+1;
+            spliceOperation.rowId = row._id;
+            selectedBlocks.push(block);
+            blocksToRemove.push(block._id);
+          }
+        });
+      }
     });
 
-    // Popup errors
-
-    if (selectedBlocks.length !== 2) {
-      alert('Operation Not Supported: Can only join two audio blocks');
-      return console.log('Can only join two blocks');
-    } 
-
-    if (selectedBlocks[0].rowId !== selectedBlocks[1].rowId) {
-      alert('Operation Not Supported: Cannot join audio blocks of different tracks')
-      return console.log('Blocks don\'t belong to the same track.');
+    if (selectedBlocks.length < 2) {
+      return alert('Operation Not Supported: Fewer than two blocks were detected in row ' + rowId);
     }
 
-    if (selectedBlocks[0].file_offset === selectedBlocks[1].file_end) {
-      spliceOperation.leftBlockId = selectedBlocks[1]._id;
-      spliceOperation.rightBlockId = selectedBlocks[0]._id;
-      spliceOperation.rowId = selectedBlocks[1].rowId;
-    } else if (selectedBlocks[1].file_offset === selectedBlocks[0].file_end) {
-      spliceOperation.leftBlockId = selectedBlocks[0]._id;
-      spliceOperation.rightBlockId = selectedBlocks[1]._id;
-      spliceOperation.rowId = selectedBlocks[1].rowId;
-    } else {
-      alert('Operation Not Supported: Cannot join adjacent blocks')
-      return console.log('Join failed - blocks are not adjacent.');
+    selectedBlocks.sort((a, b) => a.file_offset < b.file_offset ? -1 : 1);
+    selectedBlocks.reduce( (prev, curr) => {
+      connected = connected && prev.file_end === curr.file_offset;
+      return curr;
+    });
+
+    if (!connected) {
+      return alert('Operation Not Supported: Selected blocks were not originally connected.');
     }
+
+    // By this point, the operation should be legal
+    spliceOperation.joinedBlock = selectedBlocks[0]._id;
+    spliceOperation.newFileEnd = selectedBlocks.slice(-1)[0].file_end;
+    spliceOperation.blocksToRemove = blocksToRemove;
 
     if (!this.isPlaying()) this.socket.emit('spliceBlocks', spliceOperation);
   }
