@@ -13,6 +13,12 @@ class Navbar extends Component{
 
   constructor(props) {
     super(props);
+
+    this.handleLogout = this.handleLogout.bind(this);
+  }
+
+  handleLogout() {
+    this.props.ee.emit('logout');
   }
 
   render() {
@@ -21,7 +27,7 @@ class Navbar extends Component{
       <div className = {styles.navbar} >
         <AppBar 
           title={<span style={styles.title}>Audius78 <span className={styles.code}>Workspace ID: {this.props.workspaceId}</span></span>}
-          iconElementRight={<FlatButton label="Logout" className={styles.logout} onClick={this.props.onLogout} />}
+          iconElementRight={<FlatButton label="Logout" className={styles.logout} onClick={this.handleLogout} />}
           showMenuIconButton={false} />
       </div>
     )

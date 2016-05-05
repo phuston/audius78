@@ -75,38 +75,44 @@ class Workspace extends Component {
     });
 
     this.ee.on('splitBlock', (rowId, blockId, splitElement) => {
-      const splitOperation = {
-        rowId: rowId,
-        blockId: blockId,
-        operation: {
-          splitElement: splitElement
-        }
-      };
-      this.socket.emit('splitBlock', splitOperation);
+      if (!this.isPlaying()) {
+        const splitOperation = {
+          rowId: rowId,
+          blockId: blockId,
+          operation: {
+            splitElement: splitElement
+          }
+        };
+        this.socket.emit('splitBlock', splitOperation);
+      }
     });
 
     this.ee.on('moveBlock', (rowId, blockId, moveShift) => {
-      const moveOperation = {
-        rowId: rowId,
-        blockId: blockId,
-        operation: {
-          moveShift: moveShift
-        }
-      };
-      this.socket.emit('moveBlock', moveOperation);
+      if (!this.isPlaying()) {
+        const moveOperation = {
+          rowId: rowId,
+          blockId: blockId,
+          operation: {
+            moveShift: moveShift
+          }
+        };
+        this.socket.emit('moveBlock', moveOperation);
+      }
     });
 
     this.ee.on('flagBlock', (rowId, blockId, flagType, startTime, duration) => {
-      const flagOperation = {
-        rowId: rowId,
-        blockId: blockId,
-        operation: {
-          type: flagType,
-          startTime: startTime,
-          duration: duration
-        }
-      };
-      this.socket.emit('flagBlock', flagOperation);
+      if (!this.isPlaying()) {
+        const flagOperation = {
+          rowId: rowId,
+          blockId: blockId,
+          operation: {
+            type: flagType,
+            startTime: startTime,
+            duration: duration
+          }
+        };
+        this.socket.emit('flagBlock', flagOperation);
+      }
     });
 
     this.ee.on('setSeeker', (position) => {
@@ -147,9 +153,17 @@ class Workspace extends Component {
       this.emitSpliceBlocks();
     })
 
-    this.ee.on('highlightBlock', (blockInfo) => {
-      this.highlightBlock(blockInfo);
+    this.ee.on('highlightBlock', (blockIndex, rowIndex) => {
+      this.highlightBlock({
+        blockIndex: blockIndex,
+        rowIndex: rowIndex
+      });
     });
+
+    this.ee.on('logout', () => {
+      this.userLoggingOut = true;
+      this.ee.emit('stop');
+    })
 
     this.playMusic = this.playMusic.bind(this);
     this.isPlaying = this.isPlaying.bind(this);
@@ -176,10 +190,6 @@ class Workspace extends Component {
     this.setPlayingMode = (playing) => dispatch(workspaceActions.setPlayingMode(playing));
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
-    this.logout = () => {
-      dispatch(workspaceActions.setPlayingMode(playingMode.STOP));
-      this.userLoggingOut = true;
-    };
     this.setRowGain = (info) => dispatch(workspaceActions.setRowGain(info));
     this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
   }
@@ -540,9 +550,9 @@ class Workspace extends Component {
       <div className={styles.page} >
         <div className = {styles.navbar} >
           <Navbar 
-            onLogout={this.logout}
-            workspaceWidth = {this.props.workspace.width}
-            workspaceId = {this.props.workspace.id} />
+            ee={this.ee}
+            workspaceWidth={this.props.workspace.width}
+            workspaceId={this.props.workspace.id} />
         </div>
 
 
