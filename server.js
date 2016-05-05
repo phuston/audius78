@@ -9,6 +9,9 @@ var config = require('./webpack.config.js');
 var injectTapEventPlugin = require('react-tap-event-plugin');
 var app = express();
 
+// Some very general notes pertaining to your modularity - love the groupings made
+// especially on client. Through you I got to take a taste for webpack that looks very legit 
+// and I like it. No particular comments on other architecture - nginx always a good choise.
 // Import socket handling
 var sockets = require('./sockets/sockets');
 
