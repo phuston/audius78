@@ -71,29 +71,22 @@ var socketObject = {
             return row._id == spliceOperation.rowId;
           })[0];
 
-          var leftBlock, rightBlock, index;
+          var joinedBlock, index;
 
           // Store unaltered blocks in a new array so later can use $set instead of nested $push
           newBlocks = updateRow.audioBlocks.filter(function(block, i) {
-            if (block._id == spliceOperation.leftBlockId) {
-              leftBlock = block;
+            if (block._id.toString() === spliceOperation.joinedBlock) {
+              joinedBlock = block;
               index = i;
               return false;
+            } else {
+              return spliceOperation.blocksToRemove.indexOf(block._id.toString()) === -1;
             }
-
-            if (block._id == spliceOperation.rightBlockId) {
-              rightBlock = block;
-              return false;
-            }
-
-            return true;
           });
 
-          // Combine both blocks into the left block by setting a new file_end
-          leftBlock.file_end = rightBlock.file_end;
-
-          // Reinsert the left block
-          newBlocks.splice(index, 0, leftBlock);
+          // Reinsert the newly joined block
+          joinedBlock.file_end = spliceOperation.newFileEnd;
+          newBlocks.splice(index, 0, joinedBlock);
 
           // Update the correct row
           updateRow.audioBlocks = newBlocks;
