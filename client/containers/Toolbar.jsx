@@ -13,16 +13,22 @@ class Toolbar extends Component{
 		super(props);
 	}
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      nextProps.playing !== this.props.playing ||
+      nextProps.toolMode !== this.props.toolMode
+    );
+  }
+
   render() {
     return (
       <div className = {styles.toolbar}>
-        <Tools currentZoom={this.props.currentZoom}
-          toolMode={this.props.toolMode}
+        <Tools toolMode={this.props.toolMode}
           playing={this.props.playing}
           cursor={this.props.cursor}
           ee={this.props.ee} />
       </div>
-    )
+    );
   }
 }
 

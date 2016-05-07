@@ -527,14 +527,17 @@ class Workspace extends Component {
             numRows={this.props.workspace.rows.length}
             playing={this.props.workspace.playing}
             speed={this.props.workspace.timing.speed}
-            ee={this.ee}/>
+            ee={this.ee}
+          />
 
           <Cursor position={this.props.workspace.timing.cursor} 
-            numRows={this.props.workspace.rows.length}/>
+            numRows={this.props.workspace.rows.length}
+          />
           <div className={styles.songs}>
             <TrackBox className={styles.trackbox} 
               workspace={this.props.workspace} 
-              ee={this.ee} />
+              ee={this.ee}
+            />
           </div>
         </div>
       );
@@ -565,12 +568,16 @@ class Workspace extends Component {
             toolMode={this.props.workspace.toolMode}
             currentZoom={this.props.workspace.zoomLevel}
             cursor={this.props.workspace.timing.cursor} 
-            ee={this.ee} />
+            ee={this.ee} 
+          />
 
           {workspace}
 
           <div className={styles.dropzoneBox}>
-            <Dropzone onDrop={this.onDrop} className={styles.dropzone}><span className={styles.addNew}>+</span></Dropzone>
+            <Dropzone onDrop={this.onDrop} 
+              className={styles.dropzone}>
+              <span className={styles.addNew}>+</span>
+            </Dropzone>
           </div>
 
         </div>

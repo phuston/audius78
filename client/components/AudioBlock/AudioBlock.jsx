@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 import styles from './AudioBlock.scss'
 
 // Others
-import { playingMode, toolMode, UIConstants, selectColor } from '../../../utils.js';
+import { playingMode, toolMode, UIConstants } from '../../../utils.js';
 
 // Audio Processing
 import extractPeaks from 'webaudio-peaks';

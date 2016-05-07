@@ -17,55 +17,52 @@ class Waveform extends Component {
 
     this.draw = this.draw.bind(this);
     this.processProps = this.processProps.bind(this);
-    this.needsToUpdate = this.needsToUpdate.bind(this);
-    this.processProps(this.props);
     this.handleCanvasClick = this.handleCanvasClick.bind(this);
-    this.props.ee.emit('setSpeed', this.peaks.data[0].length/(2*this.props.row.rawAudio.duration));
+
+    this.processProps(this.props);
   }
 
-  needsToUpdate(oldProps, newProps) {
+  shouldComponentUpdate(nextProps, nextState) {
   	// New properties only need to be computed if a zoom event fires or a block changes.
   	return (
-  		(oldProps.currentZoom !== newProps.currentZoom) ||
-  		(oldProps.block.file_end !== newProps.block.file_end) ||
-      (oldProps.block.row_offset !== newProps.block.row_offset) ||
-      (oldProps.block._id !== newProps.block._id)
+  		this.props.currentZoom !== nextProps.currentZoom ||
+  		this.props.block.file_end !== nextProps.block.file_end ||
+      this.props.block.row_offset !== nextProps.block.row_offset ||
+      this.props.block._id !== nextProps.block._id ||
+      this.props.selected !== nextProps.selected
 		);
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    this.processProps(nextProps);  
   }
 
   processProps(props) {
   	// Set new peaks and starting and ending points of waveform block
-    let zoom = props.currentZoom;
+    const zoom = props.currentZoom;
+
   	this.peaks = extractPeaks(props.row.rawAudio, 2000*zoom, true);
   	this.firstPeak = Math.floor(props.block.file_offset / zoom);
   	this.lastPeak = Math.ceil((props.block.file_end / zoom) || (this.peaks.data[0].length - 1));
   	this.width = this.peaks.data[0].slice(this.firstPeak, this.lastPeak).length/2 - 2;
-  }
-
-  componentWillReceiveProps(nextProps) {
-  	// Need to pre-emptively update state so that component can render with correct width
-  	if (this.needsToUpdate(this.props, nextProps)) {
-    	this.processProps(nextProps);
-  	}
+    this.props.ee.emit('setSpeed', this.peaks.data[0].length/(2*this.props.row.rawAudio.duration));
   }
 
   componentDidUpdate(prevProps, prevState) {
-  	// Only draw once the canvas has been rendered
-    if (this.needsToUpdate(prevProps, this.props)) {
-    	let ctx = ReactDOM.findDOMNode(this).getContext('2d');
-      let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
-      this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
-      this.props.ee.emit('setWidth', this.left + (this.peaks.data[0].length/2) + 100);
-      this.draw(ctx);
-      this.props.ee.emit('setSpeed', this.peaks.data[0].length/(2*this.props.row.rawAudio.duration));
-    }
+  	this.update();
   }
 
   componentDidMount() {
-    let ctx = ReactDOM.findDOMNode(this).getContext('2d');
-    let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+    this.update();
+  }
+
+  update() {
+    const ctx = ReactDOM.findDOMNode(this).getContext('2d');
+    const rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+
     this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
     this.props.ee.emit('setWidth', this.left + (this.peaks.data[0].length/2) + 100);
+    
     this.draw(ctx);
   }
 
@@ -84,8 +81,8 @@ class Waveform extends Component {
         const distanceInWaveform = e.pageX - this.left + 4;
         const start = this.firstPeak * this.props.currentZoom;
         const end = this.lastPeak * this.props.currentZoom;
-
         const splitElement = Math.ceil((end - start) * (distanceInWaveform/this.width)) + start;
+        
         if (splitElement > start+10 && splitElement < end-10)
           this.props.ee.emit('splitBlock', this.props.row._id, this.props.block._id, splitElement);
         break;

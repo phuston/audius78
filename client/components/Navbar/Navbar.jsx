@@ -17,12 +17,15 @@ class Navbar extends Component{
     this.handleLogout = this.handleLogout.bind(this);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return false;  
+  }
+
   handleLogout() {
     this.props.ee.emit('logout');
   }
 
   render() {
-
     return (
       <div className = {styles.navbar} >
         <AppBar 
