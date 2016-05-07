@@ -13,25 +13,6 @@ class Row extends Component{
 
   constructor(props) {
     super(props);
-
-    this.emitSplitBlock = this.emitSplitBlock.bind(this);
-    this.emitMoveBlock = this.emitMoveBlock.bind(this);
-    this.highlightBlock = this.highlightBlock.bind(this);
-  }
-
-  emitSplitBlock(blockId, splitElement) {
-    this.props.ee.emit('splitBlock', this.props.row._id, blockId, splitElement);
-  }
-
-  emitMoveBlock(blockId, moveShift) {
-    this.props.ee.emit('moveBlock', this.props.row._id, blockId, moveShift);
-  }
-
-  highlightBlock(blockIndex) {
-    this.props.ee.emit('highlightBlock', {
-      blockIndex: blockIndex,
-      rowIndex: this.props.row.rowId
-    });
   }
 
   render(){
@@ -43,10 +24,7 @@ class Row extends Component{
           row={this.props.row} 
           playing={this.props.playing}
           ee={this.props.ee} />
-        <AudioBlock row={this.props.row} 
-          emitSplitBlock={this.emitSplitBlock}
-          emitMoveBlock={this.emitMoveBlock}
-          highlightBlock={this.highlightBlock}
+        <AudioBlock row={this.props.row}
           toolMode={this.props.toolMode}
           playing={this.props.playing}
         	currentZoom={this.props.currentZoom}

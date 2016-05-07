@@ -17,79 +17,79 @@ class Waveform extends Component {
 
     this.draw = this.draw.bind(this);
     this.processProps = this.processProps.bind(this);
-    this.needsToUpdate = this.needsToUpdate.bind(this);
-    this.processProps(this.props);
     this.handleCanvasClick = this.handleCanvasClick.bind(this);
-    this.props.ee.emit('setSpeed', this.peaks.data[0].length/(2*this.props.rawAudio.duration));
+
+    this.processProps(this.props);
   }
 
-  needsToUpdate(oldProps, newProps) {
+  shouldComponentUpdate(nextProps, nextState) {
   	// New properties only need to be computed if a zoom event fires or a block changes.
   	return (
-  		(oldProps.currentZoom !== newProps.currentZoom) ||
-  		(oldProps.block.file_end !== newProps.block.file_end) ||
-      (oldProps.block.row_offset !== newProps.block.row_offset) ||
-      (oldProps.block._id !== newProps.block._id)
+  		this.props.currentZoom !== nextProps.currentZoom ||
+  		this.props.block.file_end !== nextProps.block.file_end ||
+      this.props.block.row_offset !== nextProps.block.row_offset ||
+      this.props.block._id !== nextProps.block._id ||
+      this.props.selected !== nextProps.selected
 		);
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    this.processProps(nextProps);  
   }
 
   processProps(props) {
   	// Set new peaks and starting and ending points of waveform block
-    let zoom = props.currentZoom;
-  	this.peaks = extractPeaks(props.rawAudio, 2000*zoom, true);
+    const zoom = props.currentZoom;
+
+  	this.peaks = extractPeaks(props.row.rawAudio, 2000*zoom, true);
   	this.firstPeak = Math.floor(props.block.file_offset / zoom);
   	this.lastPeak = Math.ceil((props.block.file_end / zoom) || (this.peaks.data[0].length - 1));
   	this.width = this.peaks.data[0].slice(this.firstPeak, this.lastPeak).length/2 - 2;
-  }
-
-  componentWillReceiveProps(nextProps) {
-  	// Need to pre-emptively update state so that component can render with correct width
-  	if (this.needsToUpdate(this.props, nextProps)) {
-    	this.processProps(nextProps);
-  	}
+    this.props.ee.emit('setSpeed', this.peaks.data[0].length/(2*this.props.row.rawAudio.duration));
   }
 
   componentDidUpdate(prevProps, prevState) {
-  	// Only draw once the canvas has been rendered
-    if (this.needsToUpdate(prevProps, this.props)) {
-    	let ctx = ReactDOM.findDOMNode(this).getContext('2d');
-      let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
-      this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
-      this.props.ee.emit('setWidth', this.left + (this.peaks.data[0].length/2) + 100);
-      this.draw(ctx);
-      this.props.ee.emit('setSpeed', this.peaks.data[0].length/(2*this.props.rawAudio.duration));
-    }
+  	this.update();
   }
 
   componentDidMount() {
-    let ctx = ReactDOM.findDOMNode(this).getContext('2d');
-    let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+    this.update();
+  }
+
+  update() {
+    const ctx = ReactDOM.findDOMNode(this).getContext('2d');
+    const rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+
     this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
     this.props.ee.emit('setWidth', this.left + (this.peaks.data[0].length/2) + 100);
+    
     this.draw(ctx);
   }
 
   handleCanvasClick(e) {
   	// Figure out which tool mode the workspace is in to apply the correct operation
-    if (this.props.toolMode === toolMode.CURSOR) {
-      if (this.props.playing === playingMode.PLAYING) {
-        this.props.ee.emit('setSeeker', e.pageX - UIConstants.LEFT - 2);
-      } else {
-        this.props.ee.emit('setCursor', e.pageX - UIConstants.LEFT - 2);
-      }
-    } else if (this.props.playing !== playingMode.PLAYING) {
-      if (this.props.toolMode === toolMode.SPLIT) {
-        let distanceInWaveform = e.pageX - this.left + 5;
-        let start = this.firstPeak * this.props.currentZoom;
-        let end = this.lastPeak * this.props.currentZoom;
+    switch (this.props.toolMode) {
+      case toolMode.CURSOR:
+        if (this.props.playing === playingMode.PLAYING)
+          this.props.ee.emit('setSeeker', e.pageX - UIConstants.LEFT - 2);
+        else
+          this.props.ee.emit('setCursor', e.pageX - UIConstants.LEFT - 2);
+        break;
 
-        let splitElement = Math.ceil((end - start) * (distanceInWaveform/this.width)) + start;
-        if (splitElement > start+10 && splitElement < end-10) {
-          this.props.emitSplitBlock(this.props.block._id, splitElement);
-        }
-      } else if (this.props.toolMode === toolMode.SELECT) {
-        this.props.highlightBlock();
-      }
+      case toolMode.SPLIT:
+        // Do some math to work out where to split
+        const distanceInWaveform = e.pageX - this.left + 4;
+        const start = this.firstPeak * this.props.currentZoom;
+        const end = this.lastPeak * this.props.currentZoom;
+        const splitElement = Math.ceil((end - start) * (distanceInWaveform/this.width)) + start;
+        
+        if (splitElement > start+10 && splitElement < end-10)
+          this.props.ee.emit('splitBlock', this.props.row._id, this.props.block._id, splitElement);
+        break;
+
+      case toolMode.SELECT:
+        this.props.ee.emit('highlightBlock', this.props.blockIndex, this.props.row.rowId);
+        break;
     }
   }
 
@@ -125,16 +125,16 @@ class Waveform extends Component {
 
     ctx.fillStyle = '#fff';
     ctx.font = '10px Arial';
-    ctx.fillText(this.props.fileName, 5, 11, 100);
+    ctx.fillText(this.props.row.name, 5, 11, 100);
 
     ctx.restore();
   }
 
   render() {
-    let borderColor = this.props.selected ? '2px solid black' : '2px solid white';
+    let borderColor = this.props.selected ? '2px solid black' : '2px solid #bbb';
     return (
       <canvas width={this.width} height={UIConstants.ROW_HEIGHT-4}
-        style={{'border': borderColor, 'borderRadius': '5px', 'box-shadow' : '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'}}
+        style={{'border': borderColor, 'borderRadius': '5px', 'boxShadow' : '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'}}
         onClick={this.handleCanvasClick} />
     );
   }

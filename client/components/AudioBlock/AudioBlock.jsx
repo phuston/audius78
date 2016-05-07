@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 import styles from './AudioBlock.scss'
 
 // Others
-import { playingMode, toolMode, UIConstants, selectColor } from '../../../utils.js';
+import { playingMode, toolMode, UIConstants } from '../../../utils.js';
 
 // Audio Processing
 import extractPeaks from 'webaudio-peaks';
@@ -72,7 +72,7 @@ class AudioBlock extends Component {
       let complete = (e) => {
         e.preventDefault();
         el.onmousemove = el.onmouseup = null;
-        this.props.emitMoveBlock(blockId, this.totalMoved[blockId] * this.props.currentZoom);
+        this.props.ee.emit('moveBlock', this.props.row._id, blockId, this.totalMoved[blockId] * this.props.currentZoom);
         this.totalMoved[blockId] = 0;
         this.zIndices[blockId] = 0;
       };
@@ -92,16 +92,16 @@ class AudioBlock extends Component {
   }  
 
   render() {
-  	let data = this.props.row;
-  	let waveforms = data.audioBlocks.map((block, i) => {
-      let background = '#00bcd4'; // Color of the waveform
-      let style = {
+  	const row = this.props.row;
+    const background = '#00bcd4'; // Color of the waveform
+  	const waveforms = row.audioBlocks.map((block, i) => {
+      const style = {
         'backgroundColor': background,
         'border': 'none',
         'display': 'inline-block',
         'position': 'absolute',
         'height': '100px',
-        'top': UIConstants.TOP + data.rowId * (UIConstants.ROW_HEIGHT+7),
+        'top': UIConstants.TOP + row.rowId * (UIConstants.ROW_HEIGHT+7),
         'left': Math.max(this.initialOffset[block._id] / this.props.currentZoom + this.totalMoved[block._id], 0) + UIConstants.LEFT,
         'zIndex': this.zIndices[block._id],
       };
@@ -109,14 +109,12 @@ class AudioBlock extends Component {
   		return (
   			<div key={i} style={style} onMouseDown={this.onMouseDown.bind(this, block._id, i)}>
   				<Waveform block={block}
-            fileName={this.props.row.name}
-            highlightBlock={this.props.highlightBlock.bind(null, i)}
-            emitSplitBlock={this.props.emitSplitBlock}
+            row={row}
+            blockIndex={i}
             selected={block.selected}
             playing={this.props.playing}
             toolMode={this.props.toolMode}
-            currentZoom={this.props.currentZoom} 
-            rawAudio={this.props.row.rawAudio}
+            currentZoom={this.props.currentZoom}
             ee={this.props.ee}
           />
   			</div>
@@ -124,15 +122,16 @@ class AudioBlock extends Component {
   	});
 
     // Sets cursor image depending on tool mode
-    let audioBlockStyle = {
+    const audioBlockStyle = {
       'cursor': 'auto', 
       'width': this.props.width, 
       'height': UIConstants.ROW_HEIGHT+4,
-      'marginTop': (data.rowId === 0 ? 12 : 4),
+      'marginTop': (row.rowId === 0 ? 12 : 4),
     };
+
     switch (this.props.toolMode) {
       case (toolMode.SPLIT):
-        audioBlockStyle.cursor = 'url("http://localhost:3000/icons/cut.png"),auto';
+        audioBlockStyle.cursor = 'url("/icons/cut.png"),auto';
         break;
 
       case (toolMode.DRAG):

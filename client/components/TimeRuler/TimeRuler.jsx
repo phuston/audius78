@@ -64,7 +64,7 @@ class TimeRuler extends Component{
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		let ctx = ReactDOM.findDOMNode(this).getContext('2d');
+		const ctx = ReactDOM.findDOMNode(this).getContext('2d');
 		this.draw(ctx);
 	}
 
