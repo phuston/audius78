@@ -120,19 +120,19 @@ class Tools extends Component{
               </IconButton>
 
               <IconButton onClick={this.changeToCursor} tooltip="Cursor (C)">
-                <LocationSearch color={cursorStyle}/>
+                <LocationSearch color={cursorColor}/>
               </IconButton>
 
               <IconButton onClick={this.changeToDrag} tooltip="Drag (D)">
-                <OpenWith color={dragStyle} />
+                <OpenWith color={dragColor} />
               </IconButton>
 
               <IconButton onClick={this.changeToSplit} tooltip="Split (X)">
-                <Scissor color={splitStyle} />
+                <Scissor color={splitColor} />
               </IconButton>
 
               <IconButton onClick={this.changeToSelect} tooltip="Pick (P)">
-                <Hand color={selectStyle} />
+                <Hand color={selectColor} />
               </IconButton>
 
               <IconButton onClick={this.removeBlocks} tooltip="Delete (delete)">
