@@ -3,6 +3,7 @@ var sockets = require('../sockets/sockets');
 var Workspace = require('../models/workspace');
 var defaultWorkspace = require('../models/defaultWorkspace');
 
+// might look into using timestamp as seed for your prng
 function generateUUID() {
   var d = new Date().getTime();
   var uuid = 'xxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -14,7 +15,7 @@ function generateUUID() {
 };
 
 router.post('/create', function(req, res, next) {
-  // Compute real hash for new workspace 
+  // Compute real hash for new workspace
   var hash = generateUUID();
   var newWorkspace = defaultWorkspace;
   newWorkspace.id = hash;

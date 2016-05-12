@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
-// Styling 
+// Styling
 import styles from './AudioBlock.scss'
 
 // Others
@@ -89,7 +89,7 @@ class AudioBlock extends Component {
         this.props.ee.emit('setCursor', e.pageX - UIConstants.LEFT - 2);
       }
     }
-  }  
+  }
 
   render() {
   	const row = this.props.row;
@@ -123,8 +123,8 @@ class AudioBlock extends Component {
 
     // Sets cursor image depending on tool mode
     const audioBlockStyle = {
-      'cursor': 'auto', 
-      'width': this.props.width, 
+      'cursor': 'auto',
+      'width': this.props.width,
       'height': UIConstants.ROW_HEIGHT+4,
       'marginTop': (row.rowId === 0 ? 12 : 4),
     };

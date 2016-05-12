@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { playingMode, toolMode, UIConstants } from '../../utils.js';
 
-// Styling 
+// Styling
 import styles from './Containers.scss';
 
 // Material
@@ -20,6 +20,7 @@ class TrackBox extends Component{
   render() {
     let rows;
   	if (this.props.workspace.rows) {
+            //why Array,prototype.map instead of this.props.workspace.rows.map()?
 			rows = Array.prototype.map.call(this.props.workspace.rows, (row) => {
 	  		return (
           <Card key={row.rowId}>
@@ -30,6 +31,7 @@ class TrackBox extends Component{
               toolMode={this.props.workspace.toolMode}
               playing={this.props.workspace.playing}
               width={this.props.workspace.width}
+              //what is ee?
               ee={this.props.ee}
             />
           </Card>

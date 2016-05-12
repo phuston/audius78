@@ -182,6 +182,7 @@ class Workspace extends Component {
     this.emitRemoveBlocks = this.emitRemoveBlocks.bind(this);
     this.emitSpliceBlocks = this.emitSpliceBlocks.bind(this);
 
+    // How do ^ work if dispatch is defined down here?
     // Client side events
     let dispatch = this.props.dispatch;
     this.setToolMode = (mode) => dispatch(workspaceActions.setToolMode(mode));
@@ -198,6 +199,7 @@ class Workspace extends Component {
 
     let dispatch = this.props.dispatch;
 
+    // what is patrick doing here?
     this.socket.emit('connectWorkspace', 'patrick', this.props.workspace.id);
 
     window.addEventListener('keydown', (e) => {

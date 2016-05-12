@@ -1,3 +1,5 @@
+// I'm not sold on having action types be variables declared else where that always have the same name as their value
+// it seems redundent and maybe a bit churlish
 // User actions
 export const ADD_USER = 'ADD_USER';
 export const REMOVE_USER = 'REMOVE_USER';

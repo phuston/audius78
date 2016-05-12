@@ -19,13 +19,14 @@ export default handleActions({
     return {...state, allowRowDelete: action.payload};
   },
 
+  // I think a more careful design of your api and state structures could have made your reducers a lot simpler
   HIGHLIGHT_BLOCK: (state, action) => {
     let blocks = state.rows[action.payload.rowIndex].audioBlocks;
     blocks[action.payload.blockIndex].selected = !blocks[action.payload.blockIndex].selected;
     return {
-      ...state, 
+      ...state,
       rows: {
-        ...state.rows, 
+        ...state.rows,
         [action.payload.rowIndex]: {
           ...state.rows[action.payload.rowIndex],
           audioBlocks: blocks,
@@ -76,14 +77,14 @@ export default handleActions({
   SET_SPEED: (state, action) => {
     return {...state, timing: {...state.timing, speed: action.payload}};
   },
-  
+
   ADD_ROW: (state, action) => {
     let oldLength = state.rows.length;
 		return {
-      ...state, 
+      ...state,
       rows: {
-        ...state.rows, 
-        [action.payload.rowId]: action.payload, 
+        ...state.rows,
+        [action.payload.rowId]: action.payload,
         length: oldLength+1
       }
     };

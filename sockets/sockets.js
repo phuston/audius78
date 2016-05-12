@@ -67,7 +67,7 @@ var socketObject = {
           var newRows = workspace.rows;
 
           // Find correct row to update
-          var updateRow = workspace.rows.filter(function (row){ 
+          var updateRow = workspace.rows.filter(function (row){
             return row._id == spliceOperation.rowId;
           })[0];
 
@@ -117,8 +117,8 @@ var socketObject = {
           var newRows = workspace.rows;
 
           // Find correct row to update
-          var updateRow = workspace.rows.filter(function (row){ 
-            return row._id == splitOperation.rowId 
+          var updateRow = workspace.rows.filter(function (row){
+            return row._id == splitOperation.rowId
           })[0];
 
           var leftBlock, index, newBlocks;
@@ -180,8 +180,8 @@ var socketObject = {
           var newRows = workspace.rows;
 
           // Find correct row to update
-          var updateRow = workspace.rows.filter(function (row){ 
-            return row._id == flagOperation.rowId; 
+          var updateRow = workspace.rows.filter(function (row){
+            return row._id == flagOperation.rowId;
           })[0];
 
           // Find correct audioBlock to update
@@ -194,6 +194,7 @@ var socketObject = {
 
           newRows[updateRow.rowId] = updateRow;
 
+          // nice use of advanced parts of the mongoose api
           Workspace.findByIdAndUpdate(
             workspace._id,
             {$set: {rows: newRows}},
@@ -250,7 +251,7 @@ var socketObject = {
             {$safe: true, upsert: false, new: true},
             function(err, newWorkspace) {
               if (err) return console.error(err);
-              
+
               // Emit socket event to notify all clients to update state
               io.sockets.in(socket.workspaceId).emit('applyMoveBlock', {
                 rowId: updateRow.rowId,

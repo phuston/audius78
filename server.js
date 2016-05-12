@@ -26,6 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:false}));
 app.use(cookieParser());
 
+// tap events? Does this work on mobile?
 injectTapEventPlugin();
 
 // Set up webpack for development environment
@@ -35,7 +36,7 @@ if(isDev) {
 
   console.log("In Development Mode");
   const compiler = webpack(config);
-  app.use(webpackMiddleware(compiler, 
+  app.use(webpackMiddleware(compiler,
     {
       stats: {
         colors: true,
@@ -52,8 +53,8 @@ if(isDev) {
   }));
 }
 
-app.use(express.static(path.join(__dirname, '/public')));  
-app.use(express.static(path.join(__dirname, '/static')));  
+app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, '/static')));
 
 // Routes
 app.use('/api/workspace/', workspace);

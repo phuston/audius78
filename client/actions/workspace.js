@@ -19,29 +19,30 @@ export const newWorkspace = createAction(types.LOAD_WORKSPACE, (audioCtx)=>{
     return Promise.all(data.workspace.rows.map((row) => {
       return fetch(row.rawAudio);
     }))
+    // I think you only need one layer of nesting here not three, like:
     .then((files) => {
       return Promise.all(files.map((file) => {
         return file.arrayBuffer();
       }))
-      .then((arrayBuffers) => {
-        return Promise.all(arrayBuffers.map((arrayBuffer) => {
-          return audioCtx.decodeAudioData(arrayBuffer);
-        }))
-        .then((buffers) => {
-          let rows = {}
-          let len;
+    })
+    .then((arrayBuffers) => {
+      return Promise.all(arrayBuffers.map((arrayBuffer) => {
+        return audioCtx.decodeAudioData(arrayBuffer);
+      }))
+    })
+    .then((buffers) => {
+      let rows = {}
+      let len;
 
-          data.workspace.rows.map((row, i) => {
-            row.rawAudio = buffers[i];
-            rows[Number(i)] = row;
-            len = i;
-            return row;
-          });
-
-          rows.length = len+1;
-          return {id: data.workspace.id, rows: rows}; 
-        });
+      data.workspace.rows.map((row, i) => {
+        row.rawAudio = buffers[i];
+        rows[Number(i)] = row;
+        len = i;
+        return row;
       });
+
+      rows.length = len+1;
+      return {id: data.workspace.id, rows: rows};
     });
   })
   .catch(err =>{
@@ -86,7 +87,7 @@ export const loadWorkspace = createAction(types.LOAD_WORKSPACE, (workspaceId, au
           });
 
           rows.length = len+1;
-          return {id: data.workspace.id, rows: rows}; 
+          return {id: data.workspace.id, rows: rows};
         });
       });
     });
@@ -101,7 +102,7 @@ export const setWorkspaceWidth = createAction(types.SET_WORKSPACE_WIDTH, (width)
 });
 
 export const addRow = createAction(types.ADD_ROW, (addOperation, audioCtx) => {
-  
+
   return fetch(addOperation.newRow.rawAudio)
   .then((file) => {
     return file.arrayBuffer();
