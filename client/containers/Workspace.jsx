@@ -358,8 +358,6 @@ class Workspace extends Component {
     });
     
     this.masterOutputNode = this.audioCtx.createChannelMerger(channelCount);
-    var self = this;
-    
     let currentBlockIndex = 0;
     
     let sourceBuffers = Array.prototype.map.call(workspace.rows, (row) => {
@@ -367,20 +365,20 @@ class Workspace extends Component {
       
       let blocks = Array.prototype.map.call(row.audioBlocks, (audioBlock, i)=>{
         let block = {};
-        let gainNode = self.audioCtx.createGain();
+        let gainNode = this.audioCtx.createGain();
 
         // Connect the graph of audio
-        block.source = self.audioCtx.createBufferSource();
+        block.source = this.audioCtx.createBufferSource();
         block.source.buffer = row.rawAudio;
         block.source.connect(gainNode);
         
-        let splitterNode = self.audioCtx.createChannelSplitter(2);
+        let splitterNode = this.audioCtx.createChannelSplitter(2);
         gainNode.connect(splitterNode);
         
         if (doRecording) {
-          splitterNode.connect(self.masterOutputNode, currentBlockIndex++);  
+          splitterNode.connect(this.masterOutputNode, currentBlockIndex++);  
         } else {
-          splitterNode.connect(self.audioCtx.destination);
+          splitterNode.connect(this.audioCtx.destination);
         }        
 
         let rawAudioLength = block.source.buffer.length;
