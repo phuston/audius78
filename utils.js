@@ -5,7 +5,8 @@ Utility script that includes enumeration constants
 module.exports.playingMode = Object.freeze({
 	PLAYING: 0, 
 	PAUSE: 1, 
-	STOP: 2 
+	STOP: 2,
+	EXPORT: 3
 });
 
 module.exports.zoomLimits = Object.freeze({
