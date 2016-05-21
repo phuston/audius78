@@ -36,7 +36,8 @@ class Workspace extends Component {
     this.sourceBuffers = [];
     this.onDrop = this.onDrop.bind(this);
     this.ee = new EventEmitter();
-
+    this.recorder = null;
+    this.masterOutputNode = null;
     this.ee.on('playPause', () => {
       if (this.isPlaying()) 
         this.setPlayingMode(playingMode.PAUSE);
@@ -63,7 +64,12 @@ class Workspace extends Component {
     this.ee.on('select', () => {
       this.setToolMode(toolMode.SELECT);
     });
-
+    this.ee.on('export', () => {
+      this.setPlayingMode(playingMode.EXPORT);
+      let tracksToExport = []; // TODO allow user to toggle which tracks are included 
+      this.export(tracksToExport);
+    });
+      
     this.ee.on('zoomIn', () => {
       if (!this.isPlaying())
         this.setZoom(this.props.workspace.zoomLevel / 2);
@@ -309,7 +315,8 @@ class Workspace extends Component {
             // This means last state was STOP
             this.ee.emit('setSeeker', this.props.workspace.timing.cursor);
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            this.playMusic();
+            
+            this.playMusic(false, this.handleAudioBlockEnding);
           } else {
             // This means last state was PAUSE
             this.audioCtx.resume();
@@ -337,25 +344,44 @@ class Workspace extends Component {
     }
   }
 
-  playMusic(){
+  playMusic(doRecording, onBlocksEnded, tracksToExport){
     this.rerenderAudio = false;
     this.numBlocks = 0;
 
     const workspace = this.props.workspace;
     const samplesPerPeak = workspace.zoomLevel * 2000;
     const pixelsPerSec = this.props.workspace.timing.speed * workspace.zoomLevel;
-
+    let channelCount = 0;
+    
+    Array.prototype.map.call(workspace.rows, (row) => {
+      channelCount += row.audioBlocks.length;
+    });
+    
+    this.masterOutputNode = this.audioCtx.createChannelMerger(channelCount);
+    var self = this;
+    
+    let currentBlockIndex = 0;
+    
     let sourceBuffers = Array.prototype.map.call(workspace.rows, (row) => {
+      // TODO check if track is in tracksToExport
+      
       let blocks = Array.prototype.map.call(row.audioBlocks, (audioBlock, i)=>{
-
         let block = {};
-        let gainNode = this.audioCtx.createGain();
+        let gainNode = self.audioCtx.createGain();
 
         // Connect the graph of audio
-        block.source = this.audioCtx.createBufferSource();
+        block.source = self.audioCtx.createBufferSource();
         block.source.buffer = row.rawAudio;
         block.source.connect(gainNode);
-        gainNode.connect(this.audioCtx.destination);
+        
+        let splitterNode = self.audioCtx.createChannelSplitter(2);
+        gainNode.connect(splitterNode);
+        
+        if (doRecording) {
+          splitterNode.connect(self.masterOutputNode, currentBlockIndex++);  
+        } else {
+          splitterNode.connect(self.audioCtx.destination);
+        }        
 
         let rawAudioLength = block.source.buffer.length;
         let duration = block.source.buffer.duration;
@@ -376,7 +402,11 @@ class Workspace extends Component {
 
       return blocks;
     });
-
+    
+    if (doRecording) {
+      this.recorder = new Recorder(this.masterOutputNode, {workerPath: '/recorderWorker.js'}); // TODO config?
+    }
+     
     sourceBuffers.map( (row) => {
       row.map( (block, i) => {
         let delay = block.delayTime - this.startTime;
@@ -387,9 +417,19 @@ class Workspace extends Component {
         } else {
           this.countingBlocks++;
         }
-        block.source.onended = () => this.handleAudioBlockEnding();
+        block.source.onended = () => {
+          this.countingBlocks++;
+
+          if (this.countingBlocks === this.numBlocks) {
+            onBlocksEnded();
+          }
+        };
       });
     });
+    
+    if (doRecording) {
+      this.recorder.record();
+    }
   }
 
   isPlaying() {
@@ -498,13 +538,16 @@ class Workspace extends Component {
   }
 
   handleAudioBlockEnding() {
-    this.countingBlocks++;
-
-    if (this.countingBlocks === this.numBlocks) {
+    
       this.ee.emit('stop');
       this.ee.emit('setSeeker', this.props.workspace.timing.cursor);
       this.countingBlocks = 0;
-    }
+      
+      if (this.recorder) {
+        this.recorder.stop();
+        console.log('recording stopped');
+      }
+    
   }
 
   seekTime(time) {
@@ -513,8 +556,22 @@ class Workspace extends Component {
       this.audioCtx.close();
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       this.countingBlocks = 0;
-      this.playMusic();
+      this.playMusic(false, this.handleAudioBlockEnding);
     }
+  }
+  
+  export(tracksToExport) {
+    console.debug('Starting export');
+    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    this.countingBlocks = 0;
+    
+    this.playMusic(true, () => {
+      console.debug('Generating file');
+      this.recorder.exportWAV(blob => {
+        this.setPlayingMode(playingMode.STOP);
+        Recorder.forceDownload(blob, this.props.workspace.id + '.wav');
+      }, tracksToExport);
+    });
   }
 
   render() {
