@@ -23,6 +23,8 @@ import OpenWith from 'material-ui/lib/svg-icons/action/open-with';
 import Play from 'material-ui/lib/svg-icons/av/play-arrow';
 import Pause from 'material-ui/lib/svg-icons/av/pause';
 import CompareArrows from 'material-ui/lib/svg-icons/action/compare-arrows';
+import KeyBoardArrowLeft from 'material-ui/lib/svg-icons/hardware/keyboard-arrow-left';
+import KeyBoardArrowRight from 'material-ui/lib/svg-icons/hardware/keyboard-arrow-right';
 import SystemUpdateAlt from 'material-ui/lib/svg-icons/action/system-update-alt';
 
 class Tools extends Component{
@@ -37,6 +39,8 @@ class Tools extends Component{
     this.changeToDrag = this.changeToDrag.bind(this);
     this.changeToSplit = this.changeToSplit.bind(this);
     this.changeToSelect = this.changeToSelect.bind(this);
+    this.changeToFadeIn = this.changeToFadeIn.bind(this);
+    this.changeToFadeOut = this.changeToFadeOut.bind(this);
     this.exportRecording = this.export.bind(this);
     this.removeBlocks = this.removeBlocks.bind(this);
     this.joinBlocks = this.joinBlocks.bind(this);
@@ -61,6 +65,14 @@ class Tools extends Component{
 
   changeToSelect() {
     this.props.ee.emit('select');
+  }
+
+  changeToFadeIn() {
+    this.props.ee.emit('fadein');
+  }
+
+  changeToFadeOut() {
+    this.props.ee.emit('fadeout');
   }
   
   export() {
@@ -95,7 +107,7 @@ class Tools extends Component{
   
   render() {
     // Change cursor apperance 
-    let cursorColor, splitColor, dragColor, selectColor;
+    let cursorColor, splitColor, dragColor, selectColor, fadeInColor, fadeOutColor;
 
     switch (this.props.toolMode) {
       case toolMode.CURSOR:
@@ -112,6 +124,14 @@ class Tools extends Component{
 
       case toolMode.SELECT:
         selectColor = selectedColor;
+        break;
+
+      case toolMode.FADEIN:
+        fadeInColor = selectedColor;
+        break;
+
+      case toolMode.FADEOUT:
+        fadeOutColor = selectedColor;
         break;
     }
 
@@ -143,6 +163,14 @@ class Tools extends Component{
 
               <IconButton onClick={this.changeToSelect} tooltip="Pick (P)" disabled={!this.areButtonsEnabled()}>
                 <Hand color={selectColor} />
+              </IconButton>
+
+              <IconButton onClick={this.changeToFadeIn} tooltip="Fade In" disabled={!this.areButtonsEnabled()}>
+                <KeyBoardArrowRight color={fadeInColor} />
+              </IconButton>
+
+              <IconButton onClick={this.changeToFadeOut} tooltip="Fade Out" disabled={!this.areButtonsEnabled()}>
+                <KeyBoardArrowLeft color={fadeOutColor} />
               </IconButton>
 
               <IconButton onClick={this.removeBlocks} tooltip="Delete (delete)" disabled={!this.areButtonsEnabled()}>

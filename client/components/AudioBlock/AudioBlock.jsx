@@ -6,13 +6,14 @@ import ReactDOM from 'react-dom';
 import styles from './AudioBlock.scss'
 
 // Others
-import { playingMode, toolMode, UIConstants } from '../../../utils.js';
+import { playingMode, toolMode, UIConstants, flagType } from '../../../utils.js';
 
 // Audio Processing
 import extractPeaks from 'webaudio-peaks';
 
 // Components
 import Waveform from '../Waveform/Waveform.jsx';
+import FadeCanvas from '../FadeCanvas/FadeCanvas.jsx';
 
 class AudioBlock extends Component {
 	constructor(props) {
@@ -106,9 +107,27 @@ class AudioBlock extends Component {
         'zIndex': this.zIndices[block._id],
       };
 
+      // let fadeInCanvas, fadeOutCanvas;
+
+      // block.flags.map((flag, i) => {
+      //   switch (flag.type) {
+      //     case flagType.FADEIN:
+      //       fadeInCanvas = <FadeCanvas fade={flag}/>;
+      //       break;
+
+      //     case flagType.FADEOUT:
+      //       fadeOutCanvas = <FadeCanvas fade={flag}/>;
+      //       break;
+      //   }
+      // });
+      
+      let fadeInCanvas = <FadeCanvas fade={{start: 0, end: 50, type: 0}} />;
+      
+
   		return (
   			<div key={i} style={style} onMouseDown={this.onMouseDown.bind(this, block._id, i)}>
-  				<Waveform block={block}
+  				{fadeInCanvas}
+          <Waveform block={block}
             row={row}
             blockIndex={i}
             selected={block.selected}

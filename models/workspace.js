@@ -14,9 +14,9 @@ var workspaceSchema = mongoose.Schema({
       row_offset: Number,
       file_offset: Number,
       flags: [{
-        start_time: Number,
-        duration: Number,
-        type: String
+        start: Number,
+        end: Number,
+        type: Number
       }]
     }]
   }]

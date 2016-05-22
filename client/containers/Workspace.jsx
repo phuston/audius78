@@ -64,6 +64,15 @@ class Workspace extends Component {
     this.ee.on('select', () => {
       this.setToolMode(toolMode.SELECT);
     });
+
+    this.ee.on('fadein', () => {
+      this.setToolMode(toolMode.FADEIN);
+    });
+
+    this.ee.on('fadeout', () => {
+      this.setToolMode(toolMode.FADEOUT);
+    });
+
     this.ee.on('export', () => {
       this.setPlayingMode(playingMode.EXPORT);
       let tracksToExport = []; // TODO allow user to toggle which tracks are included 

@@ -57,8 +57,8 @@ class Waveform extends Component {
   }
 
   update() {
-    const ctx = ReactDOM.findDOMNode(this).getContext('2d');
-    const rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+    const ctx = ReactDOM.findDOMNode(this).getContext('2d'),
+          rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
 
     this.left = rect.left + (window.pageXOffset || document.documentElement.scrollLeft || 0);
     this.props.ee.emit('setWidth', this.left + (this.peaks.data[0].length/2) + 100);
@@ -107,7 +107,7 @@ class Waveform extends Component {
     let maxValue = Math.pow(2, bits-1);
 
     ctx.save();
-    ctx.fillStyle = '#00838F';
+    ctx.fillStyle = "rgba(0, 131, 143, 0.8)";
 
     // Every two peaks fit into one pixel width: one from top and one from bottom border
     for (i=this.firstPeak+2; i < this.lastPeak-2; i+=2) {
@@ -134,7 +134,12 @@ class Waveform extends Component {
     let borderColor = this.props.selected ? '2px solid black' : '2px solid #bbb';
     return (
       <canvas width={this.width} height={UIConstants.ROW_HEIGHT-4}
-        style={{'border': borderColor, 'borderRadius': '5px', 'boxShadow' : '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'}}
+        style={{
+          'position': 'absolute',
+          'border': borderColor, 
+          'borderRadius': '5px', 
+          'boxShadow' : '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'
+        }}
         onClick={this.handleCanvasClick} />
     );
   }
