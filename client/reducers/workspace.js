@@ -58,7 +58,11 @@ export default handleActions({
   SET_SEEKER: (state, action) => {
     return {...state, timing: {...state.timing, seeker: Math.max(0,action.payload)}};
   },
-
+  
+  SET_EXPORT_PROGRESS: (state, action) => {
+    return {...state, timing: {...state.timing, exportProgress: Math.min(100, action.payload)}};
+  },
+  
   SET_ZOOM: (state, action) => {
     let zoom = Math.min(Math.max(action.payload, zoomLimits.LOWER), zoomLimits.UPPER);
     let zoomRatio = state.zoomLevel/zoom;

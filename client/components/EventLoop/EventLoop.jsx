@@ -1,4 +1,4 @@
-const TICK_TIME = 50; // 50 ms / tick
+const TICK_TIME = 250; // ms / tick
 
 class EventLoopManager {
   constructor(props) {
@@ -6,10 +6,15 @@ class EventLoopManager {
     this.currentTick = 0;
     this.handlers = {};
     this.isPaused = false;
+    this.elapsedTime = 0;
   }
   
   addHandler(handlerName, handler) {
     this.handlers[handlerName] = handler;
+  }
+  
+  clearHandler(handlerName) {
+    delete this.handlers[handlerName];
   }
   
   startLoop() {
