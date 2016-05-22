@@ -7,6 +7,9 @@ import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 import * as workspaceActions from '../actions/workspace.js';
 import EventEmitter from 'event-emitter';
 
+// Utilities
+import EventLoopManager from '../components/EventLoop/EventLoop.jsx';
+
 // Containers + Components
 import TrackBox from './TrackBox.jsx';
 import Navbar from '../components/Navbar/Navbar.jsx';
@@ -38,6 +41,12 @@ class Workspace extends Component {
     this.ee = new EventEmitter();
     this.recorder = null;
     this.masterOutputNode = null;
+    this.eventLoopManager_ = new EventLoopManager();
+    
+    this.eventLoopManager_.addHandler('lmao', () => {
+      console.log('lmaoooo');
+    });
+    
     this.ee.on('playPause', () => {
       if (this.isPlaying()) 
         this.setPlayingMode(playingMode.PAUSE);
@@ -320,6 +329,7 @@ class Workspace extends Component {
           } else {
             // This means last state was PAUSE
             this.audioCtx.resume();
+            this.eventLoopManager_.startLoop();
           }
           break;
 
@@ -327,13 +337,15 @@ class Workspace extends Component {
           this.audioCtx.suspend();
           // Have to reset the seeker to handle a bug when repeatedly hitting pause/play
           this.ee.emit('setSeeker', (this.startTime+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
+          this.eventLoopManager_.pauseLoop();
           break;
 
         case (playingMode.STOP):
           // Close and remove audo context
           this.audioCtx.close();
           this.audioCtx = undefined;
-
+          this.eventLoopManager_.stopLoop();
+          
           // Have to reset the cursor to handle a bug when repeatedly hitting stop/play
           this.startTime = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
           break;
@@ -404,7 +416,9 @@ class Workspace extends Component {
     if (doRecording) {
       this.recorder = new Recorder(this.masterOutputNode, {workerPath: '/recorderWorker.js'}); // TODO config?
     }
-     
+    
+    this.eventLoopManager_.startLoop();
+    
     sourceBuffers.map( (row) => {
       row.map( (block, i) => {
         let delay = block.delayTime - this.startTime;
@@ -419,6 +433,7 @@ class Workspace extends Component {
           this.countingBlocks++;
 
           if (this.countingBlocks === this.numBlocks) {
+            this.eventLoopManager_.stopLoop();
             onBlocksEnded();
           }
         };
