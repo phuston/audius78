@@ -189,5 +189,7 @@ export const setSpeed = createAction(types.SET_SPEED, (speed) => {
   return speed;
 });
 
-
+export const setExportProgress = createAction(types.SET_EXPORT_PROGRESS, (progress) => {
+  return progress;
+});
 
