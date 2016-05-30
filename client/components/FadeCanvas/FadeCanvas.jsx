@@ -64,8 +64,7 @@ class FadeCanvas extends Component {
 	}
 
 	processProps(props) {
-		const zoom = props.currentZoom,
-			begin = props.fade.start / props.zoom,
+		const begin = props.fade.start / props.zoom,
 			end = props.fade.end / props.zoom;
 
 		this.width = end - begin;
@@ -78,7 +77,7 @@ class FadeCanvas extends Component {
 			<canvas width={this.width} height={UIConstants.ROW_HEIGHT-4}
 				style={{
 					'borderRadius': '5px',
-					'left': this.props.fade.start / this.props.zoom + 2,
+					'left': this.props.fade.start/this.props.zoom + 2,
 					'top': '2px',
 					'zIndex': '4',
 					'position': 'absolute',

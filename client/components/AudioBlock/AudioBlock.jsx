@@ -99,7 +99,7 @@ class AudioBlock extends Component {
     if (this.allowFadeIn()) {
       e.preventDefault();
       this.props.ee.emit('setFadeIn', {
-        end: e.clientX - block.row_offset - UIConstants.LEFT - 2, 
+        end: e.clientX - (block.row_offset / this.props.currentZoom) - UIConstants.LEFT - 2, 
         blockId: block._id, 
         rowId: rowId
       });
@@ -108,7 +108,7 @@ class AudioBlock extends Component {
     if (this.allowFadeOut()) {
       e.preventDefault();
       this.props.ee.emit('setFadeOut', {
-        start: e.clientX - block.row_offset - UIConstants.LEFT - 2,
+        start: e.clientX - (block.row_offset / this.props.currentZoom) - UIConstants.LEFT - 2,
         end: width,
         blockId: block._id,
         rowId: rowId
