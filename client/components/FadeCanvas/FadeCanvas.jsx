@@ -19,7 +19,9 @@ class FadeCanvas extends Component {
 
 	shouldComponentUpdate(nextProps, nextState) {
 	 	return (
-	 		this.props.currentZoom !== nextProps.currentZoom
+	 		this.props.zoom !== nextProps.zoom ||
+	 		this.props.fade.end !== nextProps.fade.end ||
+	 		this.props.fade.start !== nextProps.fade.start
  		);     
 	}
 
@@ -46,14 +48,15 @@ class FadeCanvas extends Component {
 		let curve, i, y,
 			height = (UIConstants.ROW_HEIGHT - 4);
 
+		ctx.save();
 		ctx.strokeStyle = "black";
 
-    y = height - this.curve[0] * height;
+    y = (1 - this.curve[0]) * height;
     ctx.beginPath();
     ctx.moveTo(0, y);
 
-    for (i = 3; i < this.curve.length; i++) {
-        y = height - this.curve[i] * height;
+    for (i = 1; i < this.curve.length; i++) {
+        y = (1 - this.curve[i]) * height;
         ctx.lineTo(i, y);
     }
 
@@ -62,12 +65,12 @@ class FadeCanvas extends Component {
 
 	processProps(props) {
 		const zoom = props.currentZoom,
-			reflection = (props.fade.type === flagType.FADEIN) ? 1 : -1,
-			begin = props.fade.start, // modify with zoom
-			end = props.fade.end; // modify with zoom
+			begin = props.fade.start / props.zoom,
+			end = props.fade.end / props.zoom;
 
-		this.width = (end - begin) / 2;
-		this.curve = logarithmic(this.width, 10, reflection);
+		this.width = end - begin;
+		this.curve = logarithmic(this.width, 10, 1);
+		if (props.fade.type === flagType.FADEOUT) this.curve.reverse();
 	}
 
 	render() {
@@ -75,7 +78,7 @@ class FadeCanvas extends Component {
 			<canvas width={this.width} height={UIConstants.ROW_HEIGHT-4}
 				style={{
 					'borderRadius': '5px',
-					'left': '2px',
+					'left': this.props.fade.start / this.props.zoom + 2,
 					'top': '2px',
 					'zIndex': '4',
 					'position': 'absolute',

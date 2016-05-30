@@ -68,11 +68,11 @@ class Tools extends Component{
   }
 
   changeToFadeIn() {
-    this.props.ee.emit('fadein');
+    this.props.ee.emit('fadeinMode');
   }
 
   changeToFadeOut() {
-    this.props.ee.emit('fadeout');
+    this.props.ee.emit('fadeoutMode');
   }
   
   export() {

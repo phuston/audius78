@@ -189,5 +189,9 @@ export const setSpeed = createAction(types.SET_SPEED, (speed) => {
   return speed;
 });
 
+export const applyFade = createAction(types.APPLY_FADE, (fadeOperation) => {
+  return fadeOperation;
+});
+
 
 

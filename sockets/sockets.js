@@ -313,9 +313,8 @@ var socketObject = {
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace) {
           if (err) return console.error(err);
 
-          var changedRow, index;
-
-          var newRows = workspace.rows.filter(function(row, i) {
+          var changedRow, index,
+          newRows = workspace.rows.filter(function(row, i) {
             if (row._id.toString() === gainOperation.rowId) {
               changedRow = row;
               index = i;
@@ -342,7 +341,117 @@ var socketObject = {
             }
           );
         })
-      })
+      });
+
+      socket.on('setFadeIn', function(fadeInOperation) {
+        Workspace.findOne({id: socket.workspaceId}, function(err, workspace) {
+          if (err) return console.error(err);
+
+          var changedRow, rowIndex, changedBlock, blockIndex, flagIndex
+          newRows = workspace.rows.map(function(row, i) {
+            if (row._id.toString() === fadeInOperation.rowId) {
+              changedRow = row;
+              rowIndex = i;
+            }
+            return row;
+          }),
+          newBlocks = changedRow.audioBlocks.map(function(block, i) {
+            if (block._id.toString() === fadeInOperation.blockId) {
+              changedBlock = block;
+              blockIndex = i;
+            }
+            return block;
+          }),
+          fadeElement = {
+            start: 0,
+            end: fadeInOperation.end,
+            type: 0
+          };
+
+          changedBlock.flags.map(function(flag, i) {
+            if (flag.type === 0) {
+              flagIndex = i;
+            }
+          });
+
+          if (flagIndex) {
+            changedBlock.flags[flagIndex] = fadeElement;
+          } else {
+            changedBlock.flags.push(fadeElement);
+          }
+
+          newRows[rowIndex].audioBlocks[blockIndex] = changedBlock;
+
+          Workspace.findByIdAndUpdate(
+            workspace._id,
+            {$set: {rows: newRows}},
+            {$safe: true, upsert: false, new: true},
+            function(err, newWorkspace) {
+              if (err) return console.error(err);
+
+              io.sockets.in(socket.workspaceId).emit('applyFade', {
+                rowId: rowIndex,
+                newBlocks: newWorkspace.rows[rowIndex].audioBlocks
+              });
+            }
+          );
+        });
+      });
+
+      socket.on('setFadeOut', function(fadeOutOperation) {
+        Workspace.findOne({id: socket.workspaceId}, function(err, workspace) {
+          if (err) return console.error(err);
+
+          var changedRow, rowIndex, changedBlock, blockIndex, flagIndex
+          newRows = workspace.rows.map(function(row, i) {
+            if (row._id.toString() === fadeOutOperation.rowId) {
+              changedRow = row;
+              rowIndex = i;
+            }
+            return row;
+          }),
+          newBlocks = changedRow.audioBlocks.map(function(block, i) {
+            if (block._id.toString() === fadeOutOperation.blockId) {
+              changedBlock = block;
+              blockIndex = i;
+            }
+            return block;
+          }),
+          fadeElement = {
+            start: fadeOutOperation.start,
+            end: fadeOutOperation.end,
+            type: 1
+          };
+
+          changedBlock.flags.map(function(flag, i) {
+            if (flag.type === 1) {
+              flagIndex = i;
+            }
+          });
+
+          if (flagIndex) {
+            changedBlock.flags[flagIndex] = fadeElement;
+          } else {
+            changedBlock.flags.push(fadeElement);
+          }
+
+          newRows[rowIndex].audioBlocks[blockIndex] = changedBlock;
+
+          Workspace.findByIdAndUpdate(
+            workspace._id,
+            {$set: {rows: newRows}},
+            {$safe: true, upsert: false, new: true},
+            function(err, newWorkspace) {
+              if (err) return console.error(err);
+
+              io.sockets.in(socket.workspaceId).emit('applyFade', {
+                rowId: rowIndex,
+                newBlocks: newWorkspace.rows[rowIndex].audioBlocks
+              });
+            }
+          );
+        });
+      });
 
     });
   },

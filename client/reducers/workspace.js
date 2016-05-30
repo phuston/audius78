@@ -1,6 +1,6 @@
 // Outside
 import { handleActions } from 'redux-actions';
-import { zoomLimits } from '../../utils';
+import { zoomLimits, flagType } from '../../utils';
 
 export default handleActions({
   LOAD_WORKSPACE: (state, action) => {
@@ -149,6 +149,22 @@ export default handleActions({
     let rowToUpdate = state.rows[action.payload.rowId];
     rowToUpdate.audioBlocks = action.payload.newBlocks;
     return {...state, rows: {...state.rows, [action.payload.rowId]: rowToUpdate}};
+  },
+
+  APPLY_FADE: (state, action) => {
+    const blockId = action.payload.blockId,
+          rowId = action.payload.rowId;
+
+    return {
+      ...state,
+      rows: {
+        ...state.rows,
+        [rowId]: {
+          ...state.rows[rowId],
+          audioBlocks: action.payload.newBlocks
+        }
+      }
+    };
   }
 }, {});
 
