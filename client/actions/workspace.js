@@ -193,5 +193,7 @@ export const applyFade = createAction(types.APPLY_FADE, (fadeOperation) => {
   return fadeOperation;
 });
 
-
+export const setExportProgress = createAction(types.SET_EXPORT_PROGRESS, (progress) => {
+  return progress;
+});
 

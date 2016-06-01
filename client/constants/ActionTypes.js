@@ -26,3 +26,4 @@ export const FLAG_BLOCK = 'FLAG_BLOCK';
 export const SPLIT_BLOCK = 'SPLIT_BLOCK';
 export const MOVE_BLOCK = 'MOVE_BLOCK';
 export const APPLY_FADE = 'APPLY_FADE';
+export const SET_EXPORT_PROGRESS = 'SET_EXPORT_PROGRESS';

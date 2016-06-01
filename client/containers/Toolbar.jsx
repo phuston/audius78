@@ -16,7 +16,8 @@ class Toolbar extends Component{
   shouldComponentUpdate(nextProps, nextState) {
     return (
       nextProps.playing !== this.props.playing ||
-      nextProps.toolMode !== this.props.toolMode
+      nextProps.toolMode !== this.props.toolMode ||
+      nextProps.exportProgress !== this.props.exportProgress
     );
   }
 
@@ -26,6 +27,7 @@ class Toolbar extends Component{
         <Tools toolMode={this.props.toolMode}
           playing={this.props.playing}
           cursor={this.props.cursor}
+          exportProgress={this.props.exportProgress}
           ee={this.props.ee} />
       </div>
     );

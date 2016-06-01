@@ -7,6 +7,7 @@ import styles from './Tools.scss';
 
 // Material
 import Toolbar from 'material-ui/lib/toolbar/toolbar';
+import LinearProgress from 'material-ui/lib/linear-progress';
 import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';
 import ToolbarTitle from 'material-ui/lib/toolbar/toolbar-title';
 import IconButton from 'material-ui/lib/icon-button';
@@ -184,6 +185,11 @@ class Tools extends Component{
               <IconButton onClick={this.exportRecording} tooltip="Export" disabled={!this.areButtonsEnabled()}>
                 <SystemUpdateAlt />
               </IconButton>
+              
+              <LinearProgress className={this.props.playing === playingMode.EXPORT ? styles.exportProgress : styles.hidden}
+                              mode="determinate"
+                              value={this.props.exportProgress}>
+              </LinearProgress>
           </ToolbarGroup>
 
           <ToolbarGroup float="right">

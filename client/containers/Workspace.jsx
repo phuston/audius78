@@ -7,6 +7,9 @@ import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 import * as workspaceActions from '../actions/workspace.js';
 import EventEmitter from 'event-emitter';
 
+// Utilities
+import EventLoopManager from '../components/EventLoop/EventLoop.jsx';
+
 // Containers + Components
 import TrackBox from './TrackBox.jsx';
 import Navbar from '../components/Navbar/Navbar.jsx';
@@ -38,7 +41,8 @@ class Workspace extends Component {
     this.ee = new EventEmitter();
     this.recorder = null;
     this.masterOutputNode = null;
-
+    this.eventLoopManager_ = new EventLoopManager();
+    
     this.ee.on('playPause', () => {
       if (this.isPlaying()) 
         this.setPlayingMode(playingMode.PAUSE);
@@ -183,7 +187,11 @@ class Workspace extends Component {
         rowIndex: rowIndex
       });
     });
-
+    
+    this.ee.on('setExportProgress', (progress) => {
+      dispatch(workspaceActions.setExportProgress(progress));
+    });
+    
     this.ee.on('logout', () => {
       this.userLoggingOut = true;
       this.ee.emit('stop');
@@ -344,6 +352,7 @@ class Workspace extends Component {
           } else {
             // This means last state was PAUSE
             this.audioCtx.resume();
+            this.eventLoopManager_.startLoop();
           }
           break;
 
@@ -351,13 +360,15 @@ class Workspace extends Component {
           this.audioCtx.suspend();
           // Have to reset the seeker to handle a bug when repeatedly hitting pause/play
           this.ee.emit('setSeeker', (this.startTime+this.audioCtx.currentTime) * this.props.workspace.timing.speed);
+          this.eventLoopManager_.pauseLoop();
           break;
 
         case (playingMode.STOP):
           // Close and remove audo context
           this.audioCtx.close();
           this.audioCtx = undefined;
-
+          this.eventLoopManager_.stopLoop();
+          
           // Have to reset the cursor to handle a bug when repeatedly hitting stop/play
           this.startTime = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
           break;
@@ -383,7 +394,8 @@ class Workspace extends Component {
     
     this.masterOutputNode = this.audioCtx.createChannelMerger(channelCount);
     let currentBlockIndex = 0;
-    
+    let latestEndingBlock = {duration: 0, delayTime: 0};
+     
     let sourceBuffers = Array.prototype.map.call(workspace.rows, (row) => {
       // TODO check if track is in tracksToExport
       
@@ -418,6 +430,11 @@ class Workspace extends Component {
         block.audioOffset = audioBlock.file_offset * 1000 * duration / rawAudioLength;
         block.duration = (audioEnd || duration) - block.audioOffset;
         block.delayTime = audioBlock.row_offset / pixelsPerSec;
+        
+        if (block.delayTime + block.duration > latestEndingBlock.delayTime + latestEndingBlock.duration) {
+          latestEndingBlock = block;
+        }
+        
         this.numBlocks++;
         return block;
       });
@@ -427,8 +444,16 @@ class Workspace extends Component {
     
     if (doRecording) {
       this.recorder = new Recorder(this.masterOutputNode, {workerPath: '/recorderWorker.js'}); // TODO config?
+      let exportEndTime = latestEndingBlock.duration + latestEndingBlock.delayTime;
+      
+      this.eventLoopManager_.addHandler('EXPORT_PROGRESS', () => {
+        let progress = this.audioCtx.currentTime * 100 / exportEndTime;
+        this.ee.emit('setExportProgress', progress);
+      });
     }
-     
+    
+    this.eventLoopManager_.startLoop();
+    
     sourceBuffers.map( (row) => {
       row.map( (block, i) => {
         let delay = block.delayTime - this.startTime;
@@ -443,6 +468,7 @@ class Workspace extends Component {
           this.countingBlocks++;
 
           if (this.countingBlocks === this.numBlocks) {
+            this.eventLoopManager_.stopLoop();
             onBlocksEnded();
           }
         };
@@ -591,6 +617,7 @@ class Workspace extends Component {
       console.debug('Generating file');
       this.recorder.exportWAV(blob => {
         this.setPlayingMode(playingMode.STOP);
+        this.ee.emit('setExportProgress', 0);
         Recorder.forceDownload(blob, this.props.workspace.id + '.wav');
       }, tracksToExport);
     });
@@ -646,7 +673,8 @@ class Workspace extends Component {
             playing={this.props.workspace.playing}
             toolMode={this.props.workspace.toolMode}
             currentZoom={this.props.workspace.zoomLevel}
-            cursor={this.props.workspace.timing.cursor} 
+            cursor={this.props.workspace.timing.cursor}
+            exportProgress={this.props.workspace.timing.exportProgress}
             ee={this.ee} 
           />
 
