@@ -69,6 +69,15 @@ class Workspace extends Component {
     this.ee.on('select', () => {
       this.setToolMode(toolMode.SELECT);
     });
+
+    this.ee.on('fadeinMode', () => {
+      this.setToolMode(toolMode.FADEIN);
+    });
+
+    this.ee.on('fadeoutMode', () => {
+      this.setToolMode(toolMode.FADEOUT);
+    });
+
     this.ee.on('export', () => {
       this.setPlayingMode(playingMode.EXPORT);
       let tracksToExport = []; // TODO allow user to toggle which tracks are included 
@@ -126,6 +135,14 @@ class Workspace extends Component {
       }
     });
 
+    this.ee.on('setFadeIn', (fadeInOperation) => {
+      this.socket.emit('setFadeIn', fadeInOperation);
+    });
+
+    this.ee.on('setFadeOut', (fadeOutOperation) => {
+      this.socket.emit('setFadeOut', fadeOutOperation);
+    });
+
     this.ee.on('setSeeker', (position) => {
       this.setSeeker(position);
     });
@@ -178,7 +195,7 @@ class Workspace extends Component {
     this.ee.on('logout', () => {
       this.userLoggingOut = true;
       this.ee.emit('stop');
-    })
+    });
 
     this.playMusic = this.playMusic.bind(this);
     this.isPlaying = this.isPlaying.bind(this);
@@ -206,6 +223,7 @@ class Workspace extends Component {
     this.setSeeker = (seeker) => dispatch(workspaceActions.setSeeker(seeker));
     this.setCursor = (cursor) => dispatch(workspaceActions.setCursor(cursor));
     this.setRowGain = (info) => dispatch(workspaceActions.setRowGain(info));
+    this.applyFade = (fadeOperation) => dispatch(workspaceActions.applyFade(fadeOperation));
     this.highlightBlock = (blockInfo) => dispatch(workspaceActions.highlightBlock(blockInfo));
   }
 
@@ -289,6 +307,11 @@ class Workspace extends Component {
 
     this.socket.on('applyMoveBlock', moveOperation => {
       this.moveBlock(moveOperation);
+      this.rerenderAudio = true;
+    });
+
+    this.socket.on('applyFade', (fadeOperation) => {
+      this.applyFade(fadeOperation);
       this.rerenderAudio = true;
     });
 
