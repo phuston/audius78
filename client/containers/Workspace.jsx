@@ -403,7 +403,6 @@ class Workspace extends Component {
       let blocks = Array.prototype.map.call(row.audioBlocks, (audioBlock, i)=>{
         let block = {};
         let gainNode = this.audioCtx.createGain();
-        let fadeNode = this.audioCtx.createGain();
 
         // Connect the graph of audio
         block.source = this.audioCtx.createBufferSource();
@@ -441,15 +440,35 @@ class Workspace extends Component {
         // TODO: Make this work with 'seeking'. Basically pass in current time, and for each fade:
         //    if current time > start time: hard, figure math out here. need to get value of fade at that part of track
         //    if current time > start + duration: ignore, effect over
+        var startFade, endFade, initialGain, actualStart;
+
         audioBlock.flags.map( (flag, i) => {
           if (flag.type === flagType.FADEIN) {
-            gainNode.gain.linearRampToValueAtTime(0, block.delayTime);
-            gainNode.gain.linearRampToValueAtTime(row.gain, block.delayTime + flag.duration);
-            console.log('fade in at', block.delayTime, block.delayTime + flag.duration);
+
+            startFade = block.delayTime;
+            endFade = startFade + flag.duration;
+
+            if (this.startTime < endFade) {
+              initialGain = (this.startTime <= startFade) ? 0 : (this.startTime - startFade) / (endFade - startFade);
+              actualStart = Math.max(startFade - this.startTime, 0);
+
+              gainNode.gain.linearRampToValueAtTime(initialGain, actualStart);
+              gainNode.gain.linearRampToValueAtTime(row.gain, endFade - this.startTime);
+            }
           } else if (flag.type === flagType.FADEOUT) {
-            var start = flag.start/this.props.workspace.timing.speed + block.delayTime;
-            gainNode.gain.linearRampToValueAtTime(row.gain, start);
-            gainNode.gain.linearRampToValueAtTime(0, start + flag.duration);
+
+            startFade = (flag.start / (this.props.workspace.timing.speed * this.props.workspace.zoomLevel) ) + block.delayTime;
+            endFade = startFade + flag.duration;
+
+            console.log(startFade, endFade, this.startTime);
+
+            if (this.startTime < endFade) {
+              initialGain = (this.startTime <= startFade) ? row.gain : 1 - (this.startTime - startFade) / (endFade - startFade);
+              actualStart = Math.max(startFade - this.startTime, 0);
+
+              gainNode.gain.linearRampToValueAtTime(initialGain, actualStart);
+              gainNode.gain.linearRampToValueAtTime(0, endFade - this.startTime);
+            }
           }
         });
         

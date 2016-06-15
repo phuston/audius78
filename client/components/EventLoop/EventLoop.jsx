@@ -1,4 +1,4 @@
-const TICK_TIME = 250; // ms / tick
+const TICK_TIME = 50; // ms / tick
 
 class EventLoopManager {
   constructor(props) {
@@ -29,7 +29,7 @@ class EventLoopManager {
   
   doTick() {
     this.currentTick++;
-    // console.debug(`Event tick ${this.currentTick}:`);
+    console.debug(`Event tick ${this.currentTick}:`);
     
     for (let handler in this.handlers) {
       if (this.handlers.hasOwnProperty(handler)) {

@@ -1,6 +1,7 @@
 var socketIO = require('socket.io');
 var Workspace = require('../models/workspace');
 var ObjectId = require('mongoose').Types.ObjectId;
+var flagType = require('../utils');
 
 var socketObject = {
   socketServer: function (server) {
@@ -134,6 +135,17 @@ var socketObject = {
             return true;
           });
 
+          var fadeOutElement;
+
+          leftBlock.flags = leftBlock.flags.filter(function(flag, i) {
+            if (flag.type === 1) {
+              fadeOutElement = flag;
+              return false;
+            }
+
+            return true;
+          });
+
           // Share and compute attributes of old block into the two new left and right blocks
           var oldEnd = leftBlock.file_end;
           leftBlock.file_end = (splitAt % 2 === 0) ? splitAt : splitAt+1;
@@ -146,6 +158,15 @@ var socketObject = {
             flags: [],
             _id: new ObjectId()
           };
+
+          if (fadeOutElement) {
+            fadeOutElement.start -= rightBlock.row_offset;
+            fadeOutElement.end -= rightBlock.row_offset;
+            rightBlock.flags.push(fadeOutElement);
+          }
+
+          console.log('left', leftBlock);
+          console.log('right', rightBlock);
 
           // Add left and right blocks back. Must maintain order or else front-end
           // waveform generation will not work
