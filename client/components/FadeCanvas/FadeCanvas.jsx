@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 // Others
 import { flagType, UIConstants } from '../../../utils.js';
-import { logarithmic, linear } from 'fade-curves';
+import { linear } from 'fade-curves';
 
 class FadeCanvas extends Component {
 	constructor(props) {

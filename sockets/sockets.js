@@ -1,7 +1,6 @@
 var socketIO = require('socket.io');
 var Workspace = require('../models/workspace');
 var ObjectId = require('mongoose').Types.ObjectId;
-var flagType = require('../utils');
 
 var socketObject = {
   socketServer: function (server) {
@@ -164,9 +163,6 @@ var socketObject = {
             fadeOutElement.end -= rightBlock.row_offset;
             rightBlock.flags.push(fadeOutElement);
           }
-
-          console.log('left', leftBlock);
-          console.log('right', rightBlock);
 
           // Add left and right blocks back. Must maintain order or else front-end
           // waveform generation will not work
