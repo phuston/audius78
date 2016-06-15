@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 // Others
 import { flagType, UIConstants } from '../../../utils.js';
-import { logarithmic } from 'fade-curves';
+import { logarithmic, linear } from 'fade-curves';
 
 class FadeCanvas extends Component {
 	constructor(props) {
@@ -68,7 +68,7 @@ class FadeCanvas extends Component {
 			end = props.fade.end / props.zoom;
 
 		this.width = end - begin;
-		this.curve = logarithmic(this.width, 10, 1);
+		this.curve = linear(this.width, 1);
 		if (props.fade.type === flagType.FADEOUT) this.curve.reverse();
 	}
 

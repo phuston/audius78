@@ -23,13 +23,13 @@ class EventLoopManager {
       return;
     }
     
-    console.debug(`Event loop starting at tick ${this.currentTick}`);
+    // console.debug(`Event loop starting at tick ${this.currentTick}`);
     this.intervalId = setInterval(() => this.doTick(), TICK_TIME);  
   }
   
   doTick() {
     this.currentTick++;
-    console.debug(`Event tick ${this.currentTick}:`);
+    // console.debug(`Event tick ${this.currentTick}:`);
     
     for (let handler in this.handlers) {
       if (this.handlers.hasOwnProperty(handler)) {

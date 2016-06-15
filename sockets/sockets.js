@@ -365,7 +365,8 @@ var socketObject = {
           fadeElement = {
             start: 0,
             end: fadeInOperation.end,
-            type: 0
+            type: 0,
+            duration: fadeInOperation.duration,
           };
 
           changedBlock.flags.map(function(flag, i) {
@@ -420,7 +421,8 @@ var socketObject = {
           fadeElement = {
             start: fadeOutOperation.start,
             end: fadeOutOperation.end,
-            type: 1
+            type: 1,
+            duration: fadeOutOperation.duration,
           };
 
           changedBlock.flags.map(function(flag, i) {

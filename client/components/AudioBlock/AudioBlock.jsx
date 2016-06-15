@@ -98,20 +98,25 @@ class AudioBlock extends Component {
   handleFade(block, rowId, width, e) {
     if (this.allowFadeIn()) {
       e.preventDefault();
+      var endInPixel = e.clientX - (block.row_offset / this.props.currentZoom) - UIConstants.LEFT - 2;
       this.props.ee.emit('setFadeIn', {
-        end: e.clientX - (block.row_offset / this.props.currentZoom) - UIConstants.LEFT - 2, 
+        end: endInPixel, 
         blockId: block._id, 
-        rowId: rowId
+        rowId: rowId,
+        duration: endInPixel/this.props.speed,
       });
     }
 
     if (this.allowFadeOut()) {
       e.preventDefault();
+      var startInPixel = e.clientX - (block.row_offset / this.props.currentZoom) - UIConstants.LEFT - 2;
+      var durationInPixel = width - startInPixel;
       this.props.ee.emit('setFadeOut', {
-        start: e.clientX - (block.row_offset / this.props.currentZoom) - UIConstants.LEFT - 2,
+        start: startInPixel,
         end: width,
         blockId: block._id,
-        rowId: rowId
+        rowId: rowId,
+        duration: durationInPixel/this.props.speed,
       });
     }
   }

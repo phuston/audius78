@@ -26,6 +26,7 @@ class TrackBox extends Component{
             <Row
               scrollX={this.props.workspace.scrollX}
               row={row}
+              speed={this.props.workspace.timing.speed}
               currentZoom={this.props.workspace.zoomLevel}
               toolMode={this.props.workspace.toolMode}
               playing={this.props.workspace.playing}

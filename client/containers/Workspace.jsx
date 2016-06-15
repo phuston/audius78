@@ -3,12 +3,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 import { routeActions } from 'redux-simple-router';
-import { playingMode, zoomLimits, toolMode } from '../../utils.js';
 import * as workspaceActions from '../actions/workspace.js';
 import EventEmitter from 'event-emitter';
 
 // Utilities
 import EventLoopManager from '../components/EventLoop/EventLoop.jsx';
+import { createFadeIn, createFadeOut } from 'fade-maker';
+import { playingMode, zoomLimits, toolMode, flagType } from '../../utils.js';
 
 // Containers + Components
 import TrackBox from './TrackBox.jsx';
@@ -402,6 +403,7 @@ class Workspace extends Component {
       let blocks = Array.prototype.map.call(row.audioBlocks, (audioBlock, i)=>{
         let block = {};
         let gainNode = this.audioCtx.createGain();
+        let fadeNode = this.audioCtx.createGain();
 
         // Connect the graph of audio
         block.source = this.audioCtx.createBufferSource();
@@ -434,6 +436,22 @@ class Workspace extends Component {
         if (block.delayTime + block.duration > latestEndingBlock.delayTime + latestEndingBlock.duration) {
           latestEndingBlock = block;
         }
+
+        // Check for fades
+        // TODO: Make this work with 'seeking'. Basically pass in current time, and for each fade:
+        //    if current time > start time: hard, figure math out here. need to get value of fade at that part of track
+        //    if current time > start + duration: ignore, effect over
+        audioBlock.flags.map( (flag, i) => {
+          if (flag.type === flagType.FADEIN) {
+            gainNode.gain.linearRampToValueAtTime(0, block.delayTime);
+            gainNode.gain.linearRampToValueAtTime(row.gain, block.delayTime + flag.duration);
+            console.log('fade in at', block.delayTime, block.delayTime + flag.duration);
+          } else if (flag.type === flagType.FADEOUT) {
+            var start = flag.start/this.props.workspace.timing.speed + block.delayTime;
+            gainNode.gain.linearRampToValueAtTime(row.gain, start);
+            gainNode.gain.linearRampToValueAtTime(0, start + flag.duration);
+          }
+        });
         
         this.numBlocks++;
         return block;
