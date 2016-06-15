@@ -1,12 +1,13 @@
-const TICK_TIME = 50; // ms / tick
+const TICK_TIME = 20; // ms / tick
 
 class EventLoopManager {
-  constructor(props) {
+  constructor(ee) {
     this.intervalId = null;
     this.currentTick = 0;
     this.handlers = {};
     this.isPaused = false;
     this.elapsedTime = 0;
+    this.ee = ee;
   }
   
   addHandler(handlerName, handler) {
@@ -16,8 +17,20 @@ class EventLoopManager {
   clearHandler(handlerName) {
     delete this.handlers[handlerName];
   }
+
+  setPixelsPerSec(pps) {
+    this.pps = pps;
+  }
+
+  setStartTime(time) {
+    this.startTime = time;
+  }
   
-  startLoop() {
+  startLoop(audioCtx) {
+    if (audioCtx) {
+      this.audioCtx = audioCtx;
+    }
+
     if (this.intervalId) {
       console.warn('Event loop is already running');
       return;
@@ -29,7 +42,8 @@ class EventLoopManager {
   
   doTick() {
     this.currentTick++;
-    console.debug(`Event tick ${this.currentTick}:`);
+    this.ee.emit('setSeeker', (this.startTime + this.audioCtx.currentTime) * this.pps);
+    // console.debug(`Event tick ${this.currentTick}:`);
     
     for (let handler in this.handlers) {
       if (this.handlers.hasOwnProperty(handler)) {

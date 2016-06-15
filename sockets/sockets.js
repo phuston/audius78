@@ -1,7 +1,6 @@
 var socketIO = require('socket.io');
 var Workspace = require('../models/workspace');
 var ObjectId = require('mongoose').Types.ObjectId;
-var flagType = require('../utils');
 
 var socketObject = {
   socketServer: function (server) {
@@ -20,6 +19,7 @@ var socketObject = {
         // TODO: What do we need to emit to let the other users know to add a new user?
       });
 
+      // Delete a block from a row
       socket.on('removeBlocks', function(operation) {
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace) {
           if (err) return console.error(err);
@@ -61,6 +61,7 @@ var socketObject = {
         });
       });
 
+      // Join multiple blocks back into one block. Keep fade in of first element and fade out of last element
       socket.on('spliceBlocks', function(spliceOperation) {
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
           if (err) return console.error(err);
@@ -111,6 +112,7 @@ var socketObject = {
         });
       });
 
+      // Split one block into two. Move fade out element (if any) to the right block.
       socket.on('splitBlock', function(splitOperation) {
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
           if (err) return console.error(err);
@@ -165,11 +167,7 @@ var socketObject = {
             rightBlock.flags.push(fadeOutElement);
           }
 
-          console.log('left', leftBlock);
-          console.log('right', rightBlock);
-
-          // Add left and right blocks back. Must maintain order or else front-end
-          // waveform generation will not work
+          // Add left and right blocks back. Must maintain order or else front-end  waveform generation will not work
           newBlocks.splice(index, 0, leftBlock);
           newBlocks.push(rightBlock);
 
@@ -194,45 +192,7 @@ var socketObject = {
         });
       });
 
-      socket.on('flagBlock', function(flagOperation){
-        Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
-          if (err) return console.error(err);
-
-          var newRows = workspace.rows;
-
-          // Find correct row to update
-          var updateRow = workspace.rows.filter(function (row){ 
-            return row._id == flagOperation.rowId; 
-          })[0];
-
-          // Find correct audioBlock to update
-          var audioBlock = updateRow.audioBlocks.filter(function (block){
-            return block._id == flagOperation.blockId;
-          });
-
-          // Add the flag
-          audioBlock.flags.push(flagOperation.flag);
-
-          newRows[updateRow.rowId] = updateRow;
-
-          Workspace.findByIdAndUpdate(
-            workspace._id,
-            {$set: {rows: newRows}},
-            {$safe: true, upsert: false, new: true},
-            function(err, newWorkspace) {
-              if (err) return console.error(err);
-
-              // Emit socket event to notify all clients to update state
-              io.sockets.in(socket.workspaceId).emit('applyFlagBlock', {
-                rowId: updateRow.rowId,
-                blockId: audioBlock.blockId,
-                newFlags: newWorkspace.rows[updateRow.rowId].audioBlocks[audioBlock.blockId].flags
-              })
-            }
-          );
-        })
-      });
-
+      // Drag a block around
       socket.on('moveBlock', function(moveOperation){
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
           if (err) return console.error(err);
@@ -282,6 +242,7 @@ var socketObject = {
         })
       });
 
+      // Append a row to the workspace (called after file upload)
       socket.on('addRow', function(addOperation){
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
           if (err) return console.error(err);
@@ -299,6 +260,7 @@ var socketObject = {
         });
       });
 
+      // Delete a row from the workspace
       socket.on('removeRow', function(removeOperation){
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace){
           if (err) return console.error(err);
@@ -330,6 +292,7 @@ var socketObject = {
         });
       });
 
+      // Change master volume of a given row
       socket.on('changeRowGain', function(gainOperation) {
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace) {
           if (err) return console.error(err);
@@ -364,6 +327,7 @@ var socketObject = {
         })
       });
 
+      // Add a fade in flag for a block
       socket.on('setFadeIn', function(fadeInOperation) {
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace) {
           if (err) return console.error(err);
@@ -420,6 +384,7 @@ var socketObject = {
         });
       });
 
+      // Add a fade out flag for a block
       socket.on('setFadeOut', function(fadeOutOperation) {
         Workspace.findOne({id: socket.workspaceId}, function(err, workspace) {
           if (err) return console.error(err);

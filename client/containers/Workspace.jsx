@@ -42,7 +42,6 @@ class Workspace extends Component {
     this.ee = new EventEmitter();
     this.recorder = null;
     this.masterOutputNode = null;
-    this.eventLoopManager_ = new EventLoopManager();
     
     this.ee.on('playPause', () => {
       if (this.isPlaying()) 
@@ -158,6 +157,7 @@ class Workspace extends Component {
 
     this.ee.on('setSpeed', (speed) => {
       this.setSpeed(speed);
+      this.eventLoopManager_.setPixelsPerSec(speed);
     });
 
     this.ee.on('setRowGain', (gainOperation) => {
@@ -197,6 +197,13 @@ class Workspace extends Component {
       this.userLoggingOut = true;
       this.ee.emit('stop');
     });
+
+    this.ee.on('setStartTime', (time) => {
+      this.startTime = time;
+      this.eventLoopManager_.setStartTime(time);
+    });
+
+    this.eventLoopManager_ = new EventLoopManager(this.ee);
 
     this.playMusic = this.playMusic.bind(this);
     this.isPlaying = this.isPlaying.bind(this);
@@ -371,12 +378,12 @@ class Workspace extends Component {
           this.eventLoopManager_.stopLoop();
           
           // Have to reset the cursor to handle a bug when repeatedly hitting stop/play
-          this.startTime = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
+          this.ee.emit('setStartTime', this.props.workspace.timing.cursor / this.props.workspace.timing.speed);
           break;
       }
     } else if ( this.props.workspace.playing === playingMode.STOP ){
       // This handles the case when seeking while play is stopped.
-      this.startTime = this.props.workspace.timing.cursor / this.props.workspace.timing.speed;
+      this.ee.emit('setStartTime', this.props.workspace.timing.cursor / this.props.workspace.timing.speed);
     }
   }
 
@@ -437,9 +444,6 @@ class Workspace extends Component {
         }
 
         // Check for fades
-        // TODO: Make this work with 'seeking'. Basically pass in current time, and for each fade:
-        //    if current time > start time: hard, figure math out here. need to get value of fade at that part of track
-        //    if current time > start + duration: ignore, effect over
         var startFade, endFade, initialGain, actualStart;
 
         audioBlock.flags.map( (flag, i) => {
@@ -459,8 +463,6 @@ class Workspace extends Component {
 
             startFade = (flag.start / (this.props.workspace.timing.speed * this.props.workspace.zoomLevel) ) + block.delayTime;
             endFade = startFade + flag.duration;
-
-            console.log(startFade, endFade, this.startTime);
 
             if (this.startTime < endFade) {
               initialGain = (this.startTime <= startFade) ? row.gain : 1 - (this.startTime - startFade) / (endFade - startFade);
@@ -489,7 +491,7 @@ class Workspace extends Component {
       });
     }
     
-    this.eventLoopManager_.startLoop();
+    this.eventLoopManager_.startLoop(this.audioCtx);
     
     sourceBuffers.map( (row) => {
       row.map( (block, i) => {
@@ -636,7 +638,7 @@ class Workspace extends Component {
   }
 
   seekTime(time) {
-    this.startTime = time;
+    this.ee.emit('setStartTime', time);
     if( this.props.workspace.playing === playingMode.PLAYING ){
       this.audioCtx.close();
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
