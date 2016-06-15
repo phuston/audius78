@@ -23,7 +23,6 @@ class EventLoopManager {
   }
 
   setStartTime(time) {
-    console.log('set start time', time);
     this.startTime = time;
   }
   
@@ -44,7 +43,6 @@ class EventLoopManager {
   doTick() {
     this.currentTick++;
     this.ee.emit('setSeeker', (this.startTime + this.audioCtx.currentTime) * this.pps);
-    // console.log(this.audioCtx.currentTime + this.startTime);
     // console.debug(`Event tick ${this.currentTick}:`);
     
     for (let handler in this.handlers) {

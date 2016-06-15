@@ -444,9 +444,6 @@ class Workspace extends Component {
         }
 
         // Check for fades
-        // TODO: Make this work with 'seeking'. Basically pass in current time, and for each fade:
-        //    if current time > start time: hard, figure math out here. need to get value of fade at that part of track
-        //    if current time > start + duration: ignore, effect over
         var startFade, endFade, initialGain, actualStart;
 
         audioBlock.flags.map( (flag, i) => {
@@ -466,8 +463,6 @@ class Workspace extends Component {
 
             startFade = (flag.start / (this.props.workspace.timing.speed * this.props.workspace.zoomLevel) ) + block.delayTime;
             endFade = startFade + flag.duration;
-
-            console.log(startFade, endFade, this.startTime);
 
             if (this.startTime < endFade) {
               initialGain = (this.startTime <= startFade) ? row.gain : 1 - (this.startTime - startFade) / (endFade - startFade);
