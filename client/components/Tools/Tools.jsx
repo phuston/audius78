@@ -186,10 +186,9 @@ class Tools extends Component{
                 <SystemUpdateAlt />
               </IconButton>
               
-              <LinearProgress className={this.props.playing === playingMode.EXPORT ? styles.exportProgress : styles.hidden}
-                              mode="determinate"
-                              value={this.props.exportProgress}>
-              </LinearProgress>
+              <span className={this.props.playing === playingMode.EXPORT ? styles.exportProgress : styles.hidden}>
+                {Math.round(this.props.exportProgress)}%
+              </span>
           </ToolbarGroup>
 
           <ToolbarGroup float="right">
