@@ -454,11 +454,13 @@ class Workspace extends Component {
 
               gainNode.gain.linearRampToValueAtTime(initialGain, actualStart);
               gainNode.gain.linearRampToValueAtTime(row.gain, endFade - this.startTime);
+              console.log('fade in', actualStart, endFade-this.startTime);
             }
           } else if (flag.type === flagType.FADEOUT) {
 
             startFade = (flag.start / (this.props.workspace.timing.speed * this.props.workspace.zoomLevel) ) + block.delayTime;
             endFade = startFade + flag.duration;
+            console.log('fade out', startFade, flag.duration, endFade);
 
             console.log(startFade, endFade, this.startTime);
 
@@ -468,6 +470,7 @@ class Workspace extends Component {
 
               gainNode.gain.linearRampToValueAtTime(initialGain, actualStart);
               gainNode.gain.linearRampToValueAtTime(0, endFade - this.startTime);
+              console.log('fade out', actualStart, endFade-this.startTime);
             }
           }
         });
