@@ -416,7 +416,7 @@ class Workspace extends Component {
         block.source.buffer = row.rawAudio;
         block.source.connect(gainNode);
         
-        let splitterNode = this.audioCtx.createChannelSplitter(2);
+        let splitterNode = this.audioCtx.createChannelSplitter(channelCount);
         gainNode.connect(splitterNode);
         
         if (doRecording) {
@@ -443,268 +443,272 @@ class Workspace extends Component {
           latestEndingBlock = block;
         }
 
-        // Check for fades
-        var startFade, endFade, initialGain, actualStart;
+// Check for fades
+var startFade, endFade, initialGain, actualStart;
 
-        audioBlock.flags.map( (flag, i) => {
-          if (flag.type === flagType.FADEIN) {
+audioBlock.flags.map( (flag, i) => {
+	if (flag.type === flagType.FADEIN) {
 
-            startFade = block.delayTime;
-            endFade = startFade + flag.duration;
+	startFade = block.delayTime;
+	endFade = startFade + flag.duration;
 
-            if (this.startTime < endFade) {
-              initialGain = (this.startTime <= startFade) ? 0 : (this.startTime - startFade) / (endFade - startFade);
-              actualStart = Math.max(startFade - this.startTime, 0);
+	if (this.startTime < endFade) {
+		initialGain = (this.startTime <= startFade) ? 0 : (this.startTime - startFade) / (endFade - startFade);
+		actualStart = Math.max(startFade - this.startTime, 0);
 
-              gainNode.gain.linearRampToValueAtTime(initialGain, actualStart);
-              gainNode.gain.linearRampToValueAtTime(row.gain, endFade - this.startTime);
-            }
-          } else if (flag.type === flagType.FADEOUT) {
+		gainNode.gain.linearRampToValueAtTime(initialGain, actualStart);
+		gainNode.gain.linearRampToValueAtTime(row.gain, endFade - this.startTime);
+	}
+	} else if (flag.type === flagType.FADEOUT) {
 
-            startFade = (flag.start / (this.props.workspace.timing.speed * this.props.workspace.zoomLevel) ) + block.delayTime;
-            endFade = startFade + flag.duration;
+	startFade = (flag.start / (this.props.workspace.timing.speed * this.props.workspace.zoomLevel) ) + block.delayTime;
+	endFade = startFade + flag.duration;
 
-            if (this.startTime < endFade) {
-              initialGain = (this.startTime <= startFade) ? row.gain : 1 - (this.startTime - startFade) / (endFade - startFade);
-              actualStart = Math.max(startFade - this.startTime, 0);
+	if (this.startTime < endFade) {
+		initialGain = (this.startTime <= startFade) ? row.gain : 1 - (this.startTime - startFade) / (endFade - startFade);
+		actualStart = Math.max(startFade - this.startTime, 0);
 
-              gainNode.gain.linearRampToValueAtTime(initialGain, actualStart);
-              gainNode.gain.linearRampToValueAtTime(0, endFade - this.startTime);
-            }
-          }
-        });
-        
-        this.numBlocks++;
-        return block;
-      });
+		gainNode.gain.linearRampToValueAtTime(initialGain, actualStart);
+		gainNode.gain.linearRampToValueAtTime(0, endFade - this.startTime);
+	}
+	}
+});
 
-      return blocks;
-    });
-    
-    if (doRecording) {
-      this.recorder = new Recorder(this.masterOutputNode, {workerPath: '/recorderWorker.js'}); // TODO config?
-      let exportEndTime = latestEndingBlock.duration + latestEndingBlock.delayTime;
-      
-      this.eventLoopManager_.addHandler('EXPORT_PROGRESS', () => {
-        let progress = this.audioCtx.currentTime * 100 / exportEndTime;
-        this.ee.emit('setExportProgress', progress);
-      });
-    }
-    
-    this.eventLoopManager_.startLoop(this.audioCtx);
-    
-    sourceBuffers.map( (row) => {
-      row.map( (block, i) => {
-        let delay = block.delayTime - this.startTime;
-        if (delay >= 0) {
-          block.source.start(delay, block.audioOffset, block.duration);
-        } else if (-delay < block.duration) {
-          block.source.start(0, block.audioOffset-delay, block.duration+delay);
-        } else {
-          this.countingBlocks++;
-        }
-        block.source.onended = () => {
-          this.countingBlocks++;
+this.numBlocks++;
+return block;
+});
 
-          if (this.countingBlocks === this.numBlocks) {
-            this.eventLoopManager_.stopLoop();
-            onBlocksEnded();
-          }
-        };
-      });
-    });
-    
-    if (doRecording) {
-      this.recorder.record();
-    }
-  }
+return blocks;
+});
 
-  isPlaying() {
-    return this.props.workspace.playing === playingMode.PLAYING;
-  }
+if (doRecording) {
+this.recorder = new Recorder(this.masterOutputNode, {workerPath: '/recorderWorker.js'}); // TODO config?
+let exportEndTime = latestEndingBlock.duration + latestEndingBlock.delayTime;
+this.ee.emit('setStartTime', 0);
 
-  emitRemoveBlocks() {
-    let removeBlockOperation = {};
-    let blocksToDelete = [];
+this.eventLoopManager_.subscribe('EXPORT_PROGRESS', () => {
+let progress = this.audioCtx.currentTime * 100 / exportEndTime;
+this.ee.emit('setExportProgress', progress);
+});
+}
 
-    Array.prototype.map.call(this.props.workspace.rows, (row) => {
-      row.audioBlocks.map( (block) => {
-        if (block.selected) blocksToDelete.push(block._id);
-      });
+this.eventLoopManager_.startLoop(this.audioCtx);
 
-      removeBlockOperation[row._id] = blocksToDelete;
-    });
+sourceBuffers.map( (row) => {
+row.map( (block, i) => {
+let delay = block.delayTime - this.startTime;
+if (delay >= 0) {
+	block.source.start(delay, block.audioOffset, block.duration);
+} else if (-delay < block.duration) {
+	block.source.start(0, block.audioOffset-delay, block.duration+delay);
+} else {
+	this.countingBlocks++;
+}
+block.source.onended = () => {
+	this.countingBlocks++;
 
-    if (blocksToDelete.length > 0 && !this.isPlaying()) this.socket.emit('removeBlocks', removeBlockOperation);
-  }
+	if (this.countingBlocks === this.numBlocks) {
+	this.eventLoopManager_.stopLoop();
+	onBlocksEnded();
+	}
+};
+});
+});
 
-  emitSpliceBlocks() {
-    const spliceOperation = {};
-    const selectedBlocks = [];
-    const blocksToRemove = [];
+if (doRecording) {
+this.recorder.record();
+}
+}
 
-    let rowId;
-    let connected = true;
+isPlaying() {
+return this.props.workspace.playing === playingMode.PLAYING;
+}
 
-    Array.prototype.map.call(this.props.workspace.rows, (row) => {
-      if (!rowId) {
-        row.audioBlocks.map( (block) => {
-          if (block.selected) {
-            rowId = row.rowId+1;
-            spliceOperation.rowId = row._id;
-            selectedBlocks.push(block);
-            blocksToRemove.push(block._id);
-          }
-        });
-      }
-    });
+emitRemoveBlocks() {
+let removeBlockOperation = {};
+let blocksToDelete = [];
 
-    if (selectedBlocks.length < 2) {
-      return alert('Operation Not Supported: Fewer than two blocks were detected in row ' + rowId);
-    }
+Array.prototype.map.call(this.props.workspace.rows, (row) => {
+row.audioBlocks.map( (block) => {
+if (block.selected) blocksToDelete.push(block._id);
+});
 
-    selectedBlocks.sort((a, b) => a.file_offset < b.file_offset ? -1 : 1);
-    selectedBlocks.reduce( (prev, curr) => {
-      connected = connected && prev.file_end === curr.file_offset;
-      return curr;
-    });
+removeBlockOperation[row._id] = blocksToDelete;
+});
 
-    if (!connected) {
-      return alert('Operation Not Supported: Selected blocks were not originally connected.');
-    }
+if (blocksToDelete.length > 0 && !this.isPlaying()) this.socket.emit('removeBlocks', removeBlockOperation);
+}
 
-    // By this point, the operation should be legal
-    spliceOperation.joinedBlock = selectedBlocks[0]._id;
-    spliceOperation.newFileEnd = selectedBlocks.slice(-1)[0].file_end;
-    spliceOperation.blocksToRemove = blocksToRemove;
+emitSpliceBlocks() {
+const spliceOperation = {};
+const selectedBlocks = [];
+const blocksToRemove = [];
 
-    if (!this.isPlaying()) this.socket.emit('spliceBlocks', spliceOperation);
-  }
+let rowId;
+let connected = true;
 
-  setZoom(newZoom) {
-    let zoomRatio = this.props.workspace.zoomLevel/newZoom;
-    this.props.dispatch(workspaceActions.setZoom(newZoom));
-    let newSeeker = this.props.workspace.timing.seeker * zoomRatio;
-    let newCursor = this.props.workspace.timing.cursor * zoomRatio;
-    if (newZoom <= zoomLimits.UPPER && newZoom >= zoomLimits.LOWER) {
-      this.ee.emit('setSeeker', newSeeker);
-      this.ee.emit('setCursor', newCursor);
-    }
-  }
+Array.prototype.map.call(this.props.workspace.rows, (row) => {
+if (!rowId) {
+row.audioBlocks.map( (block) => {
+	if (block.selected) {
+	rowId = row.rowId+1;
+	spliceOperation.rowId = row._id;
+	selectedBlocks.push(block);
+	blocksToRemove.push(block._id);
+	}
+});
+}
+});
 
-  onDrop(files){
-    let data = new FormData();
-    data.append('file', files[0]);
-    data.append('name', files[0].name);
-    data.append('workspaceId', this.props.workspace.id);
-    data.append('rowIndex', this.props.workspace.rows.length);
+if (selectedBlocks.length < 2) {
+return alert('Operation Not Supported: Fewer than two blocks were detected in row ' + rowId);
+}
 
-    // Disable row delete to allow indices of workspace.rows to sync properly
-    this.toggleRowDelete(false);
+selectedBlocks.sort((a, b) => a.file_offset < b.file_offset ? -1 : 1);
+selectedBlocks.reduce( (prev, curr) => {
+connected = connected && prev.file_end === curr.file_offset;
+return curr;
+});
 
-    fetch('/api/upload', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json'
-      },
-      body: data
-    })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      let addRowOperation = {
-        workspaceId: this.props.workspace.id,
-        rowId: data.rowId
-      }
-      this.socket.emit('addRow', addRowOperation);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  }
+if (!connected) {
+return alert('Operation Not Supported: Selected blocks were not originally connected.');
+}
 
-  handleAudioBlockEnding() {
-    
-      this.ee.emit('stop');
-      this.ee.emit('setSeeker', this.props.workspace.timing.cursor);
-      this.countingBlocks = 0;
-      
-      if (this.recorder) {
-        this.recorder.stop();
-        console.log('recording stopped');
-      }
-    
-  }
+// By this point, the operation should be legal
+spliceOperation.joinedBlock = selectedBlocks[0]._id;
+spliceOperation.newFileEnd = selectedBlocks.slice(-1)[0].file_end;
+spliceOperation.blocksToRemove = blocksToRemove;
 
-  seekTime(time) {
-    this.ee.emit('setStartTime', time);
-    if( this.props.workspace.playing === playingMode.PLAYING ){
-      this.audioCtx.close();
-      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      this.countingBlocks = 0;
-      this.playMusic(false, this.handleAudioBlockEnding);
-    }
-  }
-  
-  export(tracksToExport) {
-    console.debug('Starting export');
-    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    this.countingBlocks = 0;
-    
-    this.playMusic(true, () => {
-      console.debug('Generating file');
-      this.recorder.exportWAV(blob => {
-        this.setPlayingMode(playingMode.STOP);
-        this.ee.emit('setExportProgress', 0);
-        Recorder.forceDownload(blob, this.props.workspace.id + '.wav');
-      }, tracksToExport);
-    });
-  }
+if (!this.isPlaying()) this.socket.emit('spliceBlocks', spliceOperation);
+}
 
-  render() {
-    let workspace;
-    if (this.props.workspace.rows.length > 0) {
-      workspace = (
-        <div>
-          <TimeRuler workspace={this.props.workspace}/>
-          <Seeker position={this.props.workspace.timing.seeker} 
-            numRows={this.props.workspace.rows.length}
-            playing={this.props.workspace.playing}
-            speed={this.props.workspace.timing.speed}
-            ee={this.ee}
-          />
+setZoom(newZoom) {
+let zoomRatio = this.props.workspace.zoomLevel/newZoom;
+this.props.dispatch(workspaceActions.setZoom(newZoom));
+let newSeeker = this.props.workspace.timing.seeker * zoomRatio;
+let newCursor = this.props.workspace.timing.cursor * zoomRatio;
+if (newZoom <= zoomLimits.UPPER && newZoom >= zoomLimits.LOWER) {
+this.ee.emit('setSeeker', newSeeker);
+this.ee.emit('setCursor', newCursor);
+}
+}
 
-          <Cursor position={this.props.workspace.timing.cursor} 
-            numRows={this.props.workspace.rows.length}
-          />
-          <div className={styles.songs}>
-            <TrackBox className={styles.trackbox} 
-              workspace={this.props.workspace} 
-              ee={this.ee}
-            />
-          </div>
+onDrop(files){
+let data = new FormData();
+data.append('file', files[0]);
+data.append('name', files[0].name);
+data.append('workspaceId', this.props.workspace.id);
+data.append('rowIndex', this.props.workspace.rows.length);
+
+// Disable row delete to allow indices of workspace.rows to sync properly
+this.toggleRowDelete(false);
+
+fetch('/api/upload', {
+method: 'POST',
+headers: {
+'Accept': 'application/json'
+},
+body: data
+})
+.then((response) => {
+return response.json();
+})
+.then((data) => {
+let addRowOperation = {
+workspaceId: this.props.workspace.id,
+rowId: data.rowId
+}
+this.socket.emit('addRow', addRowOperation);
+})
+.catch((err) => {
+console.log(err);
+});
+}
+
+handleAudioBlockEnding() {
+
+this.ee.emit('stop');
+this.ee.emit('setSeeker', this.props.workspace.timing.cursor);
+this.countingBlocks = 0;
+
+if (this.recorder) {
+this.recorder.stop();
+console.log('recording stopped');
+}
+
+}
+
+seekTime(time) {
+this.ee.emit('setStartTime', time);
+if( this.props.workspace.playing === playingMode.PLAYING ){
+this.audioCtx.close();
+this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+this.countingBlocks = 0;
+this.playMusic(false, this.handleAudioBlockEnding);
+}
+}
+
+export(tracksToExport) {
+console.debug('Starting export');
+this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+this.countingBlocks = 0;
+
+this.playMusic(true, () => {
+console.debug('Generating file');
+this.recorder.exportWAV(blob => {
+this.setPlayingMode(playingMode.STOP);
+this.ee.emit('setExportProgress', 0);
+Recorder.forceDownload(blob, this.props.workspace.id + '.wav');
+}, tracksToExport);
+});
+}
+
+render() {
+let workspace;
+if (this.props.workspace.rows.length > 0) {
+workspace = (
+<div>
+	<TimeRuler workspace={this.props.workspace}/>
+	<Seeker position={this.props.workspace.timing.seeker} 
+	numRows={this.props.workspace.rows.length}
+	playing={this.props.workspace.playing}
+	speed={this.props.workspace.timing.speed}
+	ee={this.ee}
+	/>
+
+	<Cursor position={this.props.workspace.timing.cursor} 
+	numRows={this.props.workspace.rows.length}
+	/>
+	<div className={styles.songs}>
+	<TrackBox className={styles.trackbox} 
+		workspace={this.props.workspace} 
+		ee={this.ee}
+	/>
+	</div>
+</div>
+);
+} else {
+workspace = (
+<div style={{'marginTop': '212px', 'position': 'fixed', 'height': '70px'}}>
+	<h1>Upload a file to start using the Audius78 editor!</h1>
+</div>
+);
+}
+
+return (
+<div className={styles.page} >
+<div className = {styles.navbar} >
+	<Navbar 
+	ee={this.ee}
+	workspaceWidth={this.props.workspace.width}
+	workspaceId={this.props.workspace.id} />
+</div>
+
+<div className={styles.exportProgressDiv} style={{'width': this.props.workspace.width}}>
+		<h2 className={styles.exportProgress}>
+			Export Progress: {Math.ceil(this.props.workspace.timing.exportProgress || 0)}%
+		</h2>
         </div>
-      );
-    } else {
-      workspace = (
-        <div style={{'marginTop': '212px', 'position': 'fixed', 'height': '70px'}}>
-          <h1>Upload a file to start using the Audius78 editor!</h1>
-        </div>
-      );
-    }
-
-    return (
-      <div className={styles.page} >
-        <div className = {styles.navbar} >
-          <Navbar 
-            ee={this.ee}
-            workspaceWidth={this.props.workspace.width}
-            workspaceId={this.props.workspace.id} />
-        </div>
-
-
-        <div style={{'top': '90px', 'position': 'fixed', 'height': '90px', 'zIndex': '100', 'backgroundColor': '#FFFFFF', 'width': this.props.workspace.width}}></div>
 
         <div className={styles.workspace} style={{'width': this.props.workspace.width}}>
 

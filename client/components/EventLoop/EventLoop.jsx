@@ -10,12 +10,16 @@ class EventLoopManager {
     this.ee = ee;
   }
   
-  addHandler(handlerName, handler) {
-    this.handlers[handlerName] = handler;
+  subscribe(ev, callback) {
+  	if (this.handlers[ev]) {
+  		this.handlers[ev].push(callback);
+	} else {
+		this.handlers[ev] = [callback];
+	}
   }
   
-  clearHandler(handlerName) {
-    delete this.handlers[handlerName];
+  clearSubscribers(ev) {
+    delete this.handlers[ev];
   }
 
   setPixelsPerSec(pps) {
@@ -45,10 +49,12 @@ class EventLoopManager {
     this.ee.emit('setSeeker', (this.startTime + this.audioCtx.currentTime) * this.pps);
     // console.debug(`Event tick ${this.currentTick}:`);
     
-    for (let handler in this.handlers) {
-      if (this.handlers.hasOwnProperty(handler)) {
-        console.debug(`    ${handler}()`);
-        this.handlers[handler]();   
+    for (let ev in this.handlers) {
+      if (this.handlers.hasOwnProperty(ev)) {
+        console.debug(`    ${ev}()`);
+        for (let i in this.handlers[ev]) {
+        	this.handlers[ev][i](); 
+        }
       }
     }
   }
