@@ -96,11 +96,13 @@ class AudioBlock extends Component {
   }
 
   handleFade(block, rowId, width, e) {
+    var zoom = this.props.currentZoom;
+    // Send data for when zoom is 1. Let <FadeCanvas/> component do the math for different zoom levels
     if (this.allowFadeIn()) {
       e.preventDefault();
-      var endInPixel = e.clientX - (block.row_offset / this.props.currentZoom) - UIConstants.LEFT - 2;
+      var endInPixel = e.clientX - (block.row_offset / zoom) - UIConstants.LEFT - 2;
       this.props.ee.emit('setFadeIn', {
-        end: endInPixel, 
+        end: endInPixel * zoom,
         blockId: block._id, 
         rowId: rowId,
         duration: endInPixel/this.props.speed,
@@ -109,11 +111,12 @@ class AudioBlock extends Component {
 
     if (this.allowFadeOut()) {
       e.preventDefault();
-      var startInPixel = e.clientX - (block.row_offset / this.props.currentZoom) - UIConstants.LEFT - 2;
+      var startInPixel = e.clientX - (block.row_offset / zoom) - UIConstants.LEFT - 2;
+      startInPixel *= zoom;
       var durationInPixel = width - startInPixel;
       this.props.ee.emit('setFadeOut', {
         start: startInPixel,
-        end: width,
+        end: width * zoom,
         blockId: block._id,
         rowId: rowId,
         duration: durationInPixel/this.props.speed,
@@ -171,20 +174,20 @@ class AudioBlock extends Component {
 
   		return (
   			<div key={i} 
-          style={style} 
-          onMouseDown={this.onMouseDown.bind(this, block._id, i)}
-          onClick={this.handleFade.bind(this, block, row._id, width)}>
-  				{fadeInCanvas}
-          {fadeOutCanvas}
-          <Waveform block={block}
-            row={row}
-            blockIndex={i}
-            selected={block.selected}
-            playing={this.props.playing}
-            toolMode={this.props.toolMode}
-            currentZoom={this.props.currentZoom}
-            ee={this.props.ee}
-          />
+				style={style}
+				onMouseDown={this.onMouseDown.bind(this, block._id, i)}
+				onClick={this.handleFade.bind(this, block, row._id, width)}>
+				{fadeInCanvas}
+				{fadeOutCanvas}
+				<Waveform block={block}
+					row={row}
+					blockIndex={i}
+					selected={block.selected}
+					playing={this.props.playing}
+					toolMode={this.props.toolMode}
+					currentZoom={this.props.currentZoom}
+					ee={this.props.ee}
+				/>
   			</div>
 			);
   	});
