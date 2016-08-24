@@ -25,6 +25,7 @@ class Row extends Component{
           playing={this.props.playing}
           ee={this.props.ee} />
         <AudioBlock row={this.props.row}
+          speed={this.props.speed}
           toolMode={this.props.toolMode}
           playing={this.props.playing}
         	currentZoom={this.props.currentZoom}

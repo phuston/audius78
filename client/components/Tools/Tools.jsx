@@ -185,11 +185,6 @@ class Tools extends Component{
               <IconButton onClick={this.exportRecording} tooltip="Export" disabled={!this.areButtonsEnabled()}>
                 <SystemUpdateAlt />
               </IconButton>
-              
-              <LinearProgress className={this.props.playing === playingMode.EXPORT ? styles.exportProgress : styles.hidden}
-                              mode="determinate"
-                              value={this.props.exportProgress}>
-              </LinearProgress>
           </ToolbarGroup>
 
           <ToolbarGroup float="right">
